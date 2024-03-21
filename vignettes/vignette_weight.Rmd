@@ -372,4 +372,3 @@ hist(trimWeight(lWeight$dfWeight_Slot$gWeight), main = NULL)
 - `countWeight`: データベースに格納されたシミュレーション結果の試行数を調べる
 - `trimWeight`: ウェイトを切り詰める
 
-以上

@@ -38,6 +38,3 @@ vignetteをご覧ください。
 ```{r, eval = FALSE}
 vignette(topic = "vignette", package = "rSurveyAssign")
 ```
-
-
-以上

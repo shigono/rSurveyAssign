@@ -322,5 +322,3 @@ print(tapply(dfResult2_s$gCV_Prob_Slot, list(dfResult2_s$nCat, dfResult2_s$nSlot
 - `simBias`: シミュレーションを実行し結果をデータベースに格納する
 - `getBias`: データベースに格納されたシミュレーション結果を集計して取り出す
 - `countBias`: データベースに格納されたシミュレーション結果の試行数を調べる
-
-以上

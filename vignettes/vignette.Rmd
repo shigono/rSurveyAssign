@@ -229,4 +229,3 @@ Aを知っている人たちのうち、すべてのブランドを知ってい�
     集計のための調査ウェイトを、シミュレーションによって算出する。
   - 使用方法は["How to compute survey weights"](vignette_weight.html)を参照して下さい。
 
-以上

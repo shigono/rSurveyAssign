@@ -2,7 +2,7 @@ Package: rSurveyAssign
 Type: Package
 Title: tools for simulation of assignment in web surveys
 Version: 0.2.7
-Author: person("Shigeru", "ONO", email = "elsur_2001@yahoo.co.jp", role = c("aut", "cre"))
+Authors@R: person("Shigeru", "ONO", email = "elsur_2001@yahoo.co.jp", role = c("aut", "cre"))
 Maintainer: Shigeru ONO <elsur_2001@yahoo.co.jp>
 Description: This package contains several tools to simulate different types of assignment processes in web surveys. 
   With this package, users can estimate sample sizes and for future surveys, assess bias in future surveys, and calculate survey weights for actual surveys that have been conducted.
