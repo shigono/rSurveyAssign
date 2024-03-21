@@ -1,11 +1,4 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<style type="text/css">
-h1,h2,h3,h4,h5,h6{
-  font-size: 120%;
-}
-</style>
-
 # rSurveyAssign: tools for simulation of assignment in web surveys
 
 <!-- badges: start -->
