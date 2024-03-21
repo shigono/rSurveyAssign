@@ -1,135 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/404.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/vignette.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/vignette.html</loc>
   </url>
   <url>
-    <loc>/articles/vignette_bias.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/vignette_assign.html</loc>
   </url>
   <url>
-    <loc>/articles/vignette_size.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/vignette_bias.html</loc>
   </url>
   <url>
-    <loc>/articles/vignette_weight.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/vignette_size.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/articles/vignette_weight.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/authors.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/reference/checkDB.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/reference/checkSurvey.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/checkDB.html</loc>
   </url>
   <url>
-    <loc>/reference/countBias.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/checkSurvey.html</loc>
   </url>
   <url>
-    <loc>/reference/countSize.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/countBias.html</loc>
   </url>
   <url>
-    <loc>/reference/countWeight.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/countSize.html</loc>
   </url>
   <url>
-    <loc>/reference/execAssign.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/countWeight.html</loc>
   </url>
   <url>
-    <loc>/reference/execRetrials.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/execAssign.html</loc>
   </url>
   <url>
-    <loc>/reference/execTrials.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/execRetrials.html</loc>
   </url>
   <url>
-    <loc>/reference/getBias.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/execTrials.html</loc>
   </url>
   <url>
-    <loc>/reference/getCandidate.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/getBias.html</loc>
   </url>
   <url>
-    <loc>/reference/getSize.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/getCandidate.html</loc>
   </url>
   <url>
-    <loc>/reference/getSize_raw.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/getSize.html</loc>
   </url>
   <url>
-    <loc>/reference/getWeight.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/getSize_raw.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/getWeight.html</loc>
   </url>
   <url>
-    <loc>/reference/makePop.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/makeRetrial.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makePop.html</loc>
   </url>
   <url>
-    <loc>/reference/makeRetrialBlock.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeRetrial.html</loc>
   </url>
   <url>
-    <loc>/reference/makeSetting.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeRetrialBlock.html</loc>
   </url>
   <url>
-    <loc>/reference/makeStat_Cat.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeSetting.html</loc>
   </url>
   <url>
-    <loc>/reference/makeStat_Slot.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeStat_Cat.html</loc>
   </url>
   <url>
-    <loc>/reference/makeSurvey.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeStat_Slot.html</loc>
   </url>
   <url>
-    <loc>/reference/popdata.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/makeSurvey.html</loc>
   </url>
   <url>
-    <loc>/reference/rSurveyAssign-package.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/popdata.html</loc>
   </url>
   <url>
-    <loc>/reference/simBias.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/rSurveyAssign-package.html</loc>
   </url>
   <url>
-    <loc>/reference/simSize.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/simBias.html</loc>
   </url>
   <url>
-    <loc>/reference/simWeight.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/simSize.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_checkcat.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/simWeight.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_checkslot.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_checkcat.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_getcat.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_checkslot.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_getslot.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_getcat.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_makeSubjectCat_Alt.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_getslot.html</loc>
   </url>
   <url>
-    <loc>/reference/sub_makeSurvey_from_trial.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_makeSubjectCat_Alt.html</loc>
   </url>
   <url>
-    <loc>/reference/surveydata.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/sub_makeSurvey_from_trial.html</loc>
   </url>
   <url>
-    <loc>/reference/trimWeight.html</loc>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/surveydata.html</loc>
+  </url>
+  <url>
+    <loc>https://shigono.github.io/rSurveyAssign/reference/trimWeight.html</loc>
   </url>
 </urlset>
