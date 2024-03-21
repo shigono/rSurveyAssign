@@ -1,0 +1,37 @@
+#' survey data
+#'
+#' vignetteでの説明に用いる調査データ。
+#'
+#' 架空の調査データ。カテゴリ数3, 各カテゴリのスロット数は10。
+#' 割付カテゴリ数の上限は2, 割付カテゴリ数の上限は2,
+#' 目標対象者数はすべてのスロットについて10。カテゴリ割付の方法は、
+#' (adaptive、open, random, none), スロット割付の方法は(adaptive, all, shortnum, allclosed)であった。
+#' 調査の結果、調査対象者数は504となった。
+#'
+#' 以下の列を持つ。
+#' \itemize{
+#' \item \code{SEQ} 調査参加順序
+#' \item \code{nCat_1} カテゴリ1の割付可能性(0:割付不能, 1:割付可能)
+#' \item \code{nCat_2} カテゴリ2の割付可能性(0:割付不能, 1:割付可能)
+#' \item \code{nCat_3} カテゴリ3の割付可能性(0:割付不能, 1:割付可能)
+#' \item \code{bSlot_1_1} カテゴリ1, スロット1の割付可能性(0:割付不能, 1:割付可能, NA:不明)
+#' \item \code{bSlot_1_2} カテゴリ1, スロット2の割付可能性(0:割付不能, 1:割付可能, NA:不明)
+#' \item ...
+#' \item \code{bSlot_3_10} カテゴリ3, スロット10の割付可能性(0:割付不能, 1:割付可能, NA:不明)
+#' \item \code{nAssignedCat_1}, \code{nAssignCat_2}: この対象者に割り付けられたカテゴリの番号。
+#' 割り付けられたカテゴリが0～1個の場合はNAが格納される。
+#' ある対象者におけるnAssignedCat_1の値とnAssignedCat_2の値の順序に意味はない。
+#' \item \code{nAssignedCat_Slots}: 割り付けられたスロットが属するカテゴリ番号。
+#' スロット割付が行われなかった場合はNA。
+#' \item \code{nAssignedCat_1}, \code{nAssignedCat_2}: 割り付けられたスロット番号。
+#' 割り付けられたスロットが0～1個の場合はNAが格納される。
+#' ある対象者におけるnAssignedSlot_1の値とnAssignedSlot_2の値の順序に意味はない。
+#' }
+#'
+#' @docType data
+#'
+#' @usage data(surveydata)
+#'
+#' @keywords datasets
+#'
+"surveydata"
