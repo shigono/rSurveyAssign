@@ -42,6 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: run simulations of assignments for web surveys</a>
+    <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
     <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
@@ -174,8 +175,14 @@ ONO</h4>
 <span class="math inline">\(1\)</span>～<span class="math inline">\(J\)</span>個のブランド</td>
 </tr>
 </tbody></table>
-<p>調査手続きDは、いっけん良い手続きのようにみえます。しかしこの手続きは、深刻な問題点を持っています。</p>
-<p>第一に、事前に必要な対象者数を知ることが困難です。</p>
+<p>調査手続きDは、いっけん良い手続きのようにみえます。しかしこの手続きは、次の2つの深刻な問題点を持っています。</p>
+<ul>
+<li>必要な対象者数がわからない</li>
+<li>回答の集計値がバイアスを持つ</li>
+</ul>
+<div class="section level4">
+<h4 id="必要な対象者数がわからない">必要な対象者数がわからない<a class="anchor" aria-label="anchor" href="#%E5%BF%85%E8%A6%81%E3%81%AA%E5%AF%BE%E8%B1%A1%E8%80%85%E6%95%B0%E3%81%8C%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84"></a>
+</h4>
 <p>それぞれのブランドのイメージを測定するために、それぞれのブランドについて十分な件数の回答を得たいとしましょう。</p>
 <ul>
 <li>調査手続きAでは、<span class="math inline">\(N\)</span>人の対象者に調査すれば、各ブランドについて<span class="math inline">\(N\)</span>件の回答が得られます。</li>
@@ -189,7 +196,10 @@ ONO</h4>
 を推測できれば、十分な件数の回答を得るために必要な対象者数を逆算することができるでしょう。</li>
 <li>しかし調査手続きDでは、各ブランドについて何件の回答が得られるかを事前に推測することが困難です。</li>
 </ul>
-<p>第二に、回答の集計値がバイアスを持ちます。</p>
+</div>
+<div class="section level4">
+<h4 id="回答の集計値がバイアスを持つ">回答の集計値がバイアスを持つ<a class="anchor" aria-label="anchor" href="#%E5%9B%9E%E7%AD%94%E3%81%AE%E9%9B%86%E8%A8%88%E5%80%A4%E3%81%8C%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E6%8C%81%E3%81%A4"></a>
+</h4>
 <p>調査手続きDによって得た回答の集計値がどのような性質を持つか、簡単な例を通じて考えてみましょう。</p>
 <p>調査対象のブランドを{A,B,C}の3つとし、割付ブランド数の上限を2個とします。また、対象者を割り付けるブランドは、知っているブランドのなかから等確率で選ぶと仮定します。調査手続きDでは、ブランドAへと割り付けられる可能性がある対象者は下表の4種類となります。</p>
 <table class="table">
@@ -229,6 +239,7 @@ ONO</h4>
 <p>Aを知っている人たちのうち、すべてのブランドを知っている人はブランドAについて確率<span class="math inline">\(2/3\)</span>で聴取され、それ以外の人は確率<span class="math inline">\(1\)</span>で聴取されます。従って、Aについて収集した回答は、すべてのブランドを知っている人からの回答が少なめになってしまいます。</p>
 <p>このように、調査手続きDでは、あるブランドに対する回答が、他のブランドについて知らない対象者による回答へと偏ることになります。これを<strong>割付バイアス</strong>と呼ぶことにします。</p>
 <p>割付バイアスの大きさは、各ブランドが知られている程度や、割り付けるブランドの選び方によって複雑に変化します。そのため、推測するのは容易ではありません。</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="このパッケージの目的">1.3 このパッケージの目的<a class="anchor" aria-label="anchor" href="#%E3%81%93%E3%81%AE%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%81%AE%E7%9B%AE%E7%9A%84"></a>
@@ -317,7 +328,7 @@ ONO</h4>
 <li>調査実施中のある時点において、オープンなスロットが1つ以上あるカテゴリを「<strong>オープン</strong>」、すべてのスロットがクローズドであるカテゴリを「<strong>クローズド</strong>」と形容することにします。</li>
 </ul>
 <p>本パッケージは以下に説明する調査手続きを想定します。</p>
-<p><strong>Step 1.</strong>
+<p><strong>Step 1.</strong>:
 ある人が調査に参加したとき、その人について、各カテゴリについて割付可能であるかどうかを調べる。</p>
 <p><strong>Step 2.</strong>
 なんらかの方法で、その対象者のすべての割付可能カテゴリのうちいくつかを選ぶ。
@@ -328,7 +339,7 @@ ONO</h4>
 対象者に、それぞれの割付カテゴリについて、スロットのリストを提示し、
 それぞれについて割付可能かどうかを調べる。</p>
 <p><strong>Step 4.</strong>
-何らかの方法で、その対象者の割付可能スロットのなかからいくつかを選ぶ。
+なんらかの方法で、その対象者のいずれかの割付カテゴリの割付可能スロットのなかからいくつかを選ぶ。
 これを、「対象者を<strong>スロットに割り付ける</strong>」と表現し、
 選択されたカテゴリを「<strong>割付スロット</strong>」と呼ぶ。もし割付できなかったら、
 その対象者に対する調査は中止する。</p>
@@ -336,370 +347,46 @@ ONO</h4>
 割付スロットについての詳細な設問を提示し、回答を得る。</p>
 <p><strong>Step 6.</strong>
 すべてのカテゴリがクローズドになったら、調査を終了する。</p>
+<p>カテゴリ・スロットの割付方法の詳細については、<a href="vignette_assign.html">“How to assign
+subjects”</a>を参照して下さい。</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="割付カテゴリ割付スロットの決定方法">3. 割付カテゴリ・割付スロットの決定方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E5%89%B2%E4%BB%98%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E6%B1%BA%E5%AE%9A%E6%96%B9%E6%B3%95"></a>
-</h2>
-<p><strong>Step 2.</strong>で割付カテゴリを決め、<strong>Step
-4.</strong>で割付スロットを決める際には、
-さまざまな方法がありえます。本項では、<code>rSurveyAssign</code>パッケージがカバーする
-割付カテゴリ・割付スロットの決定方法について説明します。</p>
-<div class="section level3">
-<h3 id="割付カテゴリの決定方法">3.1 割付カテゴリの決定方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E6%B1%BA%E5%AE%9A%E6%96%B9%E6%B3%95"></a>
-</h3>
-<p>割付カテゴリを決める方法は、次の4つの特徴によって整理することができます。</p>
-<ul>
-<li>割付タイプ</li>
-<li>絞り込み条件</li>
-<li>順序付け条件</li>
-<li>除外条件</li>
-</ul>
-<p>順に説明します。
-以下では、割り付けるカテゴリの最大数をJとします。</p>
-<div class="section level4">
-<h4 id="割付タイプ">割付タイプ<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%BF%E3%82%A4%E3%83%97"></a>
-</h4>
-<ul>
-<li>adaptive: 適応的方法
-<ul>
-<li>各対象者について以下の手順で割り付けを行います。
-<ul>
-<li>
-<strong>絞り込み</strong>:
-その人の割付可能カテゴリのなかから、指定した条件
-(絞り込み条件)を満たすカテゴリを選び、割付カテゴリの候補とする。</li>
-<li>
-<strong>順序付け</strong>:
-選ばれた候補のなかから、指定された優先順位(順序付け条件)に従って
-J個までのカテゴリを抜き出し、割付カテゴリとする。</li>
-<li>
-<strong>除外</strong>:
-割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
-</ul>
-</li>
-<li>適応的方法では、必要とする調査対象者数がより少なくなります。</li>
-<li>その反面、回答には割付バイアスが生じます。
-なぜなら、ある対象者がある割付可能カテゴリを持っているとき、
-その対象者がそのカテゴリに割り付けられるかどうかが、その対象者の
-他のカテゴリについての割付可能性に応じて決まってしまうからです。</li>
-</ul>
-</li>
-<li>nonadaptive: 非適応的方法
-<ul>
-<li>各対象者について以下の手順で割り付けを行います。
-<ul>
-<li>
-<strong>順序付け</strong>: その対象者にとっての割付可能性は無視し、
-すべてのカテゴリのなかから、指定された優先順位(順序付け条件)に従って
-J数までのカテゴリを抜き出し、割付カテゴリの候補とする。</li>
-<li>
-<strong>絞り込み</strong>: 抜き出されたカテゴリのなかから、
-指定した条件(絞り込み条件)に該当するカテゴリを選び、
-割付カテゴリとする。</li>
-<li>
-<strong>除外</strong>:
-割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
-</ul>
-</li>
-<li>非適応的割付は、多くの調査対象者数を必要とします。なぜなら、
-絞り込みの結果、割付カテゴリが0個になってしまう対象者が多いからです。</li>
-<li>その反面、回答において割付バイアスは生じにくくなります。
-ある対象者がある割付可能カテゴリに割り付けられるかどうかが、その対象者の
-他のカテゴリの割付可能性とは独立に決まっているからです。</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="絞り込み条件">絞り込み条件<a class="anchor" aria-label="anchor" href="#%E7%B5%9E%E3%82%8A%E8%BE%BC%E3%81%BF%E6%9D%A1%E4%BB%B6"></a>
-</h4>
-<p>次の2種類を想定します。</p>
-<ul>
-<li>all: その対象者の割付可能カテゴリを選ぶ。
-<ul>
-<li>このとき、割付カテゴリはクローズドでありうる点に注意してください。すでに目標票数に達しているカテゴリについても聴取することになります。いいかえれば、「無駄な」回答収集を行うことになります。</li>
-</ul>
-</li>
-<li>open:
-その対象者の割付可能カテゴリのうちオープンなカテゴリを選ぶ。</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="ランキング条件">ランキング条件<a class="anchor" aria-label="anchor" href="#%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0%E6%9D%A1%E4%BB%B6"></a>
-</h4>
-<p>以下の4種類を想定します。</p>
-<ul>
-<li>random: ランダムに並べる。</li>
-<li>openclosed: 以下の順に並べる。(1)オープンなカテゴリ、ランダム順。
-(2)クローズドなカテゴリ、ランダム順。</li>
-<li>shortnum:
-その時点でオープンなスロット数が多いカテゴリから順に並べる。</li>
-<li>shortratio:
-その時点でオープンなスロットが占める割合が大きいカテゴリから順に並べる。</li>
-</ul>
-<p>(shortratioとshortnum), open,
-randomの順に、必要な調査対象者数が少なくなり、また
-割付バイアスが生じる場合には割付バイアスが強くなると考えられます。</p>
-</div>
-<div class="section level4">
-<h4 id="除外条件">除外条件<a class="anchor" aria-label="anchor" href="#%E9%99%A4%E5%A4%96%E6%9D%A1%E4%BB%B6"></a>
-</h4>
-<p>以下の2種類を想定します。</p>
-<ul>
-<li>none: なし。</li>
-<li>allclosed:
-割付カテゴリとして選ばれたカテゴリがすべてクローズドであったら、割付しない。
-<ul>
-<li>この方法では割付バイアスが生じることに注意してください。なぜなら、ある対象者において
-ある割付可能カテゴリが割付カテゴリとして選ばれたとき、その対象者が実際にそのカテゴリに
-割り付けられるかどうかが、その対象者の他のカテゴリについての割付可能性に応じて
-決まってしまうからです。</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="組み合わせ">組み合わせ<a class="anchor" aria-label="anchor" href="#%E7%B5%84%E3%81%BF%E5%90%88%E3%82%8F%E3%81%9B"></a>
-</h4>
-<p><code>rSurveyAssign</code>パッケージは、上で述べた4つの特徴の組み合わせによる
-割付方法をサポートしています。参考として、すべての組み合わせを下表に示します。</p>
-<p>割り付けるカテゴリの最大数をJとします。</p>
-<table class="table">
-<thead><tr class="header">
-<th align="left">割付タイプ</th>
-<th align="left">絞り込み条件</th>
-<th align="left">順序づけ条件</th>
-<th align="left">除外条件</th>
-<th align="left">割付カテゴリの選び方</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリからJ個までを等確率に選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリからJ個までを等確率に選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリのうちオープンなものからJ個までを等確率に選ぶ。J個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリのうちオープンなものからJ個までを等確率に選ぶ。J個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順にJ個までを選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順にJ個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">random,openclosed</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリからJ個までを等確率に選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">shortnum</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">shortratio</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが占める割合が高い順にJ個までを選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリからJ個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリからJ個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">none</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出す。J個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">allclosed</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出す。J個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">random,openclosed</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">shortnum</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからオープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-<tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">shortratio</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからオープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section level3">
-<h3 id="割付スロットの決定方法">3.2 割付スロットの決定方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%AE%E6%B1%BA%E5%AE%9A%E6%96%B9%E6%B3%95"></a>
-</h3>
-<p><strong>Step
-4.</strong>で割付スロットを決める方法は、割付カテゴリを決める場合と同様です。
-説明を以下のように読み替えてください。</p>
-<ul>
-<li>「カテゴリ」→「スロット」</li>
-<li>「その時点でオープンなスロット数が多いカテゴリ」→「その時点で目標票数に対して不足している票数が多いスロット」</li>
-<li>「その時点でオープンなスロットが占める割合が多いカテゴリ」→「その時点で目標票数に対して不足している票数の割合が高いスロット」</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="割付スロット決定におけるカテゴリの決定方法">3.3 割付スロット決定におけるカテゴリの決定方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E6%B1%BA%E5%AE%9A%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E6%B1%BA%E5%AE%9A%E6%96%B9%E6%B3%95"></a>
-</h3>
-<p><strong>Step 4.</strong>で割付スロットを決める際、もし<strong>Step
-2.</strong>で複数個のカテゴリへの割付が生じていたら、
-割付スロットをどの割付カテゴリから選ぶかという問題が生じます。</p>
-<p>現バージョンの<code>rSurveyAssign</code>パッケージは、以下に述べる方法のみを想定しています。</p>
-<ul>
-<li>割付カテゴリのなかからひとつを等確率に選び、そのカテゴリの割付可能スロットのなかから、前項で説明した方法で割付スロットを選ぶ。</li>
-<li>割付スロットの選択が行われなかった場合(ひとつも選べなかった場合、ないし除外条件によって中止された場合)は、他の割付カテゴリのなかからひとつを等確率に選び、そのカテゴリの割付可能スロットのなかから、前項で説明した方法で割付スロットを選ぶ。これを繰り返し、どこかのカテゴリから割付スロットを選ぶことができるまで続ける。</li>
-<li>どの割付カテゴリからも割付スロットが選ばれなかった場合は、その対象者に対する調査を中止する。</li>
-</ul>
-<p>ある対象者への割付スロットは必ず同一カテゴリのスロットとなる点に注意してください。</p>
-<p>複数個のカテゴリへの割付を行う場合、スロットへの回答には割付バイアスが生じます。
-なぜなら、対象者がある割付可能スロットに対して
-割り付けられるかどうかが、他のカテゴリのスロットの割付可能性に応じて決まるからです。</p>
-</div>
-<div class="section level3">
-<h3 id="割付に伴うバイアスはいつ生じるか">3.4 割付に伴うバイアスはいつ生じるか<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%81%AB%E4%BC%B4%E3%81%86%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AF%E3%81%84%E3%81%A4%E7%94%9F%E3%81%98%E3%82%8B%E3%81%8B"></a>
-</h3>
-<p>カテゴリについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件を満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
-<ul>
-<li>カテゴリ割付において非適応的方法を選んでいるか、割付カテゴリの最大数が十分に大きく、すべての割付可能カテゴリへの割付が生じている</li>
-<li>カテゴリ割付において除外条件をnoneにしている</li>
-</ul>
-<p>スロットについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件を満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
-<ul>
-<li>カテゴリ割付において非適応的方法を選んでいる</li>
-<li>カテゴリ割付において除外条件をnoneにしている</li>
-<li>割付カテゴリの最大数を1にしている</li>
-<li>スロット割付において非適応的方法を選んでいるか、割付スロットの最大数が十分に大きく、すべての割付可能スロットへの割付が生じている</li>
-<li>スロット割付において除外条件をnoneにしている</li>
-</ul>
-</div>
-</div>
-<div class="section level2">
-<h2 id="このパッケージの用途">4. このパッケージの用途<a class="anchor" aria-label="anchor" href="#%E3%81%93%E3%81%AE%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%81%AE%E7%94%A8%E9%80%94"></a>
+<h2 id="このパッケージの用途">3. このパッケージの用途<a class="anchor" aria-label="anchor" href="#%E3%81%93%E3%81%AE%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%81%AE%E7%94%A8%E9%80%94"></a>
 </h2>
 <p>このパッケージは、上記の手続きによる調査を実施しようと考えている調査者、ないしすでに実施した調査者のためのパッケージです。</p>
 <p>このパッケージは、web調査の機能を提供するものではありません。web調査の実施中に、上記の手続きに従って対象者をカテゴリ・スロットへと割り付ける機能は、web調査システム上で別途実装する必要があります。</p>
 <p>このパッケージの用途は次の3つです。</p>
-<p><strong>標本サイズ推定</strong>:
-上記の手続きによる<strong>調査を計画しているとき</strong>、
+<ul>
+<li>
+<strong>標本サイズ推定</strong>:
+<ul>
+<li>上記の手続きによる<strong>調査を計画しているとき</strong>、
 各スロットについて必要な回答件数を得るためにはどの程度の調査対象者数が必要か、
-シミュレーションによって推定する。 使用方法は<a href="vignette_size.html">“How to forecast sample
-size”</a>を参照して下さい。</p>
-<p><strong>バイアス評価</strong>:
-上記の手続きによる<strong>調査を計画しているとき</strong>、
-調査結果が持つであろうバイアスを、シミュレーションによって評価する。
-使用方法は<a href="vignette_bias.html">“How to estimate
-bias”</a>を参照して下さい。</p>
-<p><strong>ウェイト算出</strong>:
-上記の手続きによる<strong>調査を行ったあとで</strong>、
-集計のための調査ウェイトを、シミュレーションによって算出する。
-使用方法は<a href="vignette_weight.html">“How to compute survey
-weights”</a>を参照して下さい。</p>
+シミュレーションによって推定する。</li>
+<li>使用方法は<a href="vignette_size.html">“How to forecast sample
+size”</a>を参照して下さい。</li>
+</ul>
+</li>
+<li>
+<strong>バイアス評価</strong>:
+<ul>
+<li>上記の手続きによる<strong>調査を計画しているとき</strong>、
+調査結果が持つであろうバイアスを、シミュレーションによって評価する。</li>
+<li>使用方法は<a href="vignette_bias.html">“How to estimate
+bias”</a>を参照して下さい。</li>
+</ul>
+</li>
+<li>
+<strong>ウェイト算出</strong>:
+<ul>
+<li>上記の手続きによる<strong>調査を行ったあとで</strong>、
+集計のための調査ウェイトを、シミュレーションによって算出する。</li>
+<li>使用方法は<a href="vignette_weight.html">“How to compute survey
+weights”</a>を参照して下さい。</li>
+</ul>
+</li>
+</ul>
 <p>以上</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
