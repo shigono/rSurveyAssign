@@ -1,4 +1,6 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # rSurveyAssign: tools for simulation of assignment in web surveys
 
 <!-- badges: start -->
@@ -28,5 +30,3 @@ vignetteをご覧ください。
 ``` r
 vignette(topic = "vignette", package = "rSurveyAssign")
 ```
-
-以上
