@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 説明します。
 
 `rSurveyAssign`パッケージの背後にある考え方については、
-["rSurveyAssign: run simulations of assignments for web surveys"](vignette.html)を参照して下さい。
+["rSurveyAssign: tools for simulation of assignment in web surveys"](vignette.html)を参照して下さい。
 
 ## 1. データの準備
 
@@ -43,11 +43,9 @@ lSlot <- list(
   )
 lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
 ```
-また、割付のセッティングを指定します。
-["How to forecast sample size"](vignette_size.html)を参照して下さい。
 
-なお、割付バイアスを評価する際には、
-目標対象者数として本来の値を指定する必要はありません。目標対象者数はある程度の大きさが必要ですが、あまり大きすぎると時間がかかってしまいます。本来の目標対象者数を適当に定数倍した値を設定するとよいでしょう。
+割付のセッティングを指定します。
+["How to assign subjects"](vignette_assign.html)を参照して下さい。
 
 ```{r}
 # 割付のセッティング

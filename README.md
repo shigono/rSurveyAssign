@@ -1,7 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<style type="text/css">
+h1,h2,h3,h4,h5,h6{
+  font-size: 120%;
+}
+</style>
 
-# rSurveyAssign: run simulation of assignment in a web survey
+# rSurveyAssign: tools for simulation of assignment in web surveys
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -14,7 +19,7 @@ conducted.
 
 このパッケージは、web調査における対象者割付についてのシミュレーションを行うためのパッケージです。これから行う調査について標本サイズを見積もったり、バイアスを評価したり、すでに行った調査について調査ウェイトを求めたりすることができます。
 
-## インストール
+### インストール
 
 [GitHub](https://github.com/) からインストールできます。
 
@@ -23,7 +28,7 @@ conducted.
 devtools::install_github("shigono/rSurveyAssign", build_manual = TRUE, build_vignettes = TRUE)
 ```
 
-## 使い方
+### 使い方
 
 vignetteをご覧ください。
 

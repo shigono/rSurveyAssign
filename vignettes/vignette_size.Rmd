@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 説明します。
 
 `rSurveyAssign`パッケージの背後にある考え方については、
-["rSurveyAssign: run simulations of assignments for web surveys"](vignette.html)を参照して下さい。
+["rSurveyAssign: tools for simulation of assignment in web surveys"](vignette.html)を参照して下さい。
 
 ## 1. データの準備
 
@@ -113,14 +113,10 @@ lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
 - `lSLOT_REQUEST`: 各スロットの目標対象者数。
     - $J$個の要素を持つリスト。$j$番目の要素は長さ$K[j]$の整数ベクトル。
     - $j$番目の要素であるベクトルの$k$番目の要素は、カテゴリ$j$のスロット$k$に割り付ける対象者数の下限を表します。欠損は許容されません。
-- `nCAT_MAX`: 割付カテゴリ数の上限。
-- `sCAT_TYPE`, `sCAT_FILTER`, `sCAT_ORDER`, `sCAT_EXCLUDE`: カテゴリ割付のタイプ、絞り込み条件、順序付け条件、除外条件。
-["rSurveyAssign: run simulations of assignments for web surveys"](vignette.html)
-を参照して下さい。
-- `nSLOT_MAX`: 割付スロット数の上限。
-- `sSLOT_TYPE`, `sSLOT_FILTER`, `sSLOT_ORDER`, `sSLOT_EXCLUDE`: スロット割付のタイプ、絞り込み条件、順序付け条件、除外条件。
-["rSurveyAssign: run simulations of assignments for web surveys"](vignette.html)
-を参照して下さい。
+- `nCAT_MAX`, `sCAT_TYPE`, `sCAT_FILTER`, `sCAT_ORDER`, `sCAT_EXCLUDE`: カテゴリの割付方法。
+    - ["How to assign subjects"](vignette_assign.html)を参照して下さい。
+- `nSLOT_MAX`, `sSLOT_TYPE`, `sSLOT_FILTER`, `sSLOT_ORDER`, `sSLOT_EXCLUDE`: スロットの割り付け方法。
+    - ["How to assign subjects"](vignette_assign.html)を参照して下さい。
 
 セッティングを指定しましょう。
 

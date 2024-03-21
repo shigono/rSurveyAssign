@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```
 
 
-["rSurveyAssign: run simulations of assignments for web surveys"](vignette.html)で述べたように、
+["rSurveyAssign: tools for simulation of assignment in web surveys"](vignette.html)で述べたように、
 `rSurveyAssign`パッケージは以下の調査手続きを想定します。
 
 1. ある人が調査に参加したとき、その人について、各カテゴリについて割付可能であるかどうかを調べる。
@@ -52,6 +52,7 @@ knitr::opts_chunk$set(
 以下では、割り付けるカテゴリの最大数をJとします。
 
 #### 割付タイプ
+次の2種類を想定します。
 
 - adaptive: 適応的方法
   - 各対象者について以下の手順で割り付けを行います。

@@ -1,7 +1,6 @@
 url: https://shigono.github.io/rSurveyAssign/
 template:
   bootstrap: 5
-  bootswatch: journal
-
+  bootswatch: minty
 
 

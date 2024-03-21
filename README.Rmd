@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# rSurveyAssign: run simulation of assignment in a web survey
+# rSurveyAssign: tools for simulation of assignment in web surveys
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -23,7 +23,7 @@ This package contains several tools to simulate different types of assignment pr
 このパッケージは、web調査における対象者割付についてのシミュレーションを行うためのパッケージです。これから行う調査について標本サイズを見積もったり、バイアスを評価したり、すでに行った調査について調査ウェイトを求めたりすることができます。
 
 
-## インストール
+### インストール
 
 [GitHub](https://github.com/) からインストールできます。
 
@@ -32,7 +32,7 @@ This package contains several tools to simulate different types of assignment pr
 devtools::install_github("shigono/rSurveyAssign", build_manual = TRUE, build_vignettes = TRUE)
 ```
 
-## 使い方
+### 使い方
 vignetteをご覧ください。
 
 ```{r, eval = FALSE}
