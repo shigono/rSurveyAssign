@@ -25,7 +25,7 @@ This package contains several tools to simulate different types of assignment pr
 
 ### インストール
 
-[GitHub](https://github.com/) からインストールできます。
+GitHubからインストールできます。
 
 ``` r
 # install.packages("devtools")
@@ -38,3 +38,5 @@ vignetteをご覧ください。
 ```{r, eval = FALSE}
 vignette(topic = "vignette", package = "rSurveyAssign")
 ```
+
+vignetteは [パッケージのwebサイト](https://shigono.github.io/rSurveyAssign/) でも公開されています。

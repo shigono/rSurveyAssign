@@ -16,7 +16,7 @@ conducted.
 
 ### インストール
 
-[GitHub](https://github.com/) からインストールできます。
+GitHubからインストールできます。
 
 ``` r
 # install.packages("devtools")
@@ -30,3 +30,7 @@ vignetteをご覧ください。
 ``` r
 vignette(topic = "vignette", package = "rSurveyAssign")
 ```
+
+vignetteは
+[パッケージのwebサイト](https://shigono.github.io/rSurveyAssign/)
+でも公開されています。
