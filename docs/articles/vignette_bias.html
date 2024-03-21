@@ -42,6 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: run simulations of assignments for web surveys</a>
+    <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
     <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
@@ -87,7 +88,7 @@ web surveys”</a>を参照して下さい。</p>
 <a href="vignette_size.html">“How to forecast sample
 size”</a>を参照して下さい。</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shigono.github.io/rSurveyAssign/" class="external-link">rSurveyAssign</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shigono.github.io/rSurveyAssign/">rSurveyAssign</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 母集団オブジェクトの作成</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">popdata</span>, package <span class="op">=</span> <span class="st">"rSurveyAssign"</span><span class="op">)</span></span>
@@ -146,7 +147,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 2.19 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 2.2 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>

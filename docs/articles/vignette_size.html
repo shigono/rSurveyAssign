@@ -42,6 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: run simulations of assignments for web surveys</a>
+    <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
     <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
@@ -101,7 +102,7 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 カテゴリ数は3, スロット数は 各カテゴリについて10です(すなわち、<span class="math inline">\(I=10000, J=3, K[1]=K[2]=K[3]=10\)</span>)。</p>
 <p>内容をみてみましょう。</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shigono.github.io/rSurveyAssign/" class="external-link">rSurveyAssign</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shigono.github.io/rSurveyAssign/">rSurveyAssign</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">popdata</span>, package <span class="op">=</span> <span class="st">"rSurveyAssign"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">popdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   nID bCat_1 bCat_2 bCat_3 bSlot_1_1 bSlot_1_2 bSlot_1_3 bSlot_1_4 bSlot_1_5</span></span>
@@ -479,23 +480,23 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span>  bAPPEND        <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [execTrials] start trials (serial) ...</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 2 ; extract: 1303 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 3 ; extract: 1201 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1380 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1380 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 1234 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 8 ; extract: 1371 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 9 ; extract: 1041 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1385 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 979 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 14 ; extract: 1495 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 15 ; extract: 1128 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 16 ; extract: 1072 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.04 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 18 ; extract: 1157 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1158 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 991 ; 0.03 sec.</span></span>

@@ -3,8 +3,12 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   vignette: vignette.html
+  vignette_assign: vignette_assign.html
   vignette_bias: vignette_bias.html
   vignette_size: vignette_size.html
   vignette_weight: vignette_weight.html
-last_built: 2024-03-21T06:01Z
+last_built: 2024-03-21T06:36Z
+urls:
+  reference: https://shigono.github.io/rSurveyAssign/reference
+  article: https://shigono.github.io/rSurveyAssign/articles
 
