@@ -22,11 +22,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: run simulations of assignments for web surveys</a>
+    <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: tools for simulation of assignment in web surveys</a>
     <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
     <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
@@ -78,8 +78,8 @@ ONO</h4>
     
     
 <p>ここでは、<code>rSurveyAssign</code>パッケージを使った調査ウェイト算出について説明します。</p>
-<p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: run simulations of assignments for
-web surveys”</a>を参照して下さい。</p>
+<p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
+in web surveys”</a>を参照して下さい。</p>
 <p>ここでいう調査ウェイトとは、ある対象者があるカテゴリないしスロットに割り付けられる確率の逆数を指します。
 調査ウェイトを用いた重みづけ集計によって、割付バイアスを取り除いた推定を行うことができます。
 詳しくは調査法についての参考書を参照して下さい。</p>
@@ -234,14 +234,20 @@ NAとなっています。 5番目の調査対象者は、カテゴリ1のスロ
 </li>
 <li>
 <code>sCAT_TYPE</code>, <code>sCAT_FILTER</code>,
-<code>sCAT_ORDER</code>, <code>sCAT_EXCLUDE</code>:
-カテゴリ割付方法。詳細は <a href="vignette.html">“rSurveyAssign: run
-simulations of assignments for web surveys”</a> を参照して下さい。</li>
+<code>sCAT_ORDER</code>, <code>sCAT_EXCLUDE</code>: カテゴリ割付方法。
+<ul>
+<li>詳細は<a href="vignette_assign.html">“How to assign
+subjects”</a>を参照して下さい。</li>
+</ul>
+</li>
 <li>
 <code>sSLOT_TYPE</code>, <code>sSLOT_FILTER</code>,
-<code>sSLOT_ORDER</code>, <code>sSLOT_EXCLUDE</code>:
-スロット割付方法。詳細は <a href="vignette.html">“rSurveyAssign: run
-simulations of assignments for web surveys”</a> を参照して下さい。</li>
+<code>sSLOT_ORDER</code>, <code>sSLOT_EXCLUDE</code>: スロット割付方法。
+<ul>
+<li>詳細は<a href="vignette_assign.html">“How to assign
+subjects”</a>を参照して下さい。</li>
+</ul>
+</li>
 <li>
 <code>mnASSIGNCAT</code>: 割付カテゴリ。
 <ul>
@@ -350,16 +356,16 @@ simulations of assignments for web surveys”</a> を参照して下さい。</l
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.035 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.034 sec.</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.025 sec.</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.029 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.031 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.036 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.034 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.031 sec.</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.025 sec.</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.027 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.394 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.386 sec.</span></span></code></pre></div>
 <p>画面に表示されたメッセージをみてみましょう。上から2行目以降のメッセージは再割付試行について表示しています。最初の再割付試行では、調査対象者を690人抽出したところで、目標対象者数が満たされ、調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。
 <code>simWeight</code>の返し値は2つの要素からなるリストです。</p>

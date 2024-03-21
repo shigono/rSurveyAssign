@@ -22,11 +22,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: run simulations of assignments for web surveys</a>
+    <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: tools for simulation of assignment in web surveys</a>
     <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
     <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
@@ -79,8 +79,8 @@ ONO</h4>
     
 <p>ここでは、<code>rSurveyAssign</code>パッケージを使ったバイアス評価について
 説明します。</p>
-<p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: run simulations of assignments for
-web surveys”</a>を参照して下さい。</p>
+<p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
+in web surveys”</a>を参照して下さい。</p>
 <div class="section level2">
 <h2 id="データの準備">1. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
 </h2>
@@ -104,10 +104,8 @@ size”</a>を参照して下さい。</p>
 <span><span class="co">#&gt; [makePop] # of members: 10000 </span></span>
 <span><span class="co">#&gt; [makePop] # of member-category pairs which are assignable: 26488 (8829.3/category) </span></span>
 <span><span class="co">#&gt; [makePop] # of member-slot pairs which are assignable: 58836 (1961.2/slot)</span></span></code></pre></div>
-<p>また、割付のセッティングを指定します。 <a href="vignette_size.html">“How to forecast sample
-size”</a>を参照して下さい。</p>
-<p>なお、割付バイアスを評価する際には、
-目標対象者数として本来の値を指定する必要はありません。目標対象者数はある程度の大きさが必要ですが、あまり大きすぎると時間がかかってしまいます。本来の目標対象者数を適当に定数倍した値を設定するとよいでしょう。</p>
+<p>割付のセッティングを指定します。 <a href="vignette_assign.html">“How
+to assign subjects”</a>を参照して下さい。</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 割付のセッティング</span></span>
 <span><span class="va">lSetting1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
@@ -147,7 +145,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.954 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.678 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
