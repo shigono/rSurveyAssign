@@ -1,7 +1,7 @@
 Package: rSurveyAssign
 Type: Package
 Title: run simulations of assignment for web surveys
-Version: 0.2.5
+Version: 0.2.6
 Author: person("Shigeru", "ONO", email = "elsur_2001@yahoo.co.jp", role = c("aut", "cre"))
 Maintainer: Shigeru ONO <elsur_2001@yahoo.co.jp>
 Description: TThis package contains several tools to simulate different types of assignment processes in web surveys. 
