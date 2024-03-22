@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-21</h4>
+            <h4 data-toc-skip class="date">2024-03-22</h4>
       
       
       <div class="d-none name"><code>vignette_assign.Rmd</code></div>
@@ -90,15 +90,16 @@ assignment in web surveys”</a>で述べたように、
 <li>対象者に、それぞれの割付カテゴリについて、スロットのリストを提示し、
 それぞれについて割付可能かどうかを調べる。</li>
 <li>
-<strong>なんらかの方法で</strong>、その対象者のいずれかの割付カテゴリの割付可能スロットのなかからいくつかを選ぶ。
+<strong>なんらかの方法で</strong>、その対象者のいずれかの割付カテゴリの割付可能スロットのなかから、いくつかのスロットを選ぶ。
 これを、「対象者をスロットに割り付ける」と表現し、
 選択されたカテゴリを「割付スロット」と呼ぶ。もし割付できなかったら、
 その対象者に対する調査は中止する。</li>
 <li>割付スロットについての詳細な設問を提示し、回答を得る。</li>
 <li>すべてのカテゴリがクローズドになったら、調査を終了する。</li>
 </ol>
-<p>この文書では、上記のStep 2.におけるカテゴリの割付方法、ならびにStep
-4.における スロットの割付方法について説明します。</p>
+<p>この文書では、上記のうち太字部分について説明します。すなわち、Step
+2.におけるカテゴリの割付方法、ならびにStep 4.における
+スロットの割付方法について説明します。</p>
 <div class="section level2">
 <h2 id="カテゴリの割付方法">1. カテゴリの割付方法<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
 </h2>
@@ -109,59 +110,74 @@ assignment in web surveys”</a>で述べたように、
 <li>順序付け条件</li>
 <li>除外条件</li>
 </ul>
-<p>順に説明します。
-以下では、割り付けるカテゴリの最大数をJとします。</p>
+<p>順に説明します。 以下では、対象者に割り付けるカテゴリの最大数を<span class="math inline">\(J\)</span>とします。</p>
 <div class="section level4">
 <h4 id="割付タイプ">割付タイプ<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%BF%E3%82%A4%E3%83%97"></a>
 </h4>
-<p>次の2種類を想定します。</p>
-<ul>
-<li>adaptive: 適応的方法
-<ul>
-<li>各対象者について以下の手順で割り付けを行います。
+<p><code>rSurveyAssign</code>パッケージでは、割付タイプとして次の2種類を想定します。</p>
 <ul>
 <li>
-<strong>絞り込み</strong>:
-その人の割付可能カテゴリのなかから、指定した条件
+<code>adaptive</code>: 適応的方法
+<ul>
+<li>各対象者について以下の手順でカテゴリ割付を行います。</li>
+<li>Step 1. <strong>絞り込み</strong>:
+<ul>
+<li>その人の割付可能カテゴリのなかから、指定した条件
 (絞り込み条件)を満たすカテゴリを選び、割付カテゴリの候補とする。</li>
-<li>
-<strong>順序付け</strong>:
-選ばれた候補のなかから、指定された優先順位(順序付け条件)に従って
-J個までのカテゴリを抜き出し、割付カテゴリとする。</li>
-<li>
-<strong>除外</strong>:
-割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
 </ul>
 </li>
-<li>適応的方法では、必要とする調査対象者数がより少なくなります。</li>
-<li>その反面、回答には割付バイアスが生じます。
-なぜなら、ある対象者がある割付可能カテゴリを持っているとき、
-その対象者がそのカテゴリに割り付けられるかどうかが、その対象者の
-他のカテゴリについての割付可能性に応じて決まってしまうからです。</li>
-</ul>
-</li>
-<li>nonadaptive: 非適応的方法
+<li>Step 2. <strong>順序付け</strong>:
 <ul>
-<li>各対象者について以下の手順で割り付けを行います。
-<ul>
-<li>
-<strong>順序付け</strong>: その対象者にとっての割付可能性は無視し、
-すべてのカテゴリのなかから、指定された優先順位(順序付け条件)に従って
-J数までのカテゴリを抜き出し、割付カテゴリの候補とする。</li>
-<li>
-<strong>絞り込み</strong>: 抜き出されたカテゴリのなかから、
-指定した条件(絞り込み条件)に該当するカテゴリを選び、
-割付カテゴリとする。</li>
-<li>
-<strong>除外</strong>:
-割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
+<li>選んだ候補のなかから、指定された優先順位(順序付け条件)に従って <span class="math inline">\(J\)</span>個までのカテゴリを抜き出し、割付カテゴリとする。</li>
 </ul>
 </li>
-<li>非適応的割付は、多くの調査対象者数を必要とします。なぜなら、
-絞り込みの結果、割付カテゴリが0個になってしまう対象者が多いからです。</li>
-<li>その反面、回答において割付バイアスは生じにくくなります。
+<li>Step 3. <strong>除外</strong>:
+<ul>
+<li>割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<code>nonadaptive</code>: 非適応的方法
+<ul>
+<li>各対象者について以下の手順で割り付けを行います。</li>
+<li>Step 1. <strong>順序付け</strong>:
+<ul>
+<li>その対象者にとっての割付可能性は無視し、すべてのカテゴリのなかから、指定された優先順位(順序付け条件)に従って<span class="math inline">\(J\)</span>個までのカテゴリを抜き出し、割付カテゴリの候補とする。</li>
+</ul>
+</li>
+<li>Step 2. <strong>絞り込み</strong>:
+<ul>
+<li>抜き出されたカテゴリのなかから、指定した条件(絞り込み条件)に該当するカテゴリを選び、割付カテゴリとする。</li>
+</ul>
+</li>
+<li>Step 3. <strong>除外</strong>:
+<ul>
+<li>割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>ふたつの割付タイプは、絞り込みを先に行うか、順序付けを先に行うかという点が違います。</p>
+<ul>
+<li>適応的な方法では、まず割付可能なカテゴリに絞り込み、それらのなかから優先順位の高い
+<span class="math inline">\(J\)</span>個までのカテゴリを抜き出します。
+<ul>
+<li>これは非適応的方法に比べて効率の良いやり方です。</li>
+<li>その反面、割付バイアスが生じます。割付可能なカテゴリが多い人は、ある割付可能カテゴリに
+割り付けられる確率が低くなるためです。</li>
+</ul>
+</li>
+<li>いっぽう非適応的な方法では、まず割付可能性を無視して<span class="math inline">\(J\)</span>個までのカテゴリを抜き出してしまい、
+それらを割付可能なカテゴリへと絞り込みます。
+<ul>
+<li>その結果、割付カテゴリが少なくなってしまったり、
+0個になってしまったりする対象者が出現し、その分だけ多くの調査対象者数を必要とします。</li>
+<li>その反面、割付バイアスは生じにくくなります。
 ある対象者がある割付可能カテゴリに割り付けられるかどうかが、その対象者の
-他のカテゴリの割付可能性とは独立に決まっているからです。</li>
+他のカテゴリの割付可能性とは独立に決まっているためです。</li>
 </ul>
 </li>
 </ul>
@@ -169,57 +185,64 @@ J数までのカテゴリを抜き出し、割付カテゴリの候補とする�
 <div class="section level4">
 <h4 id="絞り込み条件">絞り込み条件<a class="anchor" aria-label="anchor" href="#%E7%B5%9E%E3%82%8A%E8%BE%BC%E3%81%BF%E6%9D%A1%E4%BB%B6"></a>
 </h4>
-<p>次の2種類を想定します。</p>
+<p><code>rSurveyAssign</code>パッケージでは、絞り込みの条件として次の2種類を想定します。</p>
 <ul>
-<li>all: その対象者の割付可能カテゴリを選ぶ。
+<li>
+<code>all</code>: その対象者の割付可能カテゴリを選ぶ。
 <ul>
-<li>このとき、割付カテゴリはクローズドでありうる点に注意してください。すでに目標票数に達しているカテゴリについても聴取することになります。いいかえれば、「無駄な」回答収集を行うことになります。</li>
+<li>このとき、割付カテゴリはクローズドでありうる点に注意してください。つまり、すでに目標票数に達しているカテゴリについても聴取する場合が生じます。いいかえれば、「無駄な」回答収集を行うことになります。</li>
 </ul>
 </li>
-<li>open:
+<li>
+<code>open</code>:
 その対象者の割付可能カテゴリのうちオープンなカテゴリを選ぶ。</li>
 </ul>
+<p>どちらを選んでも必要な調査対象者数は変わりませんが、対象者の回答負荷は<code>all</code>のほうが高く、また割付バイアスは<code>open</code>のほうが強くなると考えられます。</p>
 </div>
 <div class="section level4">
-<h4 id="ランキング条件">ランキング条件<a class="anchor" aria-label="anchor" href="#%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0%E6%9D%A1%E4%BB%B6"></a>
+<h4 id="順序付け条件">順序付け条件<a class="anchor" aria-label="anchor" href="#%E9%A0%86%E5%BA%8F%E4%BB%98%E3%81%91%E6%9D%A1%E4%BB%B6"></a>
 </h4>
-<p>以下の4種類を想定します。</p>
+<p><code>rSurveyAssign</code>パッケージでは、順序付けの条件として以下の4種類を想定します。</p>
 <ul>
-<li>random: ランダムに並べる。</li>
-<li>openclosed: 以下の順に並べる。(1)オープンなカテゴリ、ランダム順。
+<li>
+<code>random</code>: ランダムに並べる。</li>
+<li>
+<code>openclosed</code>:
+以下の順に並べる。(1)オープンなカテゴリ、ランダム順。
 (2)クローズドなカテゴリ、ランダム順。</li>
-<li>shortnum:
+<li>
+<code>shortnum</code>:
 その時点でオープンなスロット数が多いカテゴリから順に並べる。</li>
-<li>shortratio:
+<li>
+<code>shortratio</code>:
 その時点でオープンなスロットが占める割合が大きいカテゴリから順に並べる。</li>
 </ul>
-<p>(shortratioとshortnum), open,
-randomの順に、必要な調査対象者数が少なくなり、また
-割付バイアスが生じる場合には割付バイアスが強くなると考えられます。</p>
+<p>{<code>shortratio</code>と<code>shortnum</code>}, <code>open</code>,
+<code>random</code>の順に、必要な調査対象者数が少なくなり、また
+割付バイアスが強くなると考えられます。</p>
 </div>
 <div class="section level4">
 <h4 id="除外条件">除外条件<a class="anchor" aria-label="anchor" href="#%E9%99%A4%E5%A4%96%E6%9D%A1%E4%BB%B6"></a>
 </h4>
-<p>以下の2種類を想定します。</p>
+<p><code>rSurveyAssign</code>パッケージでは、除外の条件として以下の2種類を想定します。</p>
 <ul>
-<li>none: なし。</li>
-<li>allclosed:
-割付カテゴリとして選ばれたカテゴリがすべてクローズドであったら、割付しない。
-<ul>
-<li>この方法では割付バイアスが生じることに注意してください。なぜなら、ある対象者において
-ある割付可能カテゴリが割付カテゴリとして選ばれたとき、その対象者が実際にそのカテゴリに
-割り付けられるかどうかが、その対象者の他のカテゴリについての割付可能性に応じて
-決まってしまうからです。</li>
+<li>
+<code>none</code>: なし。</li>
+<li>
+<code>allclosed</code>:
+割付カテゴリとして選ばれたカテゴリがすべてクローズドであったら、割付しない。</li>
 </ul>
-</li>
-</ul>
+<p>絞り込み条件が<code>open</code>であるとき、
+割付カテゴリはオープンなカテゴリなので、除外条件は意味を持ちません。
+絞り込み条件が<code>all</code>であるとき、除外条件として<code>allclosed</code>を指定すれば、
+「割付カテゴリのうち少なくともどれかひとつはオープンでなければならない」と指定したことになります。</p>
 </div>
 <div class="section level4">
 <h4 id="組み合わせ">組み合わせ<a class="anchor" aria-label="anchor" href="#%E7%B5%84%E3%81%BF%E5%90%88%E3%82%8F%E3%81%9B"></a>
 </h4>
-<p><code>rSurveyAssign</code>パッケージは、上で述べた4つの特徴の組み合わせによる
-割付方法をサポートしています。参考として、すべての組み合わせを下表に示します。</p>
-<p>割り付けるカテゴリの最大数をJとします。</p>
+<p><code>rSurveyAssign</code>パッケージは、上で述べた4つの特徴の組み合わせによって生じる
+すべての割付方法をサポートしています。参考として、すべての組み合わせを下表に示します。</p>
+<p>割り付けるカテゴリの最大数を<span class="math inline">\(J\)</span>とします。</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">割付タイプ</th>
@@ -230,158 +253,174 @@ randomの順に、必要な調査対象者数が少なくなり、また
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリからJ個までを等確率に選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>random</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">その対象者の割付可能カテゴリから<span class="math inline">\(J\)</span>個までを等確率に選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリからJ個までを等確率に選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>random</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">その対象者の割付可能カテゴリから<span class="math inline">\(J\)</span>個までを等確率に選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリのうちオープンなものからJ個までを等確率に選ぶ。J個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>openclosed</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">その対象者の割付可能カテゴリのうちオープンなものから<span class="math inline">\(J\)</span>個までを等確率に選ぶ。<span class="math inline">\(J\)</span>個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリのうちオープンなものからJ個までを等確率に選ぶ。J個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>openclosed</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">その対象者の割付可能カテゴリのうちオープンなものから<span class="math inline">\(J\)</span>個までを等確率に選ぶ。<span class="math inline">\(J\)</span>個選べなかったら、その対象者の割付可能カテゴリのうちクローズドなものから不足個数までを等確率に選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">その対象者の割付可能カテゴリから、オープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">none</td>
-<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順にJ個までを選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">adaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">allclosed</td>
-<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順にJ個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">その対象者の割付可能カテゴリのうち、オープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">random,openclosed</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリからJ個までを等確率に選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left">
+<code>random</code>,<code>openclosed</code>
+</td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">その対象者のオープンな割付可能カテゴリから<span class="math inline">\(J\)</span>個までを等確率に選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">shortnum</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが多い順にJ個までを選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">adaptive</td>
-<td align="left">open</td>
-<td align="left">shortratio</td>
-<td align="left">none,allclosed</td>
-<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが占める割合が高い順にJ個までを選ぶ。</td>
+<td align="left"><code>adaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">その対象者のオープンな割付可能カテゴリから、オープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリからJ個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>random</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">すべてのカテゴリから<span class="math inline">\(J\)</span>個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">random</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリからJ個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>random</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">すべてのカテゴリから<span class="math inline">\(J\)</span>個を等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">none</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出す。J個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>openclosed</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">オープンなカテゴリから<span class="math inline">\(J\)</span>個までを等確率に抜き出す。<span class="math inline">\(J\)</span>個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">openclosed</td>
-<td align="left">allclosed</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出す。J個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>openclosed</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">オープンなカテゴリから<span class="math inline">\(J\)</span>個までを等確率に抜き出す。<span class="math inline">\(J\)</span>個抜き出せなかったら、クローズドなカテゴリから不足個数までを等確率に抜き出す。抜き出したカテゴリのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">すべてのカテゴリから、オープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortnum</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">すべてのカテゴリから、オープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリのなかにオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">none</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left"><code>none</code></td>
+<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">all</td>
-<td align="left">shortratio</td>
-<td align="left">allclosed</td>
-<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>all</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left"><code>allclosed</code></td>
+<td align="left">すべてのカテゴリから、オープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。選ばれたカテゴリの中にオープンなカテゴリがなかったら割付しない。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">random,openclosed</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからJ個までを等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left">
+<code>random</code>,<code>openclosed</code>
+</td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">オープンなカテゴリから<span class="math inline">\(J\)</span>個までを等確率に抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="odd">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">shortnum</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからオープンなスロットが多い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left"><code>shortnum</code></td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">オープンなカテゴリからオープンなスロットが多い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 <tr class="even">
-<td align="left">nonadaptive</td>
-<td align="left">open</td>
-<td align="left">shortratio</td>
-<td align="left">none,allclosed</td>
-<td align="left">オープンなカテゴリからオープンなスロットが占める割合が高い順にJ個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
+<td align="left"><code>nonadaptive</code></td>
+<td align="left"><code>open</code></td>
+<td align="left"><code>shortratio</code></td>
+<td align="left">
+<code>none</code>,<code>allclosed</code>
+</td>
+<td align="left">オープンなカテゴリからオープンなスロットが占める割合が高い順に<span class="math inline">\(J\)</span>個までを抜き出し、そのなかからその対象者の割付可能カテゴリを選ぶ。</td>
 </tr>
 </tbody>
 </table>
@@ -407,29 +446,28 @@ randomの順に、必要な調査対象者数が少なくなり、また
 割付スロットをどの割付カテゴリから選ぶかという問題が生じます。</p>
 <p>現バージョンの<code>rSurveyAssign</code>パッケージは、以下に述べる方法のみを想定しています。</p>
 <ul>
-<li>割付カテゴリのなかからひとつを等確率に選び、そのカテゴリの割付可能スロットのなかから、前項で説明した方法で割付スロットを選ぶ。</li>
-<li>割付スロットの選択が行われなかった場合(ひとつも選べなかった場合、ないし除外条件によって中止された場合)は、他の割付カテゴリのなかからひとつを等確率に選び、そのカテゴリの割付可能スロットのなかから、前項で説明した方法で割付スロットを選ぶ。これを繰り返し、どこかのカテゴリから割付スロットを選ぶことができるまで続ける。</li>
-<li>どの割付カテゴリからも割付スロットが選ばれなかった場合は、その対象者に対する調査を中止する。</li>
+<li>割付カテゴリのなかからひとつを等確率に選び、そのカテゴリにおいて、前項で説明した方法でスロットへと割り付ける。</li>
+<li>スロット割付ができなかったら、他の割付カテゴリのなかからひとつを等確率に選び、そのカテゴリにおいてスロットへと割り付ける。これを繰り返し、どこかのカテゴリでスロット割付ができるまで続ける。</li>
+<li>どの割付カテゴリでもスロット割付ができなかったら、その対象者に対する調査を中止する。</li>
 </ul>
-<p>ある対象者への割付スロットは必ず同一カテゴリのスロットとなる点に注意してください。</p>
-<p>複数個のカテゴリへの割付を行う場合、スロットへの回答には割付バイアスが生じます。
-なぜなら、対象者がある割付可能スロットに対して
-割り付けられるかどうかが、他のカテゴリのスロットの割付可能性に応じて決まるからです。</p>
+<p>ある対象者の割付スロットは、必ず同一カテゴリのスロットとなります。</p>
 </div>
 <div class="section level2">
 <h2 id="割付に伴うバイアスはいつ生じるか">4. 割付に伴うバイアスはいつ生じるか<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%81%AB%E4%BC%B4%E3%81%86%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AF%E3%81%84%E3%81%A4%E7%94%9F%E3%81%98%E3%82%8B%E3%81%8B"></a>
 </h2>
-<p>カテゴリについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件を満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
+<p>割付バイアスはどのような場面で生じるでしょうか。</p>
+<p>まず、すべての対象者がすべてのカテゴリとスロットに割付可能である場合には、上記に述べたどの方法で割り付けを行っても、
+割付バイアスは生じませんし、そもそも<code>rSurveyAssign</code>パッケージを使う理由がありません。
+以下では、いずれかの対象者において割付不能なカテゴリないしスロットが存在する場合について考えます。</p>
+<p>カテゴリについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件をすべて満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
 <ul>
-<li>カテゴリ割付において非適応的方法を選んでいるか、割付カテゴリの最大数が十分に大きく、すべての割付可能カテゴリへの割付が生じている</li>
+<li>カテゴリ割付において非適応的方法を選んでいるか、割付カテゴリの最大数が十分に大きく、順序付けに意味がなくなっている</li>
 <li>カテゴリ割付において除外条件をnoneにしている</li>
 </ul>
-<p>スロットについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件を満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
+<p>スロットについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件をすべて満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
 <ul>
-<li>カテゴリ割付において非適応的方法を選んでいる</li>
-<li>カテゴリ割付において除外条件をnoneにしている</li>
 <li>割付カテゴリの最大数を1にしている</li>
-<li>スロット割付において非適応的方法を選んでいるか、割付スロットの最大数が十分に大きく、すべての割付可能スロットへの割付が生じている</li>
+<li>スロット割付において非適応的方法を選んでいるか、割付スロットの最大数が十分に大きく、順序付けに意味がなくなっている</li>
 <li>スロット割付において除外条件をnoneにしている</li>
 </ul>
 </div>

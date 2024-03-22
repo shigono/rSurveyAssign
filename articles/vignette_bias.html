@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-21</h4>
+            <h4 data-toc-skip class="date">2024-03-22</h4>
       
       
       <div class="d-none name"><code>vignette_bias.Rmd</code></div>
@@ -77,13 +77,56 @@ ONO</h4>
 
     
     
-<p>ここでは、<code>rSurveyAssign</code>パッケージを使ったバイアス評価について
+<p>ここでは、<code>rSurveyAssign</code>パッケージを使った割付バイアスの評価について
 説明します。</p>
 <p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
 in web surveys”</a>を参照して下さい。</p>
 <div class="section level2">
-<h2 id="データの準備">1. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
+<h2 id="割付バイアスを評価するための指標">1. 割付バイアスを評価するための指標<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E8%A9%95%E4%BE%A1%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E6%8C%87%E6%A8%99"></a>
 </h2>
+<p>まず、調査結果が持つ割付バイアスを評価する方法について説明します。</p>
+<p><code>rSurveyAssign</code>パッケージは、調査結果が持つ割付バイアスを評価するために、次の3つの指標を提供しています。</p>
+<ul>
+<li><strong>割付確率の変動係数</strong></li>
+<li><strong>デザイン効果 </strong></li>
+<li><strong>実質標本サイズ </strong></li>
+</ul>
+<div class="section level3">
+<h3 id="割付確率の変動係数">1.1 割付確率の変動係数<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E5%A4%89%E5%8B%95%E4%BF%82%E6%95%B0"></a>
+</h3>
+<p>以下では、調査で測定したい変数のことを調査変数と呼ぶことにします。
+調査の目的は、各カテゴリ・スロットにおける調査変数の母集団特性(たとえば母平均)を推定することです。
+バイアスとは、調査変数の母集団特性と、調査に基づくその推定値との差の期待値のことです。</p>
+<p>あるカテゴリ・スロットについての回答における割付バイアスは、調査変数と、そのカテゴリ・スロットへの割付確率との関連
+(共分散)によって決まります。たとえば、あるスロットへの回答におけるある調査変数についてみたとき、その調査変数の値が高い人ほど
+そのスロットへの割付確率が高いとしましょう。このとき、そのスロットについての調査変数の標本平均は、
+母平均と比べて高めになってしまいます。つまり、この調査変数において割付バイアスが生じます。いっぽう、調査変数と割付確率の間に全く関連がなかったら、この調査変数においては割付バイアスが生じません。このように、割付バイアスは調査変数によって異なります。割付バイアスの実際の大きさは、個々の調査変数についてしか評価できないわけです。</p>
+<p>しかし、もし割付確率のばらつきが0に近ければ、割付バイアスはいずれの調査変数においても小さいことになります。なぜなら、たとえある調査変数と割付確率との関連が強かったとしても、割付確率そのものが回答のあいだで等しければ、バイアスは生じないからです。
+そこで、調査変数が特定されない状況では、割付確率のばらつきを割付バイアスの大きさとして捉えることができます。</p>
+<p>そこで’rSurveyAssign’パッケージでは、<strong>割付確率の変動係数</strong>(=SD/平均)を、割付バイアスの大きさの指標のひとつとして用いています。</p>
+</div>
+<div class="section level3">
+<h3 id="デザイン効果">1.2 デザイン効果<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E5%8A%B9%E6%9E%9C"></a>
+</h3>
+<p>各対象者の各カテゴリ・スロットへの割付確率を正確に推定できているならば、割付確率の逆数をウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。</p>
+<p>その反面、一般に、ウェイトを用いて集計すると集計値の分散は拡大します。集計値の分散は標本サイズが減少したときにも拡大しまから、ウェイトを用いた集計は、割付バイアスを取り除く反面、あたかも標本サイズを減らすかような効果を持つといえます。</p>
+<p><strong>デザイン効果</strong>とは、バイアスの大きさを、割付確率の逆数をウェイトとして集計することによって生じる仮想的な標本サイズの減少率として表現した値です。この値は、1+(割付確率の逆数の相対分散)として求められます。</p>
+</div>
+<div class="section level3">
+<h3 id="実質標本サイズ">1.3 実質標本サイズ<a class="anchor" aria-label="anchor" href="#%E5%AE%9F%E8%B3%AA%E6%A8%99%E6%9C%AC%E3%82%B5%E3%82%A4%E3%82%BA"></a>
+</h3>
+<p>実際の標本サイズにデザイン効果を掛けた値を<strong>実質標本サイズ</strong>と呼びます。たとえば、実際の標本サイズが
+100で、実質標本サイズが50であるとしましょう。これは、割付に伴って生じるバイアスの大きさが、それを取り除いたら標本サイズが
+50に減ってしまう程度の大きさであるということを表しています。</p>
+<p>私たちはふつう、割付確率の変動係数やデザイン効果について直観的に解釈できませんが、
+標本サイズについてはなんらかの基準を持っていることが多いでしょう。いま、
+いま、割付バイアスが生じないような調査を実現できるとして、その調査における標本サイズが100以下であったら「標本サイズが小さすぎる」と感じるとしましょう。このとき、割付バイアスが生じる調査において実質標本サイズが100以下であったら「割付バイアスが大きすぎる」と考えることができます。</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="データの準備">2. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
+</h2>
+<p>では、<code>rSurveyAssign</code>パッケージによるバイアス評価の手順について説明しましょう。</p>
 <p>母集団を表現するデータを用意し、popdataクラスのオブジェクトに変換します。
 <a href="vignette_size.html">“How to forecast sample
 size”</a>を参照して下さい。</p>
@@ -104,8 +147,7 @@ size”</a>を参照して下さい。</p>
 <span><span class="co">#&gt; [makePop] # of members: 10000 </span></span>
 <span><span class="co">#&gt; [makePop] # of member-category pairs which are assignable: 26488 (8829.3/category) </span></span>
 <span><span class="co">#&gt; [makePop] # of member-slot pairs which are assignable: 58836 (1961.2/slot)</span></span></code></pre></div>
-<p>割付のセッティングを指定します。 <a href="vignette_assign.html">“How
-to assign subjects”</a>を参照して下さい。</p>
+<p>割付のセッティングを指定します。</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 割付のセッティング</span></span>
 <span><span class="va">lSetting1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
@@ -123,9 +165,9 @@ to assign subjects”</a>を参照して下さい。</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="シミュレーション">2. シミュレーション<a class="anchor" aria-label="anchor" href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
+<h2 id="割付再割付シミュレーション">3. 割付・再割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E5%86%8D%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
 </h2>
-<p>割付によるバイアスを評価するためのシミュレーションを行ってみましょう。</p>
+<p>割付によるバイアスを評価するためのシミュレーションを行います。</p>
 <p>このシミュレーションでは、次の試行を行います。</p>
 <ul>
 <li>母集団データから対象者を抽出し、カテゴリ・スロットへの割付を行う(<strong>割付試行</strong>)。</li>
@@ -134,7 +176,7 @@ to assign subjects”</a>を参照して下さい。</p>
 <li>以上の割付試行を複数回繰り返す。</li>
 </ul>
 <div class="section level3">
-<h3 id="試行の実行">2.1 1試行の実行<a class="anchor" aria-label="anchor" href="#%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C"></a>
+<h3 id="試行の実行">3.1 1試行の実行<a class="anchor" aria-label="anchor" href="#%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C"></a>
 </h3>
 <p>まず、割付試行を1回だけ行ってみましょう。時間を節約するため、再割付試行は10回とします。</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -145,7 +187,7 @@ to assign subjects”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.825 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.864 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
@@ -194,7 +236,7 @@ to assign subjects”</a>を参照して下さい。</p>
 0.00であったと推定されます。実際には割付確率は0ではないので(もしそうであれば割付試行において割付が起きなかったはずです)、0に近い値、ということを意味しています。</p>
 </div>
 <div class="section level3">
-<h3 id="多数の試行の実行と保存">2.2 多数の試行の実行と保存<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E6%95%B0%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%81%A8%E4%BF%9D%E5%AD%98"></a>
+<h3 id="多数の試行の実行と保存">3.2 多数の試行の実行と保存<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E6%95%B0%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%81%A8%E4%BF%9D%E5%AD%98"></a>
 </h3>
 <p>上の例では、割付試行を1回、再割付試行を10回行い、
 シミュレーションの結果をデータフレームのリストとして取得しました。</p>
@@ -229,56 +271,14 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 </div>
 </div>
 <div class="section level2">
-<h2 id="バイアスを評価するための指標">3. バイアスを評価するための指標<a class="anchor" aria-label="anchor" href="#%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E8%A9%95%E4%BE%A1%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E6%8C%87%E6%A8%99"></a>
+<h2 id="割付バイアスの評価">4. 割付バイアスの評価<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E8%A9%95%E4%BE%A1"></a>
 </h2>
-<p>十分な回数の再割付試行を行ったとしましょう。ここから調査結果が持つバイアスを評価するためにはどのようにしたらよいでしょうか。</p>
-<p><code>rSurveyAssign</code>パッケージは、調査結果が持つバイアスを評価するために、次の3つの指標を提供しています。</p>
-<ul>
-<li><strong>割付確率の変動係数</strong></li>
-<li><strong>デザイン効果 </strong></li>
-<li><strong>実質標本サイズ </strong></li>
-</ul>
+<p>では、割付バイアスを評価してみましょう。関数<code>getBias</code>を使います。</p>
 <div class="section level3">
-<h3 id="割付確率の変動係数">3.1 割付確率の変動係数<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E5%A4%89%E5%8B%95%E4%BF%82%E6%95%B0"></a>
-</h3>
-<p>以下では、調査で測定したい変数のことを調査変数と呼ぶことにします。
-調査の目的は、各カテゴリ・スロットにおける調査変数の母集団特性(たとえば母平均)を推定することです。
-バイアスとは、調査変数の母集団特性と、調査に基づくその推定値との差の期待値のことです。</p>
-<p>あるカテゴリ・スロットについての回答における割付バイアスは、調査変数と、そのカテゴリ・スロットへの割付確率との関連
-(共分散)によって決まります。たとえば、あるスロットへの回答におけるある調査変数についてみたとき、その調査変数の値が高い人ほど
-そのスロットへの割付確率が高いとしましょう。このとき、そのスロットについての調査変数の標本平均は、
-母平均と比べて高めになってしまいます。つまり、この調査変数において割付バイアスが生じます。いっぽう、調査変数と割付確率の間に全く関連がなかったら、この調査変数においては割付バイアスが生じません。このように、割付バイアスは調査変数によって異なります。割付バイアスの実際の大きさは、個々の調査変数についてしか評価できないわけです。</p>
-<p>しかし、もし割付確率のばらつきが0に近ければ、割付バイアスはいずれの調査変数においても小さいことになります。なぜなら、たとえある調査変数と割付確率との関連が強かったとしても、割付確率そのものが回答のあいだで等しければ、バイアスは生じないからです。
-そこで、調査変数が特定されない状況では、割付確率のばらつきを割付バイアスの大きさとして捉えることができます。</p>
-<p>そこで’rSurveyAssign’パッケージでは、<strong>割付確率の変動係数</strong>(=SD/平均)を、割付バイアスの大きさの指標のひとつとして用いています。</p>
-</div>
-<div class="section level3">
-<h3 id="デザイン効果">3.2 デザイン効果<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E5%8A%B9%E6%9E%9C"></a>
-</h3>
-<p>’rSurveyAssign’パッケージは、各対象者の各カテゴリ・スロットへの割付確率を推定します。推定値は割付確率は一定の誤差を含んでいますが、もし割付確率を正確に推定できているならば、割付確率の逆数を調査ウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。</p>
-<p>その反面、一般に、調査ウェイトを用いて集計すると集計値の分散は拡大します。集計値の分散は標本サイズが減少したときにも拡大しまから、調査ウェイトを用いた集計は、割付バイアスを取り除く反面、あたかも標本サイズを減らすかような効果を持つといえます。</p>
-<p><strong>デザイン効果</strong>とは、バイアスの大きさを、調査ウェイトを使って集計することによって生じる仮想的な標本サイズの減少率として表現した値です。この値は、1+(割付確率の逆数の相対分散)として求められます。</p>
-</div>
-<div class="section level3">
-<h3 id="実質標本サイズ">3.3 実質標本サイズ<a class="anchor" aria-label="anchor" href="#%E5%AE%9F%E8%B3%AA%E6%A8%99%E6%9C%AC%E3%82%B5%E3%82%A4%E3%82%BA"></a>
-</h3>
-<p>実際の標本サイズにデザイン効果を掛けた値を<strong>実質標本サイズ</strong>と呼びます。たとえば、実際の標本サイズが
-100で、実質標本サイズが50であるとしましょう。これは、割付に伴って生じるバイアスの大きさが、それを取り除いたら標本サイズが
-50に減ってしまう程度の大きさであるということを表しています。</p>
-<p>私たちはふつう、割付確率の変動係数やデザイン効果について直観的に解釈できませんが、
-標本サイズについてはなんらかの基準を持っていることが多いでしょう。いま、
-いま、割付バイアスが生じないような調査を実現できるとして、その調査における標本サイズが100以下であったら「標本サイズが小さすぎる」と感じるとしましょう。このとき、割付バイアスが生じる調査において実質標本サイズが100以下であったら「割付バイアスが大きすぎる」と考えることができます。</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="バイアスの評価">4. バイアスの評価<a class="anchor" aria-label="anchor" href="#%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E8%A9%95%E4%BE%A1"></a>
-</h2>
-<p>では、バイアスを評価してみましょう。関数<code>getBias</code>を使います。</p>
-<div class="section level3">
-<h3 id="カテゴリごとのバイアス">3.1 カテゴリごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
+<h3 id="カテゴリごとのバイアス">4.1 カテゴリごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h3>
 <p>関数<code>getSize</code>の引数<code>sTYPE</code>を<code>cat</code>とすると、
-各試行での各カテゴリごとのバイアスを評価することができます。
+各試行での各カテゴリごとの割付バイアスを評価することができます。
 getBias`の返し値はデータフレームです。内容をみてみましょう。</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult1_c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getBias.html">getBias</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"cat"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_bias_1.sqlite"</span><span class="op">)</span></span>
@@ -297,7 +297,7 @@ getBias`の返し値はデータフレームです。内容をみてみましょ
 <li>変数
 <code>nFreq_Cat</code>は、その割付試行におけるそのカテゴリに対する回答件数(すなわち、このカテゴリに割り付けられた延べ対象者数)を表しています。試行1ではカテゴリ1が2030回割り付けられました。</li>
 <li>変数
-<code>gCV_Prob_Cat</code>は割付確率の変動係数を表しています。0のときには割付バイアスがありません。大きいほど割付バイアスが大きいと考えられます。試行1では、カテゴリ1の割付における割付確率の変動係数が約0.42となりました。</li>
+<code>gCV_Prob_Cat</code>はカテゴリへの割付確率の変動係数を表しています。0のときには割付バイアスがありません。大きいほど割付バイアスが大きいと考えられます。試行1では、カテゴリ1の割付における割付確率の変動係数が約0.42となりました。</li>
 <li>変数<code>gDeff_Cat</code>は、カテゴリに対する回答におけるデザイン効果を表しています。1のときには割付バイアスがありません。1より大きいほど割付バイアスが大きいと考えられます。試行1では、カテゴリ1に対する回答におけるデザイン効果が約1.06となりました。</li>
 <li>変数<code>gESS_Cat</code>は、カテゴリに対する回答の実質標本サイズを表しています。この値が回答件数と一致するときはバイアスがありません。それより小さいほど、バイアスが大きいと考えられます。試行1では、カテゴリ1に対する回答の実質標本サイズは約1939となりました。</li>
 </ul>
@@ -310,10 +310,10 @@ getBias`の返し値はデータフレームです。内容をみてみましょ
 特にカテゴリ1への回答において、かなりの割付バイアスが生じているようです。</p>
 </div>
 <div class="section level3">
-<h3 id="スロットごとのバイアス">3.2 スロットごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
+<h3 id="スロットごとのバイアス">4.2 スロットごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h3>
 <p>関数<code>getSize</code>の引数<code>sTYPE</code>を<code>slot</code>とすると、
-各試行での各スロットへの回答におけるバイアスを調べることができます。</p>
+各試行での各スロットへの回答における割付バイアスを調べることができます。</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult1_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getBias.html">getBias</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"slot"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_bias_1.sqlite"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dfResult1_s</span><span class="op">)</span></span>
@@ -331,7 +331,7 @@ getBias`の返し値はデータフレームです。内容をみてみましょ
 <li>変数
 <code>nFreq_Slot</code>は、その割付試行におけるそのスロットへの回答件数(そのスロットに割り付けられた延べ対象者数)を表しています。試行1ではカテゴリ1のスロット1への割付が100回生じました。</li>
 <li>変数
-<code>gCV_Prob_Slot</code>は割付確率の変動係数を表しています。0のときには割付バイアスがありません。大きいほど割付バイアスが大きいと考えられます。試行1のスロット1では、割付確率の変動係数が約0.59となりました。</li>
+<code>gCV_Prob_Slot</code>はスロットへの割付確率の変動係数を表しています。0のときには割付バイアスがありません。大きいほど割付バイアスが大きいと考えられます。試行1のスロット1では、割付確率の変動係数が約0.59となりました。</li>
 <li>変数<code>gDeff_Slot</code>は、スロットに対する回答におけるデザイン効果を表しています。1のときには割付バイアスがありません。1より大きいほど割付バイアスが大きいと考えられます。試行1では、カテゴリ1のスロット1に対する回答におけるデザイン効果が約7.4となりました。</li>
 <li>変数<code>gESS_Slot</code>は、スロットに対する回答の実質標本サイズを表しています。この値が回答件数と一致するときは割付バイアスがありません。それより小さいほど割付バイアスが大きいと考えられます。試行1では、カテゴリ1のスロット1に対する回答の実質標本サイズは約13.6となりました。</li>
 </ul>
@@ -404,7 +404,7 @@ getBias`の返し値はデータフレームです。内容をみてみましょ
 <p>本項で試した割付方法は、カテゴリについてもスロットについても非適応的かつ除外条件のない割付方法を採用し、
 かつ割付カテゴリの最大数は1でした。 <a href="vignette.html">“rSurveyAssign: run simulations of assignments for
 web surveys”</a>で述べたように、
-これらの割り付け方法では割付バイアスは生じないはずです。</p>
+この割り付け方法では割付バイアスは生じないはずです。</p>
 <p>ところが、割付確率の変動係数は0に近い値になったものの、0にはなりませんでした。これは
 割付確率の推定に誤差があるためです。誤差は再割当試行数を大きくすれば小さくなりますが、0にはなりません。
 そのため、割付確率の変動係数は、真の変動係数と比べ、誤差による変動のぶんだけ大きめに偏ってしまいます。</p>
@@ -413,9 +413,9 @@ web surveys”</a>で述べたように、
 これらの指標は、あくまで相対的な指標として捉え、割付方法間の比較にのみ用いることをお勧めします。</p>
 </div>
 <div class="section level2">
-<h2 id="まとめ-バイアス評価に関連する関数">6. まとめ: バイアス評価に関連する関数<a class="anchor" aria-label="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81-%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E8%A9%95%E4%BE%A1%E3%81%AB%E9%96%A2%E9%80%A3%E3%81%99%E3%82%8B%E9%96%A2%E6%95%B0"></a>
+<h2 id="まとめ-割付バイアス評価に関連する関数">6. まとめ: 割付バイアス評価に関連する関数<a class="anchor" aria-label="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81-%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E8%A9%95%E4%BE%A1%E3%81%AB%E9%96%A2%E9%80%A3%E3%81%99%E3%82%8B%E9%96%A2%E6%95%B0"></a>
 </h2>
-<p><code>rSurveyAssign</code>パッケージが提供する関数のうち、バイアス評価に関連する関数は以下の通りです。</p>
+<p><code>rSurveyAssign</code>パッケージが提供する関数のうち、割付バイアスの評価に関連する関数は以下の通りです。</p>
 <ul>
 <li>
 <code>makePop</code>: 母集団データを作成する</li>

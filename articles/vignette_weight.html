@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-21</h4>
+            <h4 data-toc-skip class="date">2024-03-22</h4>
       
       
       <div class="d-none name"><code>vignette_weight.Rmd</code></div>
@@ -77,16 +77,149 @@ ONO</h4>
 
     
     
-<p>ここでは、<code>rSurveyAssign</code>パッケージを使った調査ウェイト算出について説明します。</p>
+<p>ここでは、<code>rSurveyAssign</code>パッケージを使ったウェイト算出について説明します。</p>
 <p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
 in web surveys”</a>を参照して下さい。</p>
-<p>ここでいう調査ウェイトとは、ある対象者があるカテゴリないしスロットに割り付けられる確率の逆数を指します。
-調査ウェイトを用いた重みづけ集計によって、割付バイアスを取り除いた推定を行うことができます。
-詳しくは調査法についての参考書を参照して下さい。</p>
 <div class="section level2">
-<h2 id="調査データ">1. 調査データ<a class="anchor" aria-label="anchor" href="#%E8%AA%BF%E6%9F%BB%E3%83%87%E3%83%BC%E3%82%BF"></a>
+<h2 id="割付確率とウェイト">1. 割付確率とウェイト<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%A8%E3%82%A6%E3%82%A7%E3%82%A4%E3%83%88"></a>
 </h2>
-<p>調査データを用意します。</p>
+<p>まず、割付バイアスを取り除くためのウェイトについて説明します。
+このウェイトは、調査において広く用いられている標本ウェイトと似た概念です。
+標本ウェイトについての詳細は、標本調査についての参考書、たとえば土屋「概説
+標本調査法」(朝倉書店)を参照してください。</p>
+<p>たとえば、ある製品カテゴリのたくさんのブランドについて、消費者が抱いているイメージを調べたとします。
+消費者から無作為抽出した調査対象者を、なんらかの割付方法によって、
+その人が知っているブランドのなかから<span class="math inline">\(J\)</span>個までのブランドへと割り付け、
+割付ブランドについてイメージを問う設問を提示し、回答を求めました。</p>
+<p>次の場合について考えます(説明のため、人数が非現実的に少なくなっています)。
+調査対象ブランドのひとつであるブランドXについて知っている人は、調査対象者のうち10人でした。
+そのうち、ブランドXに対して割り付けた対象者(つまりブランドXのイメージについて回答を求めた対象者)は
+5人でした。割付方法に起因し、割付確率はその対象者の他のブランドへの割付可能性に応じて変動していました。</p>
+<p>割付確率を下表に示します。割付確率順に並べています。</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">対象者番号</th>
+<th align="left">ブランドXへの割付確率</th>
+<th align="left">ブランドXへの割付有無</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">0.05</td>
+<td align="left">割り付けられなかった</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">0.10</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">0.15</td>
+<td align="left">割り付けられなかった</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">0.20</td>
+<td align="left">割り付けられなかった</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">0.30</td>
+<td align="left">割り付けられなかった</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">0.40</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">0.50</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">0.60</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">0.80</td>
+<td align="left">割り付けられなかった</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">0.90</td>
+<td align="left">割り付けられた</td>
+</tr>
+</tbody>
+</table>
+<p>たとえば対象者1は、ブランドXへの割付確率が非常に低く(他のたくさんのブランドを知っていたのでしょう)、
+実際にXに割り付けられなかった人です。対象者2は、Xへの割付確率は低かったにも関わらず、
+たまたまXに割り付けられた人です。</p>
+<p>私たちが手に入れる調査データは、下表の5人の対象者の回答です。</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">対象者番号</th>
+<th align="left">ブランドXへの割付確率</th>
+<th align="left">ブランドXへの割付有無</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">0.10</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">0.40</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">0.50</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">0.60</td>
+<td align="left">割り付けられた</td>
+</tr>
+<tr class="odd">
+<td align="left">10</td>
+<td align="left">0.90</td>
+<td align="left">割り付けられた</td>
+</tr>
+</tbody>
+</table>
+<p>これらの対象者は、ブランドXを知っていた10人に比べ、割付確率が高かった人(おそらく他のブランドをあまり知らなかった人)へと
+偏っています。</p>
+<p>この割付バイアスを集計値から取り除くためにはどうしたらよいでしょうか？</p>
+<p>その方法のひとつが、集計の際に、割付確率が低かった人に大きな重み、高かった人に小さな重みを与えることです。</p>
+<ul>
+<li>たとえば対象者2は、割付確率が同程度に低かった人々の代表者であると考えます。割付確率は0.1だったので、
+10人分の対象者を代表しているのだと考えることができます。そこで、対象者2の回答には重み10を付与します。</li>
+<li>同様に、対象者10は、割付確率が同程度に高かった人々の代表者であると考えます。割付確率は0.9だったので、
+1/0.9=1.11人分の対象者を代表しているのだと考えることができます。そこで、回答に重み1.11を付与します。</li>
+</ul>
+<p>集計の際にはこの重みを用います。たとえば調査変数<span class="math inline">\(x\)</span>について平均を求める際には、 回答者<span class="math inline">\(i\)</span>の回答を<span class="math inline">\(x_i\)</span>として、以下とします。 <span class="math display">\[ \bar{x} = \frac{1}{10+2.5+2+1.97+1.11} (10 x_2 +
+2.5 x_6 + 2 x_7 + 1.67 x_8 + 1.11 x_{10}) \]</span>
+つまり、各対象者の回答を「その対象者が何人分を代表していたか」で重みづけて合計し、重みの和(代表されている人々の人数)で
+割るわけです。なお、私たちはブランドXを知っていた対象者数が10であることを知っていますから、
+<span class="math inline">\(10+2.5+2+1.97+1.11\)</span>ではなくて<span class="math inline">\(10\)</span>で割るという考え方もできますが、いくつかの理由により、上の考え方のほうが良いことが
+わかっています。</p>
+<p>この方法で、集計値から割付バイアスを取り除くことができます。
+集計の際に用いる重み、すなわち割付確率の逆数のことを<strong>ウェイト</strong>と呼びます。</p>
+</div>
+<div class="section level2">
+<h2 id="データの準備">2. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
+</h2>
+<p>では、<code>rSurveyAssign</code>パッケージによるウェイト算出の手順について説明しましょう。</p>
+<div class="section level3">
+<h3 id="調査データ">2.1 調査データ<a class="anchor" aria-label="anchor" href="#%E8%AA%BF%E6%9F%BB%E3%83%87%E3%83%BC%E3%82%BF"></a>
+</h3>
+<p>まず、調査データを用意します。</p>
 <p>調査データの例として、<code>surveydata</code>が用意されています。
 <code>surveydata</code>は、本パッケージが想定している割付方法で実施された調査で得た、
 架空のデータを持つデータフレームです。</p>
@@ -149,36 +282,51 @@ in web surveys”</a>を参照して下さい。</p>
 <span><span class="co">#&gt; 5                  1               7              10</span></span>
 <span><span class="co">#&gt; 6                  1               2               1</span></span></code></pre></div>
 <p>行は調査対象者を表しています。i行目は、i番目に調査に参加した対象者を表しています。</p>
-<p>変数<code>bCat_1</code>, <code>bCat_2</code>,
+<ul>
+<li>変数<code>bCat_1</code>, <code>bCat_2</code>,
 <code>bCat_3</code>は、カテゴリ1, 2, 3への割付可能性を表しています。
-たとえば、1番目の調査対象者は、すべてのカテゴリに割付可能でした。
-5番目の調査対象者は、カテゴリ1にのみ割付可能でした。</p>
-<p>変数<code>nAssignedCat_1</code>,
+<ul>
+<li>たとえば、1番目の調査対象者は、すべてのカテゴリに割付可能でした。
+5番目の調査対象者は、カテゴリ1にのみ割付可能でした。</li>
+</ul>
+</li>
+<li>変数<code>nAssignedCat_1</code>,
 <code>nAssignedCat_2</code>は、対象者が割り付けられたカテゴリの番号です。
-列の順番には意味がありません。 たとえば、1番目の対象者はカテゴリ2,
-3に割り付けられました。
-5番目の対象者は、カテゴリ1に割り付けられました。</p>
-<p>変数<code>bSlot_1_1</code>, <code>bSlot_1_2</code>, …は、カテゴリ 1
+列の順番には意味がありません。
+<ul>
+<li>たとえば、1番目の対象者はカテゴリ2, 3に割り付けられました。
+5番目の対象者は、カテゴリ1に割り付けられました。</li>
+</ul>
+</li>
+<li>変数<code>bSlot_1_1</code>, <code>bSlot_1_2</code>, …は、カテゴリ 1
 のスロット 1, 2,, …
-への割付可能性を表しています。<code>bSlot_2_1</code>以降も同様です。</p>
-<p>このデータ例では、対象者がカテゴリ i に割り付けられなかったとき、
+への割付可能性を表しています。<code>bSlot_2_1</code>以降も同様です。
+<ul>
+<li>たとえば、5番目の調査対象者は、カテゴリ1のスロット7,
+10に割付可能であることがわかっています。</li>
+<li>このデータ例では、対象者がカテゴリ i に割り付けられなかったとき、
 カテゴリ i に属するスロットへの割付可能性はすべてNAとなっています。
 たとえば、1番目の調査対象者は、カテゴリ1に対して割付可能でしたが、
 カテゴリ1への割付は生じなかったため、カテゴリ1に属するスロットへの割付可能性は
-NAとなっています。 5番目の調査対象者は、カテゴリ1のスロット7,
-10に割付可能であることがわかっています。</p>
-<p>変数<code>nAssignedCat_Slots</code>は、対象者が割り付けられたスロットが属するカテゴリの番号です。
+NAとなっています。</li>
+</ul>
+</li>
+<li>変数<code>nAssignedCat_Slots</code>は、対象者が割り付けられたスロットが属するカテゴリの番号です。
 スロットへの割付が起きなかった場合はNAとなっています。
-1番目の対象者ではカテゴリ3のスロットへの割付が起きました。
-5番目の対象者ではカテゴリ1のスロットへの割付が起きました。</p>
-<p>最後に、変数<code>nAssignedSlot_1</code>,
-<code>nAssignedSlot_2</code>は、
-対象者が割り付けられたスロットの番号です。
-列の順番には意味がありません。
-1番目の対象者は(カテゴリ3の)スロット7へと割り付けられました。
-5番目の対象者は(カテゴリ1の)スロット7,10へと割り付けられました。</p>
+<ul>
+<li>たとえば、1番目の対象者ではカテゴリ3のスロットへの割付が起きました。5番目の対象者ではカテゴリ1のスロットへの割付が起きました。</li>
+</ul>
+</li>
+<li>最後に、変数<code>nAssignedSlot_1</code>,
+<code>nAssignedSlot_2</code>は、対象者が割り付けられたスロットの番号です。列の順番には意味がありません。
+<ul>
+<li>たとえば、1番目の対象者はカテゴリ3のスロット7へと割り付けられました。5番目の対象者はカテゴリ1のスロット7,10へと割り付けられました。</li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section level3">
-<h3 id="surveydataオブジェクトの生成">1.1 surveydataオブジェクトの生成<a class="anchor" aria-label="anchor" href="#surveydata%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E7%94%9F%E6%88%90"></a>
+<h3 id="surveydataオブジェクトの生成">1.2 surveydataオブジェクトの生成<a class="anchor" aria-label="anchor" href="#surveydata%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E7%94%9F%E6%88%90"></a>
 </h3>
 <p>調査データを<code>rSurveyAssign</code>パッケージが扱える形式に変換します。</p>
 <p><code>rSurveyAssign</code>パッケージは、調査データを表すクラス<code>surveydata</code>を用意しています。
@@ -323,11 +471,10 @@ subjects”</a>を参照して下さい。</li>
 <span><span class="co">#&gt; [makeSurvey]   assigned: 346 (11.5/slot)</span></span></code></pre></div>
 <p>無事に変換されました。</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="割付のチェック">2. 割付のチェック<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF"></a>
-</h2>
-<p>調査ウェイトを算出する前に、調査データにおいてカテゴリ割付・スロット割付が
+<div class="section level3">
+<h3 id="割付のチェック">1.2 割付のチェック<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%81%AE%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF"></a>
+</h3>
+<p>話を進める前に、調査データにおいてカテゴリ割付・スロット割付が
 期待通りに行われていたかどうかをチェックしておきましょう。</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfCheck</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkSurvey.html">checkSurvey</a></span><span class="op">(</span><span class="va">lSurvey</span><span class="op">)</span></span>
@@ -337,10 +484,11 @@ subjects”</a>を参照して下さい。</li>
 <p>実際のweb調査においても、システムのトラブルや、対象者を割り付けるタイミングが複数の対象者で重なってしまうといった理由により、必ずしもすべての割付が期待通りに行われるとは限らないと思います。従って、期待に反する割付が行われた人がある程度生じるのは仕方がないと思います。</p>
 <p>しかし、期待に反する割付が行われた人数が多すぎるときには、以下で算出するウェイトの妥当性も疑われます。実査システムをチェックする必要があるでしょう。</p>
 </div>
+</div>
 <div class="section level2">
-<h2 id="シミュレーション">3. シミュレーション<a class="anchor" aria-label="anchor" href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
+<h2 id="再割付シミュレーション">3. 再割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%86%8D%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
 </h2>
-<p>調査ウェイトを算出するためにシミュレーションを行ってみましょう。</p>
+<p>ウェイトを算出するためにシミュレーションを行ってみましょう。</p>
 <p><code>rSurveyAssign</code>パッケージでは、割付確率を推定するために、調査データから調査対象者を復元抽出することによって仮想的な調査対象者を生成し、カテゴリ・スロットへの割付をやりなおします。これを<strong>再割付試行</strong>と呼びます。</p>
 <p>再割付試行を十分な回数繰り返し、ある対象者があるカテゴリ・スロットへと割り付けられる割合を求め、これを割付確率の推定値とします。</p>
 <div class="section level3">
@@ -355,17 +503,17 @@ subjects”</a>を参照して下さい。</li>
 <span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.025 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.036 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.032 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.029 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.024 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.027 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.387 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.042 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.032 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.028 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.031 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.032 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.035 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.036 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.023 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.035 sec.</span></span>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.408 sec.</span></span></code></pre></div>
 <p>画面に表示されたメッセージをみてみましょう。上から2行目以降のメッセージは再割付試行について表示しています。最初の再割付試行では、調査対象者を690人抽出したところで、目標対象者数が満たされ、調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。
 <code>simWeight</code>の返し値は2つの要素からなるリストです。</p>
@@ -468,10 +616,10 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 </div>
 </div>
 <div class="section level2">
-<h2 id="調査ウェイトの算出">4. 調査ウェイトの算出<a class="anchor" aria-label="anchor" href="#%E8%AA%BF%E6%9F%BB%E3%82%A6%E3%82%A7%E3%82%A4%E3%83%88%E3%81%AE%E7%AE%97%E5%87%BA"></a>
+<h2 id="ウェイトの算出">4. ウェイトの算出<a class="anchor" aria-label="anchor" href="#%E3%82%A6%E3%82%A7%E3%82%A4%E3%83%88%E3%81%AE%E7%AE%97%E5%87%BA"></a>
 </h2>
-<p>十分な回数の再割付試行を行えば、それらの結果から、ある人があるカテゴリ・スロットに割り付けられる確率を推定し、調査ウェイトを求めることができます。</p>
-<p>シミュレーション試行の結果に基づき調査ウェイトを算出するためには、関数<code>getWeight</code>を使います。</p>
+<p>十分な回数の再割付試行を行えば、それらの結果から、ある人があるカテゴリ・スロットに割り付けられる確率を推定し、ウェイトを求めることができます。</p>
+<p>シミュレーション試行の結果に基づきウェイトを算出するためには、関数<code>getWeight</code>を使います。</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lWeight</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWeight.html">getWeight</a></span><span class="op">(</span><span class="va">lSurvey</span>, <span class="st">"../tools/rSurveyAssign_vignette_weight_2.sqlite"</span><span class="op">)</span></span></code></pre></div>
 <p><code>getWeight</code>の返し値は2つのデータフレームを含むリストです。</p>
@@ -490,7 +638,7 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        3     2        <span style="text-decoration: underline;">1</span>000               679           <span style="text-decoration: underline;">1</span>024 0.663   0.979</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        3     1        <span style="text-decoration: underline;">1</span>000               583           <span style="text-decoration: underline;">1</span>024 0.570   1.14</span></span></code></pre></div>
 <p>対象者1の割付カテゴリ3への回答には、ウェイト1.06が付与されています。
-なお、このウェイトは、すべての調査対象者のすべての割付カテゴリを通じて、
+なお、このウェイトは、すべての調査対象者のすべての割付カテゴリを通じて
 平均1に規準化されています。ヒストグラムを描いてみましょう。</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Cat</span><span class="op">$</span><span class="va">gWeight</span>, main <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
