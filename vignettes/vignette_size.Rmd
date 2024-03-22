@@ -113,16 +113,24 @@ lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
 - `lSLOT_REQUEST`: 各スロットの目標対象者数。
     - $J$個の要素を持つリスト。$j$番目の要素は長さ$K[j]$の整数ベクトル。
     - $j$番目の要素であるベクトルの$k$番目の要素は、カテゴリ$j$のスロット$k$に割り付ける対象者数の下限を表します。欠損は許容されません。
-- `nCAT_MAX`, `sCAT_TYPE`, `sCAT_FILTER`, `sCAT_ORDER`, `sCAT_EXCLUDE`: カテゴリの割付方法。
-    - ["How to assign subjects"](vignette_assign.html)を参照して下さい。
-- `nSLOT_MAX`, `sSLOT_TYPE`, `sSLOT_FILTER`, `sSLOT_ORDER`, `sSLOT_EXCLUDE`: スロットの割り付け方法。
-    - ["How to assign subjects"](vignette_assign.html)を参照して下さい。
+- `nCAT_MAX`:      割付カテゴリの最大数。
+- `nSLOT_MAX`:     割付スロットの最大数。
+- `sCAT_TYPE`:     カテゴリの割付方法(割付タイプ)。
+- `sCAT_FILTER`:   カテゴリの割付方法(絞り込み条件)。
+- `sCAT_ORDER`:    カテゴリの割付方法(順序付け条件)。
+- `sCAT_EXCLUDE`:  カテゴリの割付方法(除外条件)。
+- `sSLOT_TYPE`:    スロットの割付方法(割付タイプ)。
+- `sSLOT_FILTER`:  スロットの割付方法(絞り込み条件)。
+- `sSLOT_ORDER`:   スロットの割付方法(順序付け条件)。
+- `sSLOT_EXCLUDE`: スロットの割付方法(除外条件)。
 
-セッティングを指定しましょう。
+カテゴリ・スロットの割付方法については ["How to assign subjects"](vignette_assign.html)を参照して下さい。
+
+では、セッティングを指定しましょう。
 
 - すべてのカテゴリのすべてのスロットに、すくなくとも10人の対象者を割り付けることにします。
-- 回答負荷の観点から、ひとりの対象者に割り付けるカテゴリは2つまで、スロットは2つまでとします。
-- カテゴリの割付方法として(adaptive,open,random,none)を使用し、スロットの割付方法として(adaptive,all,shortnum,allclosed)を使用します。
+- 回答負荷の観点から、ひとりの対象者が割り付けられるカテゴリは2つまで、スロットは2つまでとします。
+- カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(adaptive,open,random,none)を使用し、スロットの割付方法として(adaptive,all,shortnum,allclosed)を使用します。
 
 ```{r}
 lSetting <- makeSetting(
@@ -140,7 +148,7 @@ lSetting <- makeSetting(
 )
 ```
 
-## 3. シミュレーション
+## 3. 割付シミュレーション
 
 では、必要な標本サイズを推定するために、シミュレーションを行ってみましょう。
 

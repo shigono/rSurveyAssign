@@ -40,3 +40,4 @@ vignette(topic = "vignette", package = "rSurveyAssign")
 ```
 
 vignetteは [パッケージのwebサイト](https://shigono.github.io/rSurveyAssign/) でも公開されています。
+メニューの"Articles"の下にある[rSurveyAssign: tools for simulation of assignment in web surveys](https://shigono.github.io/rSurveyAssign/articles/vignette.html)をご覧ください。

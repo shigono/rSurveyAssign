@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-21</h4>
+            <h4 data-toc-skip class="date">2024-03-22</h4>
       
       
       <div class="d-none name"><code>vignette_size.Rmd</code></div>
@@ -221,31 +221,33 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 </ul>
 </li>
 <li>
-<code>nCAT_MAX</code>, <code>sCAT_TYPE</code>,
-<code>sCAT_FILTER</code>, <code>sCAT_ORDER</code>,
-<code>sCAT_EXCLUDE</code>: カテゴリの割付方法。
-<ul>
+<code>nCAT_MAX</code>: 割付カテゴリの最大数。</li>
 <li>
-<a href="vignette_assign.html">“How to assign
-subjects”</a>を参照して下さい。</li>
-</ul>
-</li>
+<code>nSLOT_MAX</code>: 割付スロットの最大数。</li>
 <li>
-<code>nSLOT_MAX</code>, <code>sSLOT_TYPE</code>,
-<code>sSLOT_FILTER</code>, <code>sSLOT_ORDER</code>,
-<code>sSLOT_EXCLUDE</code>: スロットの割り付け方法。
-<ul>
+<code>sCAT_TYPE</code>: カテゴリの割付方法(割付タイプ)。</li>
 <li>
-<a href="vignette_assign.html">“How to assign
-subjects”</a>を参照して下さい。</li>
+<code>sCAT_FILTER</code>: カテゴリの割付方法(絞り込み条件)。</li>
+<li>
+<code>sCAT_ORDER</code>: カテゴリの割付方法(順序付け条件)。</li>
+<li>
+<code>sCAT_EXCLUDE</code>: カテゴリの割付方法(除外条件)。</li>
+<li>
+<code>sSLOT_TYPE</code>: スロットの割付方法(割付タイプ)。</li>
+<li>
+<code>sSLOT_FILTER</code>: スロットの割付方法(絞り込み条件)。</li>
+<li>
+<code>sSLOT_ORDER</code>: スロットの割付方法(順序付け条件)。</li>
+<li>
+<code>sSLOT_EXCLUDE</code>: スロットの割付方法(除外条件)。</li>
 </ul>
-</li>
-</ul>
-<p>セッティングを指定しましょう。</p>
+<p>カテゴリ・スロットの割付方法については <a href="vignette_assign.html">“How to assign
+subjects”</a>を参照して下さい。</p>
+<p>では、セッティングを指定しましょう。</p>
 <ul>
 <li>すべてのカテゴリのすべてのスロットに、すくなくとも10人の対象者を割り付けることにします。</li>
-<li>回答負荷の観点から、ひとりの対象者に割り付けるカテゴリは2つまで、スロットは2つまでとします。</li>
-<li>カテゴリの割付方法として(adaptive,open,random,none)を使用し、スロットの割付方法として(adaptive,all,shortnum,allclosed)を使用します。</li>
+<li>回答負荷の観点から、ひとりの対象者が割り付けられるカテゴリは2つまで、スロットは2つまでとします。</li>
+<li>カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(adaptive,open,random,none)を使用し、スロットの割付方法として(adaptive,all,shortnum,allclosed)を使用します。</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lSetting</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
@@ -263,7 +265,7 @@ subjects”</a>を参照して下さい。</li>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="シミュレーション">3. シミュレーション<a class="anchor" aria-label="anchor" href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
+<h2 id="割付シミュレーション">3. 割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
 </h2>
 <p>では、必要な標本サイズを推定するために、シミュレーションを行ってみましょう。</p>
 <p>このシミュレーションでは、母集団データから対象者を復元抽出し、
@@ -492,20 +494,20 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.04 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1380 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 1234 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 8 ; extract: 1371 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 9 ; extract: 1041 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1385 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.05 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 979 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 979 ; 0.04 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 14 ; extract: 1495 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 15 ; extract: 1128 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 16 ; extract: 1072 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 18 ; extract: 1157 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1158 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 991 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1158 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 991 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] end trials.</span></span>
 <span><span class="co">#&gt; [simSize] # Accumlated Trials: 20</span></span>
 <span><span class="co">#&gt; NULL</span></span>
