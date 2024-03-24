@@ -2,3 +2,6 @@ url: https://shigono.github.io/rSurveyAssign/
 template:
   bootstrap: 5
   bootswatch: journal
+authors:
+  Shigeru ONO:
+    href: "https://elsur.jpn.org/"

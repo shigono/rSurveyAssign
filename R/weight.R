@@ -252,6 +252,7 @@ getWeight <- function(
 
   # カテゴリ割付頻度
   dfStat_Cat <- tbl(con, sDBTABLE_CAT) %>%
+    dplyr::filter(.data$bAssign == 1) %>%
     group_by(.data$nSubject, .data$nCat) %>%
     summarize(
       nNumRetrial       = sum(.data$nBlockSize, na.rm=TRUE),
@@ -263,6 +264,7 @@ getWeight <- function(
 
   # スロット割付頻度
   dfStat_Slot <- tbl(con, sDBTABLE_SLOT) %>%
+    dplyr::filter(.data$bAssign == 1) %>%
     group_by(.data$nSubject, .data$nCat, .data$nSlot) %>%
     summarize(
       nNumRetrial        = sum(.data$nBlockSize, na.rm=TRUE),

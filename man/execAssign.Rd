@@ -21,7 +21,7 @@ execAssign(
   sSLOT_ORDER,
   sSLOT_EXCLUDE,
   bCHECKCOMPLETE = TRUE,
-  bVERBOSE = FALSE
+  sVERBOSE = c("simple", "detail", "none")
 )
 }
 \arguments{
@@ -94,8 +94,8 @@ execAssign(
 \code{anSEQ_PERSON}を使い切っても
 全スロットがクローズしなかったらエラーを発生させる}
 
-\item{bVERBOSE}{a logical.
-詳細を画面表示する}
+\item{sVERBOSE}{a string.
+画面表示レベル。}
 }
 \value{
 an integer matrix.
@@ -105,13 +105,13 @@ an integer matrix.
    カテゴリ番号とは\code{mbPERSON_CAT_USE}における列番号を指し、
    スロット番号とは\code{lPERSON_SLOT_HIT}の当該カテゴリにおける列番号を指す。
    \itemize{
-   \item \code{SEQ}: 調査参加順(連番)
-   \item \code{nPerson}: 対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
-   \item \code{nCat_1}: 割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
+   \item \code{SEQ}: 1             調査参加順(連番)
+   \item \code{nPerson}:           対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
+   \item \code{nCat_1}:            割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
    \item ...
-   \item \code{nCat_}(nCAT_MAX): 割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
-   \item \code{nCat}: 割付スロットが属するカテゴリ番号、ないし\code{NA}
-   \item \code{nSlot_1}: 割付スロット\code{1}のスロット番号、ないし\code{NA}
+   \item \code{nCat_}(nCAT_MAX):   割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
+   \item \code{nCat}:              割付スロットが属するカテゴリ番号、ないし\code{NA}
+   \item \code{nSlot_1}:           割付スロット\code{1}のスロット番号、ないし\code{NA}
    \item ...
    \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{nSLOT_MAX}のスロット番号、ないし\code{NA}
    }

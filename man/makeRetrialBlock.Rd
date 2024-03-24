@@ -11,7 +11,7 @@ makeRetrialBlock(
   nMAXSIZE,
   bPARALLEL,
   sLOGFILE,
-  sVERBOSE
+  sVERBOSE = c("simple", "detail", "none")
 )
 }
 \arguments{

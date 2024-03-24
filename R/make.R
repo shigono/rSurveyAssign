@@ -1,6 +1,188 @@
 ### make.R
 ###   データ作成の関数
 ###
+makePop <- function(
+    mbCAT,
+    lSLOT,
+    sVERBOSE = c("simple", "none", "detail")
+){
+  #' make population data.
+  #'
+  #' 母集団データを作成する。
+  #'
+  #' @export
+  #'
+  #' @param mbCAT an integer matrix.
+  #'    母集団メンバーのカテゴリ割付可能性を表す。
+  #'
+  #'    \code{mbCAT[i,j]}は以下を表す。欠損不可。
+  #'    \itemize{
+  #'    \item 1: 母集団メンバーiはカテゴリjについて割付可能。
+  #'    \item 0: 母集団メンバーiはカテゴリjについて割付不能。
+  #'    }
+  #'
+  #'    列に名前を付けるとカテゴリ名とみなされる。
+  #'    名前を付けるならばすべての列に重複なく名前をつけること。
+  #'
+  #' @param lSLOT a list of integer matrices.
+  #'    母集団メンバーのスロット割付可能性を表す。
+  #'
+  #'    \code{lSLOT[[j]][i,k]}は以下を表す。
+  #'    \itemize{
+  #'    \item 1: 母集団メンバーiはカテゴリjのスロットkについて割付可能。
+  #'    \item 0: 母集団メンバーiはカテゴリjのスロットkについて割付不能。
+  #'    }
+  #'
+  #'    \code{mbCAT[i,j] == 0}のとき、
+  #'    \code{lSLOT[[j]][i, ]}はすべて欠損として扱われる
+  #'    (すなわち、割付不能カテゴリに属するスロットへの割付可能性は
+  #'    無視される)。
+  #'
+  #'    \code{mbCAT[i,j] == 1}のとき、
+  #'    \code{lSLOT[[j]][i, ]}は欠損不可
+  #'    (すなわち、割付不能カテゴリに属するスロットへの割付可能性は
+  #'    すべて記述する必要がある)。
+  #'
+  #'    列に名前を付けた場合はスロット名とみなされる。
+  #'    名前を付けるならばすべての列に重複なく名前をつけること。
+  #'
+  #' @param sVERBOSE a string.
+  #'    画面表示レベル。
+  #'
+  #' @return an object of `popdata` class.
+  #' その実体は以下の要素を持つリスト。
+  #' \itemize{
+  #' \item \code{mbCAT} 整数行列。
+  #'                    引数mbCATとして与えられた行列。
+  #'                    列名がついていなかった場合は、
+  #'                    列名"Cat_(j)"が付与される。
+  #' \item \code{lSLOT} 整数行列のリスト。
+  #'                    引数lSLOTとして与えられたリスト。
+  #'                    ただし、割付不能カテゴリに属するスロットへの
+  #'                    割付可能性はすべて欠損に置き換えられている。
+  #'                    引数lSLOTの要素に列名が付いていなかった場合は、
+  #'                    列名"Slot_(j)_(k)"が付与される。
+  #' }
+
+  ## あいさつのためsVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[makePop] start.\n")
+  }
+
+  ## 引数チェック - - - - - - -
+  ## mbCAT
+  ## クラス
+  stopifnot(is.matrix(mbCAT))
+  ## 欠損を含まない
+  if (any(is.na(mbCAT)))
+    stop("[makePop] Error: mbCAT should have no NA.")
+  ## 値は予期通り
+  if (any(!(mbCAT %in% 0:1)))
+    stop("[makePop] Error: The elements of mbCAT should be either 0 or 1.")
+  ## 列名を取得する(あとで使います)
+  asName_Cat <- colnames(mbCAT)
+  if (!is.null(asName_Cat)){
+    # もし列名が付いているならば列名はユニーク
+    stopifnot(anyDuplicated(asName_Cat) == 0)
+  }
+
+  ### lSLOT
+  ## クラス
+  stopifnot(is.list(lSLOT))
+  stopifnot(sapply(lSLOT, function(x) "matrix" %in% class(x)))
+  ## 要素数はmbCATの列数と同じ
+  if (length(lSLOT) != ncol(mbCAT))
+    stop("[makePop] Error: The length of lSLOT should be equal to the number of columns of mbCAT.")
+  ## 各要素の行数はmbCATの行数と同じ
+  if (any(sapply(lSLOT, nrow) != nrow(mbCAT)))
+    stop("[makePop] Error: The number of rows of each element in lSLOT should be equal to the number of rows of mbCAT.")
+  for (i in seq_along(lSLOT)){
+    mbSlot <- lSLOT[[i]]
+    # 各要素に含まれている値は0, 1, NAのいずれか
+    if (any (!( mbSlot[!is.na(mbSlot)] %in% c(0,1) )))
+      stop("[makePop] Error: lSLOT[[", i, "]] has invalid values.")
+    # カテゴリが割付可能な時、スロットの割付可能性は欠損不可
+    if (any(is.na(mbSlot[mbCAT[,i] == 1,]))){
+      stop("[makePop] Error: lSLOT[[", i, "]] has unexpected NAs. ???")
+    }
+  }
+  ## 名前を取得
+  asName_Slot <- unlist(lapply(lSLOT, names)) # あとで使います
+  if (!is.null(asName_Slot)){
+    # もし列名が付いているならば
+    # すべての要素にもれなく名前がついている
+    stopifnot (length(asName_Slot) == length(unlist(lSLOT)))
+    # 重複はない
+    stopifnot (anyDuplicated(asName_Slot) == 0)
+  }
+
+  ## ここからメイン - - - - - -
+  # mbCATへの名前付与
+  if (is.null(asName_Cat))
+    colnames(mbCAT) <- paste0("Cat_", seq_len(ncol(mbCAT)))
+
+  # lSLOTの修正
+  lSLOT <- lapply(
+    seq_along(lSLOT),
+    function(nCurrentCat){
+      out <- lSLOT[[nCurrentCat]]
+      # 割付不能カテゴリのスロット割付可能性を欠損にする
+      out[mbCAT[, nCurrentCat] == 0, ] <- NA
+      # ひとつでも欠損がある行はすべて欠損にする
+      out[apply(out, 1, function(x) sum(is.na(x)) > 0),] <- NA
+      return(out)
+    }
+  )
+
+  # lSLOTへの名前付与
+  if (is.null(asName_Slot)){
+    cat("[makePop] assign colnames to lSLOT ...\n")
+    lSLOT <- lapply(
+      seq_along(lSLOT),
+      function(nCat){
+        out <- lSLOT[[nCat]]
+        colnames(out) <- paste0("Slot_", nCat, "_", seq_len(ncol(out)))
+        return(out)
+      }
+    )
+  }
+
+  ## メッセージ - - - -
+  if (sVERBOSE %in% c("simple", "detail")){
+    cat("[makePop] # of categories:", ncol(mbCAT), "\n")
+    cat("[makePop] # of slots:", paste0(sapply(lSLOT, ncol), collapse = ","), "\n")
+    cat("[makePop] # of members:", nrow(mbCAT), "\n")
+    nCount <- sum(as.vector(mbCAT))
+    gMean  <- nCount / ncol(mbCAT)
+    cat("[makePop] # of member-category pairs which are assignable:", nCount, sprintf("(%0.1f/category)", gMean), "\n")
+    nCount <- sum(sapply(lSLOT, function(x) sum(as.vector(x), na.rm=T)))
+    gMean  <- nCount / sum(sapply(lSLOT, ncol))
+    cat("[makePop] # of member-slot pairs which are assignable:", nCount, sprintf("(%0.1f/slot)", gMean), "\n")
+  }
+
+  ## 警告 - - - -
+  # mbCATにすべて0の列があったら警告する
+  if (any(colSums(mbCAT) == 0)){
+    warning("[makePop] There is a column whose values are all 0 in mbCAT.")
+  }
+  # lSLOTにすべて0の列があったら警告する
+  if (any(unlist(lapply(lSLOT, function(x) colSums(x, na.rm=TRUE))) == 0)){
+    warning("[makePop] There is a column whose values are all 0 in lSLOT.")
+  }
+
+  ## 出力 - - - -
+  lOut <- list(
+    mbCAT = mbCAT,
+    lSLOT = lSLOT
+  )
+  class(lOut) <- "popdata"
+
+  if (sVERBOSE == "detail"){
+    cat("[makePop] end.\n")
+  }
+  return(lOut)
+}
 makeSetting <- function(
   lSLOT_REQUEST,
   nCAT_MAX,
@@ -13,7 +195,8 @@ makeSetting <- function(
   sSLOT_FILTER  = c("all", "open"),
   sSLOT_ORDER   = c("random", "openclosed", "shortnum", "shortratio"),
   sSLOT_EXCLUDE = c("none", "allclosed"),
-  nSUBJECT_MAX  = 0
+  nSUBJECT_MAX  = 0,
+  sVERBOSE = c("simple", "none", "detail")
 ){
   #' make setting.
   #'
@@ -21,11 +204,13 @@ makeSetting <- function(
   #'
   #' @export
   #'
-  #' @param lSLOT_REQUEST a list of integer vectors.
+  #' @param lSLOT_REQUEST a list of (named) integer vectors.
   #'    各スロットに割り付ける対象者数の目標。
   #'    要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-  #'    欠損なし。
-  #' @param nCAT_MAX an integer.
+  #'    欠損不可。
+  #'    要素に名前がついている場合、スロット名とみなされるので、
+  #'    名前を付けるならばすべての要素に重複なく名前をつけること。
+  #' @param nCAT_MAX a integer.
   #'    ある対象者に割り付けるカテゴリ数の上限。
   #' @param sCAT_TYPE a string.
   #'    カテゴリ割付タイプ。詳細はvignetteを参照。
@@ -57,17 +242,34 @@ makeSetting <- function(
   #'    対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
   #'    対象者数が母集団サイズの10倍を超えても
   #'    割付対象者数が目標に到達しなかったときはエラーとなる。
+  #' @param sVERBOSE a string.
+  #'    画面表示レベル。
   #'
   #' @return an object of `assignsetting` class.
   #'         その実体は、この関数の引数を要素として持つリスト。
+  #'         ただし、引数lSLOT_REQUESTの要素に名前がついていない場合は、
+  #'         名前"Slot_(j)_(k)"が付与される。
+
+  ## あいさつのため、sVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[makeSetting] start.\n")
+  }
 
   ## 引数チェック - - - - - - -
-
   ## lSLOT_REQUEST
   ## listである
-  stopifnot("list" %in% class(lSLOT_REQUEST))
+  stopifnot(is.list(lSLOT_REQUEST))
   ## 欠損はない
   stopifnot( sapply(lSLOT_REQUEST, function(x) sum(is.na(x))) == 0)
+  ## 名前を取得
+  asName_Slot <- unlist(lapply(lSLOT_REQUEST, names)) # あとで使います
+  if (!is.null(asName_Slot)){
+    # すべての要素にもれなく名前がついている
+    stopifnot (length(asName_Slot) == length(unlist(lSLOT_REQUEST)))
+    # 重複はない
+    stopifnot (anyDuplicated(asName_Slot) == 0)
+  }
 
   ## nCAT_MAX
   ## 0以上のスカラー
@@ -134,6 +336,19 @@ makeSetting <- function(
   ## 0以上であること
   stopifnot(nSUBJECT_MAX >= 0)
 
+  # メイン - - - - -
+  # lSLOT_REQUESTへの名前付与
+  if (is.null(asName_Slot)){
+    cat("[makeSetting] assign names to lSLOT_REQUEST ...\n")
+    lSLOT_REQUEST <- lapply(
+      seq_along(lSLOT_REQUEST),
+      function(nCat){
+        out <- lSLOT_REQUEST[[nCat]]
+        names(out) <- paste0("Slot_", nCat, "_", seq_along(out))
+        return(out)
+      }
+    )
+  }
 
   # 出力 - - - - -
   lOut <- list(
@@ -151,154 +366,21 @@ makeSetting <- function(
     nSUBJECT_MAX  = nSUBJECT_MAX
   )
   class(lOut) <- "assignsetting"
-  return(lOut)
-}
-makePop <- function(
-  mbCAT,
-  lSLOT,
-  sVERBOSE = c("simple", "none", "detail")
-){
-  #' make population data.
-  #'
-  #' 母集団データを作成する。
-  #'
-  #' @export
-  #'
-  #' @param mbCAT an integer matrix.
-  #'    母集団メンバーのカテゴリ割付可能性を表す。
-  #'
-  #'    \code{mbCAT[i,j]}は以下を表す。欠損不可。
-  #'    \itemize{
-  #'    \item 1: 母集団メンバーiはカテゴリjについて割付可能。
-  #'    \item 0: 母集団メンバーiはカテゴリjについて割付不能。
-  #'    }
-  #'
-  #' @param lSLOT a list of integer matrices.
-  #'    母集団メンバーのスロット割付可能性を表す。
-  #'
-  #'    \code{lSLOT[[j]][i,k]}は以下を表す。
-  #'    \itemize{
-  #'    \item 1: 母集団メンバーiはカテゴリjのスロットkについて割付可能。
-  #'    \item 0: 母集団メンバーiはカテゴリjのスロットkについて割付不能。
-  #'    }
-  #'
-  #'    \code{mbCAT[i,j] == 0}のとき、
-  #'    \code{lSLOT[[j]][i, ]}はすべて欠損として扱われる
-  #'    (すなわち、割付不能カテゴリに属するスロットへの割付可能性は
-  #'    無視される)。
-  #'
-  #'    \code{mbCAT[i,j] == 1}のとき、
-  #'    \code{lSLOT[[j]][i, ]}は欠損不可
-  #'    (すなわち、割付不能カテゴリに属するスロットへの割付可能性は
-  #'    すべて記述する必要がある)。
-  #'
-  #' @param sVERBOSE a string.
-  #'    画面表示レベル。
-  #'
-  #' @return an object of `popdata` class.
-  #' その実体は以下の要素を持つリスト。
-  #' \itemize{
-  #' \item \code{mbCAT} 整数行列。
-  #'                    引数mbCATとして与えられた行列。
-  #' \item \code{lSLOT} 整数行列のリスト。
-  #'                    引数lSLOTとして与えられたリスト。
-  #'                    ただし、割付不能カテゴリに属するスロットへの
-  #'                    割付可能性はすべて欠損に置き換えられている。
-  #' }
 
-  ## 引数チェック - - - - - - -
-  ## mbCAT
-  ## クラス
-  stopifnot("matrix" %in% class(mbCAT))
-  ## 欠損を含まない
-  if (any(is.na(mbCAT)))
-    stop("[makePop] Error: mbCAT should have no NA.")
-  ## 値は予期通り
-  if (any(!(mbCAT %in% 0:1)))
-    stop("[makePop] Error: The elements of mbCAT should be either 0 or 1.")
-
-  ### lSLOT
-  ## クラス
-  stopifnot("list" %in% class(lSLOT))
-  stopifnot(sapply(lSLOT, function(x) "matrix" %in% class(x)))
-  ## 要素数はmbCATの列数と同じ
-  if (length(lSLOT) != ncol(mbCAT))
-    stop("[makePop] Error: The length of lSLOT should be equal to the number of columns of mbCAT.")
-  ## 各要素の行数はmbCATの行数と同じ
-  if (any(sapply(lSLOT, nrow) != nrow(mbCAT)))
-    stop("[makePop] Error: The number of rows of each element in lSLOT should be equal to the number of rows of mbCAT.")
-  for (i in seq_along(lSLOT)){
-    mbSlot <- lSLOT[[i]]
-    # 各要素に含まれている値は0, 1, NAのいずれか
-    if (any (!( mbSlot[!is.na(mbSlot)] %in% c(0,1) )))
-      stop("[makePop] Error: lSLOT[[", i, "]] has invalid values.")
-    # カテゴリが割付可能な時、スロットの割付可能性は欠損不可
-    if (any(is.na(mbSlot[mbCAT[,i] == 1,]))){
-      stop("[makePop] Error: lSLOT[[", i, "]] has unexpected NAs. ???")
-    }
+  if (sVERBOSE == "detail"){
+    cat("[makeSetting] end.\n")
   }
-
-  ## sVERBOSE
-  ## 推測する
-  sVERBOSE <- match.arg(sVERBOSE)
-
-  ## ここからメイン - - - - - -
-
-  # lSLOTの修正
-  lSLOT <- lapply(
-    seq_along(lSLOT),
-    function(nCurrentCat){
-      out <- lSLOT[[nCurrentCat]]
-      # 割付不能カテゴリのスロット割付可能性を欠損にする
-      out[mbCAT[, nCurrentCat] == 0, ] <- NA
-      # ひとつでも欠損がある行はすべて欠損にする
-      out[apply(out, 1, function(x) sum(is.na(x)) > 0),] <- NA
-      return(out)
-    }
-  )
-
-  ## メッセージ - - - -
-
-  if (sVERBOSE %in% c("simple", "detail")){
-    cat("[makePop] # of categories:", ncol(mbCAT), "\n")
-    cat("[makePop] # of slots:", paste0(sapply(lSLOT, ncol), collapse = ","), "\n")
-    cat("[makePop] # of members:", nrow(mbCAT), "\n")
-    nCount <- sum(as.vector(mbCAT))
-    gMean  <- nCount / ncol(mbCAT)
-    cat("[makePop] # of member-category pairs which are assignable:", nCount, sprintf("(%0.1f/category)", gMean), "\n")
-    nCount <- sum(sapply(lSLOT, function(x) sum(as.vector(x), na.rm=T)))
-    gMean  <- nCount / sum(sapply(lSLOT, ncol))
-    cat("[makePop] # of member-slot pairs which are assignable:", nCount, sprintf("(%0.1f/slot)", gMean), "\n")
-  }
-
-  ## 警告 - - - -
-
-  # mbCATにすべて0の列があったら警告する
-  if (any(colSums(mbCAT) == 0)){
-    warning("[makePop] There is a column whose values are all 0 in mbCAT.")
-  }
-  # lSLOTにすべて0の列があったら警告する
-  if (any(unlist(lapply(lSLOT, function(x) colSums(x, na.rm=TRUE))) == 0)){
-    warning("[makePop] There is a column whose values are all 0 in lSLOT.")
-  }
-
-  ## 出力 - - - -
-
-  lOut <- list(
-    mbCAT = mbCAT,
-    lSLOT = lSLOT
-  )
-  class(lOut) <- "popdata"
-
   return(lOut)
 }
 sub_makeSubjectCat_Alt <- function(
   mbCAT,
-  lSLOT
+  lSLOT,
+  sVERBOSE = c("simple", "none", "detail")
 ){
   #' Internal: make a table to extract a set of alternative persons from person and category
   #'
   #' Internal: 対象者番号とカテゴリから, 代替する対象者番号群を引く表を作る
+  #'           makeSurvey()からコールされる
   #'
   #' @keywords internal
   #'
@@ -317,6 +399,8 @@ sub_makeSubjectCat_Alt <- function(
   #'    \item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
   #'    }
   #'    欠損についてはDetailsを参照。
+  #' @param sVERBOSE a string.
+  #'    画面表示レベル。
   #'
   #' @return リスト。以下の要素を持つ。
   #' \itemize{
@@ -346,6 +430,12 @@ sub_makeSubjectCat_Alt <- function(
   #' @importFrom dplyr mutate
   #' @importFrom dplyr if_else
   #' @importFrom dplyr row_number
+
+  ## あいさつのため、sVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[sub_makeSubjectCat_Alt] start.\n")
+  }
 
   # mbCATの列名を決めておく
   colnames(mbCAT) <- paste0("bAssignable_", seq_len(ncol(mbCAT)))
@@ -469,6 +559,10 @@ sub_makeSubjectCat_Alt <- function(
     manSubjectCat_AltSet = manSubjectCat_AltSet,
     mnSubjectCat_AltStatus = mnSubjectCat_AltStatus
   )
+
+  if (sVERBOSE == "detail"){
+    cat("[sub_makeSubjectCat_Alt] end.\n")
+  }
   return(lOut)
 }
 makeSurvey <- function(
@@ -502,6 +596,8 @@ makeSurvey <- function(
   #'    \item 1: 調査対象者iはカテゴリjについて割付可能。
   #'    \item 0: 調査対象者iはカテゴリjについて割付不能。
   #'    }
+  #'    列に名前を付けるとカテゴリ名とみなされる。
+  #'    名前を付けるならばすべての列に重複なく名前をつけること。
   #'
   #' @param lSLOT 整数行列のリスト。
   #'    調査対象者のスロット割付可能性。
@@ -511,11 +607,14 @@ makeSurvey <- function(
   #'    \item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
   #'    }
   #'    欠損についてはDetailsを参照。
+  #'    列に名前を付けるとスロット名とみなされる。
+  #'    名前を付けるならばすべての列に重複なく名前をつけること。
   #'
   #' @param lSLOT_REQUEST 整数ベクトルのリスト。
   #'    各スロットに割り付ける対象者数の下限。
   #'    要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
   #'    欠損なし。
+  #'    要素の列名はlSLOTの要素の列名と一致していること。
   #'
   #' @param mnASSIGNCAT 整数行列。
   #'    調査対象者の割付カテゴリ。列数は、割付カテゴリ数の上限。
@@ -610,11 +709,17 @@ makeSurvey <- function(
   #'
   #' @return `surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。
   #' \itemize{
-  #' \item \code{mbCAT} 整数行列。引数mbCATの値。
-  #' \item \code{lSLOT} 整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
-  #' スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
-  #' その行はみなNAに変更される。
+  #' \item \code{mbCAT}         整数行列。引数mbCATの値。
+  #'                            列名がついていなかった場合は、
+  #'                            列名"Cat_(j)"が付与される。
+  #' \item \code{lSLOT}         整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
+  #'                            スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
+  #'                            その行はみなNAに変更される。
+  #'                            列名がついていなかった場合は、
+  #'                            列名"Slot_(j)_(k)"が付与される。
   #' \item \code{lSLOT_REQUEST} 整数ベクトルのリスト。引数lSLOT_REQUESTの値。
+  #'                            名前がついていなかった場合は、
+  #'                            名前"Slot_(j)_(k)"が付与される。
   #' \item \code{sCAT_TYPE}     文字列。引数sCAT_TYPEの値。
   #' \item \code{sCAT_FILTER}   文字列。引数sCAT_FILTERの値。
   #' \item \code{sCAT_ORDER}    文字列。引数sCAT_ORDERの値。
@@ -628,10 +733,11 @@ makeSurvey <- function(
   #' \item \code{mnASSIGNSLOT}  整数行列。引数mnASSIGNSLOTの値。
   #' \item \code{nSUBJECT_MAX}  整数。引数nSUBJECT_MAXの値。
   #' \item \code{manSubjectCat_AltSubject} 整数ベクトルを要素とする行列。行は対象者(mbCATの行),
-  #' 列はカテゴリ(mbCATの列), 要素はその対象者のスロット割付可能性を調べるときに
-  #' 参照すべき対象者番号のベクトル。
-  #' \item \code{mnSubjectCat_AltStatus} 整数ベクトルの行列。行は対象者(mbCATの行),
-  #' 列はカテゴリ(mbCATの列), 要素は以下のいずれか:
+  #'                                       列はカテゴリ(mbCATの列),
+  #'                                       要素はその対象者のスロット割付可能性を調べるときに
+  #'                                       参照すべき対象者番号のベクトル。
+  #' \item \code{mnSubjectCat_AltStatus}   整数ベクトルの行列。行は対象者(mbCATの行),
+  #'                                       列はカテゴリ(mbCATの列), 要素は以下のいずれか:
   #' \itemize{
   #' \item NA: 割付不能カテゴリ
   #' \item 0: スロット割付可能性が既知
@@ -641,6 +747,12 @@ makeSurvey <- function(
   #' }
   #' }
 
+  ## あいさつのためsVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[makeSurvey] start.\n")
+  }
+
   ## 引数チェック - - - - - - -
   ## mbCAT
   ## 欠損を含まない
@@ -649,6 +761,12 @@ makeSurvey <- function(
   ## 値は予期通り
   if (any(!(mbCAT %in% 0:1)))
     stop("The elements of mbCAT should be either 0 or 1.")
+  ## 列名を取得する(あとで使います)
+  asName_Cat <- colnames(mbCAT)
+  if (!is.null(asName_Cat)){
+    # もし列名が付いているならば列名はユニーク
+    stopifnot(anyDuplicated(asName_Cat) == 0)
+  }
 
   ### lSLOT
   ## 要素数はmbCATの列数と同じ
@@ -665,6 +783,15 @@ makeSurvey <- function(
       stop("lSLOT[[", j, "]] has unexpected values.")
     }
   }
+  ## 名前を取得(あとで使います)
+  asName_Slot <- unlist(lapply(lSLOT, names))
+  if (!is.null(asName_Slot)){
+    # もし列名が付いているならば
+    # すべての要素にもれなく名前がついている
+    stopifnot (length(asName_Slot) == length(unlist(lSLOT)))
+    # 重複はない
+    stopifnot (anyDuplicated(asName_Slot) == 0)
+  }
   ## スロットに異常な欠損がないかどうかを調べたいのだが、
   ## いまは面倒なので、あとでmbSubjectCat_Assignを作ってからチェックする
 
@@ -678,6 +805,8 @@ makeSurvey <- function(
   ## 欠損はない
   if (any(sapply(lSLOT_REQUEST, function(x) sum(is.na(x))) != 0))
     stop("The elements of lSLOT_REQUEST should have no NA.")
+  ## 列名はlSLOTと同じ
+  stopifnot(unlist(lapply(lSLOT_REQUEST, names)) == asName_Slot)
 
   ## sCAT_TYPE
   ## とにかく指定していることが必要
@@ -793,10 +922,6 @@ makeSurvey <- function(
   ## nSUBJECT_MAX
   stopifnot(is.null(nSUBJECT_MAX) || !is.na(nSUBJECT_MAX))
 
-  ## sVERBOSE
-  ## 推測する
-  sVERBOSE <- match.arg(sVERBOSE)
-
   ## ここからメイン - - - - - -
 
   ## mbSubjectCat_Assign: 行に対象者、列にカテゴリ、値は割付有無
@@ -818,6 +943,10 @@ makeSurvey <- function(
       stop("lSLOT[[", j, "]] has unexpected NA.")
   }
 
+  # mbCATへの名前付与
+  if (is.null(asName_Cat))
+    colnames(mbCAT) <- paste0("Cat_", seq_len(ncol(mbCAT)))
+
   ## lSLOTの修正
   lSLOT <- lapply(
     seq_along(lSLOT),
@@ -830,6 +959,26 @@ makeSurvey <- function(
       return(out)
     }
   )
+
+  # lSLOT, lSLOT_REQUESTへの名前付与
+  if (is.null(asName_Slot)){
+    lSLOT <- lapply(
+      seq_along(lSLOT),
+      function(nCat){
+        out <- lSLOT[[nCat]]
+        colnames(out) <- paste0("Slot_", nCat, "_", seq_len(ncol(out)))
+        return(out)
+      }
+    )
+    lSLOT_REQUEST <- lapply(
+      seq_along(lSLOT_REQUEST),
+      function(nCat){
+        out <- lSLOT_REQUEST[[nCat]]
+        names(out) <- paste0("Slot_", nCat, "_", seq_along(out))
+        return(out)
+      }
+    )
+  }
 
   # 代替対象者の情報を取得
   lSubjectCat_Alt <- sub_makeSubjectCat_Alt(mbCAT, lSLOT)
@@ -900,24 +1049,28 @@ makeSurvey <- function(
   ### 出力 - - - - -
 
   out <- list(
-    mbCAT          = mbCAT,
-    lSLOT          = lSLOT,
-    lSLOT_REQUEST  = lSLOT_REQUEST,
-    sCAT_TYPE      = sCAT_TYPE,
-    sCAT_FILTER    = sCAT_FILTER,
-    sCAT_ORDER     = sCAT_ORDER,
-    sCAT_EXCLUDE   = sCAT_EXCLUDE,
-    sSLOT_TYPE     = sSLOT_TYPE,
-    sSLOT_FILTER   = sSLOT_FILTER,
-    sSLOT_ORDER    = sSLOT_ORDER,
-    sSLOT_EXCLUDE  = sSLOT_EXCLUDE,
-    mnASSIGNCAT    = mnASSIGNCAT,
-    anPARENTCAT    = anPARENTCAT,
-    mnASSIGNSLOT   = mnASSIGNSLOT,
+    mbCAT                  = mbCAT,
+    lSLOT                  = lSLOT,
+    lSLOT_REQUEST          = lSLOT_REQUEST,
+    sCAT_TYPE              = sCAT_TYPE,
+    sCAT_FILTER            = sCAT_FILTER,
+    sCAT_ORDER             = sCAT_ORDER,
+    sCAT_EXCLUDE           = sCAT_EXCLUDE,
+    sSLOT_TYPE             = sSLOT_TYPE,
+    sSLOT_FILTER           = sSLOT_FILTER,
+    sSLOT_ORDER            = sSLOT_ORDER,
+    sSLOT_EXCLUDE          = sSLOT_EXCLUDE,
+    mnASSIGNCAT            = mnASSIGNCAT,
+    anPARENTCAT            = anPARENTCAT,
+    mnASSIGNSLOT           = mnASSIGNSLOT,
     nSUBJECT_MAX           = nSUBJECT_MAX,
     manSubjectCat_AltSet   = lSubjectCat_Alt$manSubjectCat_AltSet,
-    mnSubjectCat_AltStatus = lSubjectCat_Alt$dfSubjectCat_AltStatus
+    mnSubjectCat_AltStatus = lSubjectCat_Alt$mnSubjectCat_AltStatus
   )
   class(out) <- "surveydata"
+
+  if (sVERBOSE == "detail"){
+    cat("[makeSurvey] end.\n")
+  }
   return(out)
 }

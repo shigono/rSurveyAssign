@@ -4,14 +4,14 @@
 \alias{checkSurvey}
 \title{check assigned categories and slots in survey data}
 \usage{
-checkSurvey(lSURVEY, bVERBOSE = FALSE)
+checkSurvey(lSURVEY, sVERBOSE = c("simple", "detail", "none"))
 }
 \arguments{
 \item{lSURVEY}{an object of `surveydata` class.。
 調査データ。\code{\link{makeSurvey}}で生成する。}
 
-\item{bVERBOSE}{a logical.
-詳細を画面表示するか。}
+\item{sVERBOSE}{a string.
+画面表示レベル。}
 }
 \value{
 a data frame.

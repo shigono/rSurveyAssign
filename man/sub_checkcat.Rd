@@ -45,7 +45,7 @@ sub_checkcat(
 \item{sCAT_EXCLUDE}{文字列。
 カテゴリ割付の際の除外条件。}
 
-\item{DEBUG}{as logical.
+\item{bDEBUG}{as logical.
 デバッグモード}
 }
 \value{

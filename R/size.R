@@ -78,8 +78,11 @@ simSize <- function(
   #' @importFrom RSQLite SQLite
   #' @importFrom digest digest
 
-  # ダイジェスト
-  sCurrentDigest <- digest(list(lPOP, lSETTING))
+  ## あいさつ
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[simSize] Hi.\n")
+  }
 
   ## 引数チェック - - - - - - -
   ## lPOP, lSETTING, nNUMTRIAL, bPARALLEL, sLOGFILEはexecTrialsでチェックする
@@ -102,14 +105,10 @@ simSize <- function(
   ## 期待通り
   stopifnot(bAPPEND %in% c(TRUE, FALSE))
 
-  ## sVERBOSE
-  ## 推測する
-  sVERBOSE <- match.arg(sVERBOSE)
-
   ## ここからメイン - - - - - - -
-  if (sVERBOSE == "detail"){
-    cat("[simSize] Hi.\n")
-  }
+
+  # ダイジェスト
+  sCurrentDigest <- digest(list(lPOP, lSETTING))
 
   dfTrial <- execTrials(
     lPOP       = lPOP,

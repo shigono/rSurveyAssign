@@ -4,14 +4,18 @@
 \alias{makeStat_Slot}
 \title{Interal: make statistics for slots}
 \usage{
-makeStat_Slot(dfReplicateBlock, lSURVEY, bVERBOSE)
+makeStat_Slot(
+  dfReplicateBlock,
+  lSURVEY,
+  sVERBOSE = c("simple", "detail", "none")
+)
 }
 \arguments{
 \item{dfReplicateBlock}{a data frame
 対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
 以下の列を持つと期待される
  \itemize{
- \item \code{nSubject}:          対象者番号
+ \item \code{nSubject}:         対象者番号
  \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
  \item ...
  \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号、ないし\code{NA}
@@ -24,17 +28,19 @@ makeStat_Slot(dfReplicateBlock, lSURVEY, bVERBOSE)
 \item{lSURVEY}{a `surveydata`-class object.
 survey data. See the document of `makeSurvey` for details.}
 
-\item{bVERBOSE}{a logical.
-詳細を画面表示する}
+\item{sVERBOSE}{文字列。
+画面表示レベル。}
 }
 \value{
 a data frame
-   行は対象者x割付スロット
+   行は対象者x割付可能スロット。lSURVEY上で割付可能性が判明しているスロットに
+   限定されることに注意(つまり、代替対象者のスロットは含まれない)
    列は以下の通り
    \itemize{
    \item \code{nSubject}           対象者番号
-   \item \code{nCat}              親カテゴリ番号
-   \item \code{nSlot}             スロット番号
+   \item \code{nCat}               親カテゴリ番号
+   \item \code{nSlot}              スロット番号
+   \item \code{bAssign}            lSURVEY上でそのスロットが割り付けられていたか
    \item \code{nCount_SubjectSlot} その人にそのスロットが割り付けられた回数
    \item \code{nCount_Subject}     その人の出現回数
    }

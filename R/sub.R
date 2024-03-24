@@ -198,4 +198,5 @@ checkDB <- function(
 ignore_unused_imports <- function(){
   # https://r-pkgs.org/dependencies-in-practice.html
   dbplyr::tbl_lazy
+  ggplot2::ggplot
 }

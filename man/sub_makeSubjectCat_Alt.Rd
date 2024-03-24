@@ -4,7 +4,7 @@
 \alias{sub_makeSubjectCat_Alt}
 \title{Internal: make a table to extract a set of alternative persons from person and category}
 \usage{
-sub_makeSubjectCat_Alt(mbCAT, lSLOT)
+sub_makeSubjectCat_Alt(mbCAT, lSLOT, sVERBOSE = c("simple", "none", "detail"))
 }
 \arguments{
 \item{mbCAT}{整数行列。
@@ -23,6 +23,9 @@ sub_makeSubjectCat_Alt(mbCAT, lSLOT)
 \item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
 }
 欠損についてはDetailsを参照。}
+
+\item{sVERBOSE}{a string.
+画面表示レベル。}
 }
 \value{
 リスト。以下の要素を持つ。
@@ -46,5 +49,6 @@ sub_makeSubjectCat_Alt(mbCAT, lSLOT)
 }
 \description{
 Internal: 対象者番号とカテゴリから, 代替する対象者番号群を引く表を作る
+          makeSurvey()からコールされる
 }
 \keyword{internal}

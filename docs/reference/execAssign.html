@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -69,7 +72,7 @@
 <span>  <span class="va">sSLOT_ORDER</span>,</span>
 <span>  <span class="va">sSLOT_EXCLUDE</span>,</span>
 <span>  bCHECKCOMPLETE <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bVERBOSE <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  sVERBOSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"detail"</span>, <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -170,9 +173,9 @@
 全スロットがクローズしなかったらエラーを発生させる</p></dd>
 
 
-<dt>bVERBOSE</dt>
-<dd><p>a logical.
-詳細を画面表示する</p></dd>
+<dt>sVERBOSE</dt>
+<dd><p>a string.
+画面表示レベル。</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -186,13 +189,13 @@
    カテゴリ番号とは<code>mbPERSON_CAT_USE</code>における列番号を指し、
    スロット番号とは<code>lPERSON_SLOT_HIT</code>の当該カテゴリにおける列番号を指す。</p>
 <p></p>
-<ul><li><p><code>SEQ</code>: 調査参加順(連番)</p></li>
-<li><p><code>nPerson</code>: 対象者番号 (<code>mbPERSON_CAT_USE</code>上の行番号)</p></li>
-<li><p><code>nCat_1</code>: 割付カテゴリ<code>1</code>のカテゴリ番号、ないし<code>NA</code></p></li>
+<ul><li><p><code>SEQ</code>: 1             調査参加順(連番)</p></li>
+<li><p><code>nPerson</code>:           対象者番号 (<code>mbPERSON_CAT_USE</code>上の行番号)</p></li>
+<li><p><code>nCat_1</code>:            割付カテゴリ<code>1</code>のカテゴリ番号、ないし<code>NA</code></p></li>
 <li><p>...</p></li>
-<li><p><code>nCat_</code>(nCAT_MAX): 割付カテゴリ<code>nCAT_MAX</code>のカテゴリ番号、ないし<code>NA</code></p></li>
-<li><p><code>nCat</code>: 割付スロットが属するカテゴリ番号、ないし<code>NA</code></p></li>
-<li><p><code>nSlot_1</code>: 割付スロット<code>1</code>のスロット番号、ないし<code>NA</code></p></li>
+<li><p><code>nCat_</code>(nCAT_MAX):   割付カテゴリ<code>nCAT_MAX</code>のカテゴリ番号、ないし<code>NA</code></p></li>
+<li><p><code>nCat</code>:              割付スロットが属するカテゴリ番号、ないし<code>NA</code></p></li>
+<li><p><code>nSlot_1</code>:           割付スロット<code>1</code>のスロット番号、ないし<code>NA</code></p></li>
 <li><p>...</p></li>
 <li><p><code>nSlot_</code>(nSLOT_MAX): 割付スロット<code>nSLOT_MAX</code>のスロット番号、ないし<code>NA</code></p></li>
 </ul></div>
@@ -202,7 +205,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -14,7 +14,10 @@ makePop(mbCAT, lSLOT, sVERBOSE = c("simple", "none", "detail"))
    \itemize{
    \item 1: 母集団メンバーiはカテゴリjについて割付可能。
    \item 0: 母集団メンバーiはカテゴリjについて割付不能。
-   }}
+   }
+
+   列に名前を付けるとカテゴリ名とみなされる。
+   名前を付けるならばすべての列に重複なく名前をつけること。}
 
 \item{lSLOT}{a list of integer matrices.
    母集団メンバーのスロット割付可能性を表す。
@@ -33,7 +36,10 @@ makePop(mbCAT, lSLOT, sVERBOSE = c("simple", "none", "detail"))
    \code{mbCAT[i,j] == 1}のとき、
    \code{lSLOT[[j]][i, ]}は欠損不可
    (すなわち、割付不能カテゴリに属するスロットへの割付可能性は
-   すべて記述する必要がある)。}
+   すべて記述する必要がある)。
+
+   列に名前を付けた場合はスロット名とみなされる。
+   名前を付けるならばすべての列に重複なく名前をつけること。}
 
 \item{sVERBOSE}{a string.
 画面表示レベル。}
@@ -44,10 +50,14 @@ an object of `popdata` class.
 \itemize{
 \item \code{mbCAT} 整数行列。
                    引数mbCATとして与えられた行列。
+                   列名がついていなかった場合は、
+                   列名"Cat_(j)"が付与される。
 \item \code{lSLOT} 整数行列のリスト。
                    引数lSLOTとして与えられたリスト。
                    ただし、割付不能カテゴリに属するスロットへの
                    割付可能性はすべて欠損に置き換えられている。
+                   引数lSLOTの要素に列名が付いていなかった場合は、
+                   列名"Slot_(j)_(k)"が付与される。
 }
 }
 \description{

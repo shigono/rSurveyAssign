@@ -30,7 +30,9 @@ makeSurvey(
 \itemize{
 \item 1: 調査対象者iはカテゴリjについて割付可能。
 \item 0: 調査対象者iはカテゴリjについて割付不能。
-}}
+}
+列に名前を付けるとカテゴリ名とみなされる。
+名前を付けるならばすべての列に重複なく名前をつけること。}
 
 \item{lSLOT}{整数行列のリスト。
 調査対象者のスロット割付可能性。
@@ -39,12 +41,15 @@ makeSurvey(
 \item 1: 調査対象者iはカテゴリjのスロットkについて割付可能。
 \item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
 }
-欠損についてはDetailsを参照。}
+欠損についてはDetailsを参照。
+列に名前を付けるとスロット名とみなされる。
+名前を付けるならばすべての列に重複なく名前をつけること。}
 
 \item{lSLOT_REQUEST}{整数ベクトルのリスト。
 各スロットに割り付ける対象者数の下限。
 要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-欠損なし。}
+欠損なし。
+要素の列名はlSLOTの要素の列名と一致していること。}
 
 \item{mnASSIGNCAT}{整数行列。
 調査対象者の割付カテゴリ。列数は、割付カテゴリ数の上限。
@@ -106,11 +111,17 @@ makeSurvey(
 \value{
 `surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。
 \itemize{
-\item \code{mbCAT} 整数行列。引数mbCATの値。
-\item \code{lSLOT} 整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
-スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
-その行はみなNAに変更される。
+\item \code{mbCAT}         整数行列。引数mbCATの値。
+                           列名がついていなかった場合は、
+                           列名"Cat_(j)"が付与される。
+\item \code{lSLOT}         整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
+                           スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
+                           その行はみなNAに変更される。
+                           列名がついていなかった場合は、
+                           列名"Slot_(j)_(k)"が付与される。
 \item \code{lSLOT_REQUEST} 整数ベクトルのリスト。引数lSLOT_REQUESTの値。
+                           名前がついていなかった場合は、
+                           名前"Slot_(j)_(k)"が付与される。
 \item \code{sCAT_TYPE}     文字列。引数sCAT_TYPEの値。
 \item \code{sCAT_FILTER}   文字列。引数sCAT_FILTERの値。
 \item \code{sCAT_ORDER}    文字列。引数sCAT_ORDERの値。
@@ -124,10 +135,11 @@ makeSurvey(
 \item \code{mnASSIGNSLOT}  整数行列。引数mnASSIGNSLOTの値。
 \item \code{nSUBJECT_MAX}  整数。引数nSUBJECT_MAXの値。
 \item \code{manSubjectCat_AltSubject} 整数ベクトルを要素とする行列。行は対象者(mbCATの行),
-列はカテゴリ(mbCATの列), 要素はその対象者のスロット割付可能性を調べるときに
-参照すべき対象者番号のベクトル。
-\item \code{mnSubjectCat_AltStatus} 整数ベクトルの行列。行は対象者(mbCATの行),
-列はカテゴリ(mbCATの列), 要素は以下のいずれか:
+                                      列はカテゴリ(mbCATの列),
+                                      要素はその対象者のスロット割付可能性を調べるときに
+                                      参照すべき対象者番号のベクトル。
+\item \code{mnSubjectCat_AltStatus}   整数ベクトルの行列。行は対象者(mbCATの行),
+                                      列はカテゴリ(mbCATの列), 要素は以下のいずれか:
 \itemize{
 \item NA: 割付不能カテゴリ
 \item 0: スロット割付可能性が既知

@@ -75,13 +75,63 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。}
 
    シミュレーションの結果は次の3つのデータフレームからなる。
    \itemize{
-     \item \code{dfSubject}:
-           行はある試行のある調査参加者を表す。
-           列は\code{execTrial()}の出力に試行番号 \code{nTrial}を追加したもの。
-     \item \code{dfStat_Cat}: 行はある試行のあるカテゴリを表す。
-           列は\code{execRetrial()}の出力のうち\code{dfStat_Cat}に試行番号 \code{nTrial}を追加したもの。
-     \item \code{dfStat_Slot}: 行はある試行のあるカテゴリのあるスロットを表す。
-           列は\code{execRetrial()}の出力のうち\code{dfStat_Slot}に試行番号 \code{nTrial}を追加したもの。
+   \item \code{dfSubject}: 割付シミュレーションの結果
+   \item \code{dfStat_Cat}: 再割付シミュレーションにおけるカテゴリ割付頻度
+   \item \code{dfStat_Slot}: 再割付シミュレーションにおけるスロット割付頻度
+   }
+
+   割付シミュレーションの結果:
+   行はある割付試行のある調査参加者を表す。
+   列は以下のとおり(順不同):
+   \itemize{
+   \item \code{nTrial}:           試行番号
+   \item \code{nSubject}:         対象者番号 (調査参加順の連番)
+   \item \code{nPerson}:          母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
+   \item \code{sRowname}:         \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
+   \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
+   \item ...
+   \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
+   \item \code{nCat}:             割付スロットが属するカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
+   \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号(\code{lPOP$mbSLOT[[nCat]]}の列番号)、ないし\code{NA}
+   \item ...
+   \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号(\code{lPOP$mbSLOT[[nCat]]}の列番号)、ないし\code{NA}
+   }
+
+   再割付シミュレーションにおけるカテゴリ割付頻度:
+   行は調査対象者x割付可能カテゴリを表す。
+   列は以下のとおり(順不同):
+   \itemize{
+   \item \code{nTrial}:            試行番号
+   \item \code{nBlock}:            ブロック番号
+   \item \code{nBlockSize}:        ブロックサイズ(ブロック内の再割付試行数)
+   \item \code{nSubject}:          調査対象者番号
+   \item \code{nCat}:              カテゴリ番号
+   \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
+   \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
+   \item \code{bAssign}            割付試行で割付が起きていたか
+   \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
+   \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+   \item \code{gAssignablity_Cat}: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)
+   }
+
+   再割付シミュレーションにおけるスロット割付頻度:
+   行は調査対象者x割付可能スロットを表す。
+   割付試行において割付可能性が判明しているスロットに
+   限定されることに注意(つまり、代替対象者のスロットは含まれない)
+   列は以下のとおり(順不同):
+   \itemize{
+   \item \code{nTrial}:             試行番号
+   \item \code{nBlock}:             ブロック番号
+   \item \code{nBlockSize}:         ブロックサイズ(ブロック内の再割付試行数)
+   \item \code{nSubject}:           調査対象者番号
+   \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
+   \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
+   \item \code{nCat}:               スロットが属するカテゴリ番号
+   \item \code{nSlot}:              スロット番号
+   \item \code{bAssign}             割付試行で割付が起きていたか
+   \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
+   \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+   \item \code{gAssignablity_Slot}: スロット割付可能度(全スロットに占める割付可能スロットの割合)
    }
 }
 \description{

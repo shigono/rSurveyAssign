@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -79,7 +82,8 @@
 調査対象者のカテゴリ割付可能性。
 <code>mbCAT[i,j]</code>は以下を表す。欠損不可。</p><ul><li><p>1: 調査対象者iはカテゴリjについて割付可能。</p></li>
 <li><p>0: 調査対象者iはカテゴリjについて割付不能。</p></li>
-</ul></dd>
+</ul><p>列に名前を付けるとカテゴリ名とみなされる。
+名前を付けるならばすべての列に重複なく名前をつけること。</p></dd>
 
 
 <dt>lSLOT</dt>
@@ -87,14 +91,17 @@
 調査対象者のスロット割付可能性。
 <code>lSLOT[[j]][i,k]</code>は以下を表す。</p><ul><li><p>1: 調査対象者iはカテゴリjのスロットkについて割付可能。</p></li>
 <li><p>0: 調査対象者iはカテゴリjのスロットkについて割付不能。</p></li>
-</ul><p>欠損についてはDetailsを参照。</p></dd>
+</ul><p>欠損についてはDetailsを参照。
+列に名前を付けるとスロット名とみなされる。
+名前を付けるならばすべての列に重複なく名前をつけること。</p></dd>
 
 
 <dt>lSLOT_REQUEST</dt>
 <dd><p>整数ベクトルのリスト。
 各スロットに割り付ける対象者数の下限。
 要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-欠損なし。</p></dd>
+欠損なし。
+要素の列名はlSLOTの要素の列名と一致していること。</p></dd>
 
 
 <dt>mnASSIGNCAT</dt>
@@ -182,11 +189,17 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>`surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。</p><ul><li><p><code>mbCAT</code> 整数行列。引数mbCATの値。</p></li>
-<li><p><code>lSLOT</code> 整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
-スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
-その行はみなNAに変更される。</p></li>
-<li><p><code>lSLOT_REQUEST</code> 整数ベクトルのリスト。引数lSLOT_REQUESTの値。</p></li>
+<p>`surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。</p><ul><li><p><code>mbCAT</code>         整数行列。引数mbCATの値。
+                           列名がついていなかった場合は、
+                           列名"Cat_(j)"が付与される。</p></li>
+<li><p><code>lSLOT</code>         整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
+                           スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
+                           その行はみなNAに変更される。
+                           列名がついていなかった場合は、
+                           列名"Slot_(j)_(k)"が付与される。</p></li>
+<li><p><code>lSLOT_REQUEST</code> 整数ベクトルのリスト。引数lSLOT_REQUESTの値。
+                           名前がついていなかった場合は、
+                           名前"Slot_(j)_(k)"が付与される。</p></li>
 <li><p><code>sCAT_TYPE</code>     文字列。引数sCAT_TYPEの値。</p></li>
 <li><p><code>sCAT_FILTER</code>   文字列。引数sCAT_FILTERの値。</p></li>
 <li><p><code>sCAT_ORDER</code>    文字列。引数sCAT_ORDERの値。</p></li>
@@ -200,10 +213,11 @@
 <li><p><code>mnASSIGNSLOT</code>  整数行列。引数mnASSIGNSLOTの値。</p></li>
 <li><p><code>nSUBJECT_MAX</code>  整数。引数nSUBJECT_MAXの値。</p></li>
 <li><p><code>manSubjectCat_AltSubject</code> 整数ベクトルを要素とする行列。行は対象者(mbCATの行),
-列はカテゴリ(mbCATの列), 要素はその対象者のスロット割付可能性を調べるときに
-参照すべき対象者番号のベクトル。</p></li>
-<li><p><code>mnSubjectCat_AltStatus</code> 整数ベクトルの行列。行は対象者(mbCATの行),
-列はカテゴリ(mbCATの列), 要素は以下のいずれか:</p><ul><li><p>NA: 割付不能カテゴリ</p></li>
+                                      列はカテゴリ(mbCATの列),
+                                      要素はその対象者のスロット割付可能性を調べるときに
+                                      参照すべき対象者番号のベクトル。</p></li>
+<li><p><code>mnSubjectCat_AltStatus</code>   整数ベクトルの行列。行は対象者(mbCATの行),
+                                      列はカテゴリ(mbCATの列), 要素は以下のいずれか:</p><ul><li><p>NA: 割付不能カテゴリ</p></li>
 <li><p>0: スロット割付可能性が既知</p></li>
 <li><p>1: スロット割付可能性が未知であるためカテゴリ割付可能性が同じ対象者で代替</p></li>
 <li><p>2: スロット割付可能性が未知であるため割付カテゴリ数が同じ対象者で代替</p></li>
@@ -250,7 +264,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

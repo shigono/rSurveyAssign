@@ -39,7 +39,7 @@ sub_getcat <- function(
   #'    カテゴリ割付の際の順序付け条件。
   #' @param sCAT_EXCLUDE 文字列。
   #'    カテゴリ割付の際の除外条件。
-  #' @param DEBUG as logical.
+  #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
   #' @return an integer vector.
@@ -49,6 +49,8 @@ sub_getcat <- function(
   #'
   # notes:
   #   getCandidate()はコールしない。速度を優先したいから
+
+  if (bDEBUG) cat("[sub_getcat] start.\n")
 
   ## 引数チェック - - - - - - - - - -
   if (bDEBUG){
@@ -84,9 +86,6 @@ sub_getcat <- function(
     stopifnot(sCAT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
     stopifnot(sCAT_EXCLUDE %in% c("none", "allclosed"))
   }
-
-  ## ここからメイン - - - - - - - - -
-  if (bDEBUG) cat("[sub_getcat] start.\n")
 
   # 割付可能カテゴリがあるかどうかで分岐する。時間を節約するため
   if (all(abCatNo_Use == 0)){
@@ -200,11 +199,13 @@ sub_checkcat <- function(
   #'    カテゴリ割付の際の順序付け条件。
   #' @param sCAT_EXCLUDE 文字列。
   #'    カテゴリ割付の際の除外条件。
-  #' @param DEBUG as logical.
+  #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
   #' @return a list of integer vectors.
   #'    要素は割付カテゴリのある組み合わせ。ソート済み。
+
+  if (bDEBUG) cat("[sub_checkcat] start.\n")
 
   ## 引数チェック - - - - - - - - - -
   if (bDEBUG){
@@ -284,6 +285,7 @@ sub_checkcat <- function(
     lOut <- lOut[ sapply(lOut, function(x) sum(abCatNo_Open[x])) > 0 ]
   }
 
+  if (bDEBUG) cat("[sub_checkcat] end.\n")
   return(lOut)
 }
 sub_getslot <- function(
@@ -323,7 +325,7 @@ sub_getslot <- function(
   #'    スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。
   #' @param sSLOT_EXCLUDE 文字列。
   #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
-  #' @param DEBUG as logical.
+  #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
   #' @return an integer vector.
@@ -333,6 +335,8 @@ sub_getslot <- function(
   #
   # notes:
   #   getCandidate()はコールしない。速度を優先したいから
+
+  if (bDEBUG) cat("[sub_getslot] start.\n")
 
   ## 引数チェック - - - - - - - - - -
   if (bDEBUG){
@@ -369,8 +373,6 @@ sub_getslot <- function(
   }
 
   ## ここからメイン - - - - - - - - -
-
-  if (bDEBUG) cat("[sub_getslot] start.\n")
 
   # 割付可能スロットとオープンスロットを表示
   if (bDEBUG) cat("[sub_getslot] Hit slot:",  paste0(seq_along(abSlotNo_Hit)[abSlotNo_Hit == 1], collapse=","), "\n")
@@ -459,6 +461,7 @@ sub_getslot <- function(
   }
 
   if (bDEBUG) cat("[sub_getslot] -> out:", paste0(out, collapse=","), "\n")
+
   if (bDEBUG) cat("[sub_getslot] end.\n")
   return(out)
 }
@@ -500,7 +503,7 @@ sub_checkslot <- function(
   #'    スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。
   #' @param sSLOT_EXCLUDE 文字列。
   #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
-  #' @param DEBUG as logical.
+  #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
   #' @return a list of integer vectors.
@@ -554,8 +557,6 @@ sub_checkslot <- function(
   }
 
   ## ここからメイン - - - - - - - - -
-
-  # 候補の決定
   # 候補の決定
   if (sSLOT_TYPE == "adaptive"){
     anCandSlot <- switch(
@@ -627,7 +628,7 @@ execAssign <- function(
   sSLOT_ORDER,
   sSLOT_EXCLUDE,
   bCHECKCOMPLETE = TRUE,
-  bVERBOSE       = FALSE
+  sVERBOSE = c("simple", "detail", "none")
 ){
   #' Internal: Assign participants into 'categories' and 'slots'
   #'
@@ -698,8 +699,8 @@ execAssign <- function(
   #'    \code{anSEQ_PERSON}を使い切っても
   #'    全スロットがクローズしなかったらエラーを発生させる
   #'
-  #' @param bVERBOSE a logical.
-  #'    詳細を画面表示する
+  #' @param sVERBOSE a string.
+  #'    画面表示レベル。
   #'
   #' @return an integer matrix.
   #'    行は全スロットがクローズするまでの対象者。0行かもしれないことに注意。
@@ -708,13 +709,13 @@ execAssign <- function(
   #'    カテゴリ番号とは\code{mbPERSON_CAT_USE}における列番号を指し、
   #'    スロット番号とは\code{lPERSON_SLOT_HIT}の当該カテゴリにおける列番号を指す。
   #'    \itemize{
-  #'    \item \code{SEQ}: 調査参加順(連番)
-  #'    \item \code{nPerson}: 対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
-  #'    \item \code{nCat_1}: 割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
+  #'    \item \code{SEQ}: 1             調査参加順(連番)
+  #'    \item \code{nPerson}:           対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
+  #'    \item \code{nCat_1}:            割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
-  #'    \item \code{nCat_}(nCAT_MAX): 割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
-  #'    \item \code{nCat}: 割付スロットが属するカテゴリ番号、ないし\code{NA}
-  #'    \item \code{nSlot_1}: 割付スロット\code{1}のスロット番号、ないし\code{NA}
+  #'    \item \code{nCat_}(nCAT_MAX):   割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nCat}:              割付スロットが属するカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nSlot_1}:           割付スロット\code{1}のスロット番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{nSLOT_MAX}のスロット番号、ないし\code{NA}
   #'    }
@@ -723,13 +724,18 @@ execAssign <- function(
   #   - この関数は実行速度が大事！
   #   - 呼び出し元が並列処理していることを想定すること
   #   - 外のサブルーチンを呼ばないこと (呼んでもいいけど、並列処理の際にロードが必要になる)
+  #   - DEBUGモードを発動できる
+  #   - sVERBOSEに関わらず、個人レベルのメッセージは出さない。DEBUGモードでのみ出す
 
   # - - - -
+  # DEBUGモードの発動有無
   bDEBUG = FALSE
   # - - - -
 
-  if (bVERBOSE){
-    cat("[execAssign] Start!\n")
+  ## あいさつのためsVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[execAssign] start.\n")
   }
 
   ## 引数チェック - - - - - - -
@@ -801,10 +807,6 @@ execAssign <- function(
     ## bCHECKCOMPLETE
     ## 値は期待通り
     stopifnot(bCHECKCOMPLETE %in% c(TRUE, FALSE))
-
-    ## bVERBOSE
-    ## 値は期待通り
-    stopifnot(bVERBOSE %in% c(TRUE, FALSE))
   }
 
   ## ここからメイン - - - - - - - -
@@ -857,7 +859,7 @@ execAssign <- function(
 
       # 行番号
       nPerson <- anSEQ_PERSON[i]
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[execAssign]", i, ": nPerson=", nPerson, " - - - - \n")
       }
 
@@ -866,8 +868,6 @@ execAssign <- function(
       # trap: 欠損はない
       if (bDEBUG){
         stopifnot(!is.na(abCatNo_Use))
-      }
-      if (bVERBOSE){
         cat("[execAssign] assignability to categories:", abCatNo_Use, "\n")
       }
 
@@ -884,7 +884,7 @@ execAssign <- function(
         sCAT_EXCLUDE,
         bDEBUG = bDEBUG
       )
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[execAssign] assigned categories:", anAssignedCat, "\n")
       }
 
@@ -895,21 +895,20 @@ execAssign <- function(
       nParentCat <- NA
       anAssignedSlot <- rep(NA, nSLOT_MAX)
       for (nAssignedCat in anAssignedCat_Compress){
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[execAssign] searching slots of assigned category", nAssignedCat, "... \n")
           cat("[execAssign] alternate person:", mnSEQ_CAT_PERSON[i, nAssignedCat], "\n")
         }
 
         # スロットの割付可能性をとってくる
         abSlotNo_Hit <- lPERSON_SLOT_HIT[[nAssignedCat]][mnSEQ_CAT_PERSON[i, nAssignedCat], ]
-
         if (bDEBUG){
           ## trap: 欠損はない
           stopifnot(!is.na(abSlotNo_Hit))
         }
 
         # さすがに長すぎる...
-        # if (bVERBOSE){
+        # if (bDEBUG){
         #   cat("[execAssign] abSlotNo_Hit:", abSlotNo_Hit, "\n")
         # }
 
@@ -933,14 +932,14 @@ execAssign <- function(
           break
         }
       }
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[execAssign] parent category of assigned slots:", nParentCat, "\n")
         cat("[execAssign] assigned slots:", anAssignedSlot, "\n")
       }
 
       # 割付履歴に書き込む
       anOut <- c(i, nPerson, anAssignedCat, nParentCat, anAssignedSlot)
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[execAssign] output:", anOut, "\n")
       }
       mnOut[i, ] <- anOut
@@ -957,7 +956,7 @@ execAssign <- function(
         anSlotNo_Count[anAssignedSlot_Compressed] <- anSlotNo_Count[anAssignedSlot_Compressed] + 1
         # 戻す
         anLoc_Count[anLoc_CatNo == nParentCat] <- anSlotNo_Count
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[execAssign] # total number of acquired votes:", sum(anLoc_Count), "\n")
         }
 
@@ -965,19 +964,19 @@ execAssign <- function(
         abLoc_Open[anLoc_CatNo == nParentCat] <- as.integer(
           anLoc_Count[anLoc_CatNo == nParentCat] < anLoc_Request[anLoc_CatNo == nParentCat]
         )
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[execAssign] # total number of opened slots:", sum(abLoc_Open), "\n")
         }
 
         # 各カテゴリのオープンスロット数
         anCatNo_Count[nParentCat] <- sum(abLoc_Open[anLoc_CatNo == nParentCat])
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[execAssign] # number of opened slots of each category:", anCatNo_Count, "\n")
         }
 
         # 各カテゴリのオープン判定
         abCatNo_Open <- as.integer(anCatNo_Count > 0)
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[execAssign] # number of opened categories:", anCatNo_Count, "\n")
         }
       }
@@ -997,14 +996,14 @@ execAssign <- function(
       stop("[execAssign] Error: A survey was terminated with insufficient sample size.")
   }
 
-  if (bVERBOSE){
+  if (sVERBOSE == "detail"){
     cat("[execAssign] End\n")
   }
   return(out)
 }
 checkSurvey <- function(
   lSURVEY,
-  bVERBOSE = FALSE
+  sVERBOSE = c("simple", "detail", "none")
 ){
   #' check assigned categories and slots in survey data
   #'
@@ -1013,10 +1012,10 @@ checkSurvey <- function(
   #'
   #' @export
   #'
-  #' @param lSURVEY an object of `surveydata` class.。
-  #'                調査データ。\code{\link{makeSurvey}}で生成する。
-  #' @param bVERBOSE a logical.
-  #'                詳細を画面表示するか。
+  #' @param lSURVEY  an object of `surveydata` class.。
+  #'                 調査データ。\code{\link{makeSurvey}}で生成する。
+  #' @param sVERBOSE a string.
+  #'                 画面表示レベル。
   #'
   #' @return a data frame.
   #'    割付結果とその検証。
@@ -1036,26 +1035,27 @@ checkSurvey <- function(
   #'    }
   #'
   # note:
-  #   ウェイト算出時に使う関数なので、
-  #   本来 weighting.R に置くべきだが、コードが execAssign()と似ている
-  #   ので、assign.Rに置いている
+  #   - ウェイト算出時に使う関数なので、
+  #     本来 weighting.R に置くべきだが、コードが execAssign()と似ている
+  #     ので、assign.Rに置いている
+  #   - DEBUGモードを発動できる
+  #   - sVERBOSEに関わらず、個人レベルのメッセージは出さない。DEBUGモードで出す
 
   # - - - -
+  ## デバッグモードの発動有無
   bDEBUG <- FALSE
   # - - - -
 
-  if (bVERBOSE){
-    cat("[checkSurvey] Start!\n")
+  ## あいさつのためsVERBOSEのみ先に確定する
+  sVERBOSE <- match.arg(sVERBOSE)
+  if (sVERBOSE == "detail"){
+    cat("[checkSurvey] start.\n")
   }
 
   ## 引数チェック - - - - -
   ## lSURVEY
   ## クラスは期待通り
   stopifnot(class(lSURVEY) == "surveydata")
-
-  ## bVERBOSE
-  ## 値は期待通り
-  stopifnot(bVERBOSE %in% c(TRUE, FALSE))
 
   ## ここからメイン - - - - - - - -
 
@@ -1098,15 +1098,7 @@ checkSurvey <- function(
   # ひとりづつ抽出し、割付を行う
   for (nPerson in seq_len(nrow(lSURVEY$mbCAT))){
 
-    # if (nPerson == 442){
-    #   bDEBUG <- TRUE
-    #   bVERBOSE <- TRUE
-    # } else {
-    #   bDEBUG <- FALSE
-    #   bVERBOSE <- FALSE
-    # }
-
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] nPerson:", nPerson, " - - - - \n")
     }
 
@@ -1114,14 +1106,14 @@ checkSurvey <- function(
     asCurrentMsg <- c()
 
     ### Phase 1. カテゴリの割り付けのチェック - - - - - - - - - - - - - -
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] Phase 1.\n")
     }
 
     # その人のカテゴリ割付可能性をとってくる
     abCatNo_Use <- lSURVEY$mbCAT[nPerson, ]
 
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] abCatNo_Use:", abCatNo_Use, "\n")
       cat("[checkSurvey] abCatNo_Open:", abCatNo_Open, "\n")
       cat("[checkSurvey] anCatNo_Count:", anCatNo_Count, "\n")
@@ -1161,7 +1153,7 @@ checkSurvey <- function(
       sPossibleCat <- paste0(sPossibleCat, " etc.")
     }
 
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] lPossibleCat:", sPossibleCat, "\n")
     }
 
@@ -1169,7 +1161,7 @@ checkSurvey <- function(
     anAssignCat <- lSURVEY$mnASSIGNCAT[nPerson,]
     anAssignCat <- anAssignCat[!is.na(anAssignCat)]
     anAssignCat <- sort(anAssignCat)
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] anAssignCat:", anAssignCat, "\n")
     }
 
@@ -1181,14 +1173,14 @@ checkSurvey <- function(
         "Assigned to unexpected categories. Possible categories are:",
         sPossibleCat
       )
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[checkSurvey] Error:", sNewMsg, "\n")
       }
       asCurrentMsg <- c(asCurrentMsg, sNewMsg)
     }
 
     ### Phase 2. 親カテゴリの割り付けのチェック - - - - - - - - - - - - - -
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] Phase 2.\n")
     }
 
@@ -1222,7 +1214,7 @@ checkSurvey <- function(
 
     # 親カテゴリの候補
     anPossibleParent <- anAssignCat[sapply(lPossibleCatSlot, length) > 0]
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] anPossibleParent:", anPossibleParent, "\n")
     }
 
@@ -1230,7 +1222,7 @@ checkSurvey <- function(
     # 親カテゴリが割付カテゴリのなかに含まれていることはmakeSurvey()で確認済
     nParentCat <- lSURVEY$anPARENTCAT[nPerson]
     nParentCat <- nParentCat[!is.na(nParentCat)]
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] nParentCat:", nParentCat, "\n")
     }
 
@@ -1246,14 +1238,14 @@ checkSurvey <- function(
         "Unexpected parent category:", nParentCat, ". Possible categories are:",
         paste0(anPossibleParent, collapse = ",")
       )
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[checkSurvey] Error:", sNewMsg, "\n")
       }
       asCurrentMsg <- c(asCurrentMsg, sNewMsg)
     }
 
     ### Phase 3. スロットの割り付けのチェック - - - - - - - - - - - - - -
-    if (bVERBOSE){
+    if (bDEBUG){
       cat("[checkSurvey] Phase 3.\n")
     }
 
@@ -1300,7 +1292,7 @@ checkSurvey <- function(
         )
         sPossibleSlot <- paste0(sPossibleSlot, " etc.")
       }
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[checkSurvey] anPossibleSlot:", sPossibleSlot, "\n")
       }
 
@@ -1308,7 +1300,7 @@ checkSurvey <- function(
       anAssignSlot <- lSURVEY$mnASSIGNSLOT[nPerson,]
       anAssignSlot <- anAssignSlot[!is.na(anAssignSlot)]
       anAssignSlot <- sort(anAssignSlot)
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[checkSurvey] anAssignSlot:", anAssignSlot, "\n")
       }
 
@@ -1321,14 +1313,14 @@ checkSurvey <- function(
           "Assigned to unexpected slots in category", nParentCat, ". Possible slots are:",
           sPossibleSlot
         )
-        if (bVERBOSE){
+        if (bDEBUG){
           cat("[checkSurvey] Error:", sNewMsg, "\n")
         }
         asCurrentMsg <- c(asCurrentMsg, sNewMsg)
       }
 
       ### Phase 4. この対象者についての終了処理 - - - - - - - - - - - - - -
-      if (bVERBOSE){
+      if (bDEBUG){
         cat("[checkSurvey] Phase 4.\n")
       }
       # スロットの獲得票数を加算
@@ -1352,8 +1344,6 @@ checkSurvey <- function(
     mnPersonCatNo_Count[nPerson,] <- anCatNo_Count
     mnPersonLoc_Count[nPerson,] <- anLoc_Count
     asCheckMsg[nPerson] <- paste0(asCurrentMsg, collapse=";")
-
-    ### if (nPerson == 442) stop()
 
   }
 
@@ -1400,8 +1390,9 @@ checkSurvey <- function(
     sCheckMsg = asCheckMsg
   )
   cat("[checkSurvey]", sum(out$bValid != 1), "errors are found.\n")
-  if (bVERBOSE){
-    cat("[checkSurvey] End\n")
+
+  if (sVERBOSE == "detail"){
+    cat("[checkSurvey] end.\n")
   }
   return(out)
 }

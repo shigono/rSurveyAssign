@@ -11,7 +11,7 @@ execRetrials(
   nNUMBLOCK,
   bPARALLEL,
   sLOGFILE,
-  sVERBOSE
+  sVERBOSE = c("simple", "detail", "none")
 )
 }
 \arguments{
@@ -43,26 +43,30 @@ execRetrials(
    \item \code{dfStat_Slot}: スロット割付頻度
    }
 
-   カテゴリ割付頻度: 行は調査対象者x割付カテゴリを表す。
+   カテゴリ割付頻度: 行は調査対象者x割付可能カテゴリを表す。
    列は以下のとおり(順不同):
    \itemize{
-   \item \code{nBlock}:           ブロック番号
-   \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
-   \item \code{nSubject}:         調査対象者番号
-   \item \code{nCat}:             カテゴリ番号
+   \item \code{nBlock}:            ブロック番号
+   \item \code{nBlockSize}:        ブロックサイズ(ブロック内の再割付試行数)
+   \item \code{nSubject}:          調査対象者番号
+   \item \code{nCat}:              カテゴリ番号
+   \item \code{bAssign}            割付試行で割付が起きていたか
    \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
    }
 
-   スロット割付頻度: 行は調査対象者x割付スロットを表す。
+   スロット割付頻度: 行は調査対象者x割付可能スロットを表す。
+   割付試行において割付可能性が判明しているスロットに
+   限定されることに注意(つまり、代替対象者のスロットは含まれない)
    列は以下のとおり(順不同):
    \itemize{
-   \item \code{nBlock}:           ブロック番号
-   \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
-   \item \code{nSubject}:         調査対象者番号
-   \item \code{nCat}:             スロットが属するカテゴリ番号
-   \item \code{nSlot}:            スロット番号
-   \item \code{nCount_Subject}:   ブロック内の再割付試行で調査対象者が出現した回数
+   \item \code{nBlock}:             ブロック番号
+   \item \code{nBlockSize}:         ブロックサイズ(ブロック内の再割付試行数)
+   \item \code{nSubject}:           調査対象者番号
+   \item \code{nCat}:               スロットが属するカテゴリ番号
+   \item \code{nSlot}:              スロット番号
+   \item \code{bAssign}             割付試行で割付が起きていたか
+   \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
    \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
    }
 }

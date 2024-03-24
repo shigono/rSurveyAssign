@@ -16,16 +16,19 @@ makeSetting(
   sSLOT_FILTER = c("all", "open"),
   sSLOT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
   sSLOT_EXCLUDE = c("none", "allclosed"),
-  nSUBJECT_MAX = 0
+  nSUBJECT_MAX = 0,
+  sVERBOSE = c("simple", "none", "detail")
 )
 }
 \arguments{
-\item{lSLOT_REQUEST}{a list of integer vectors.
+\item{lSLOT_REQUEST}{a list of (named) integer vectors.
 各スロットに割り付ける対象者数の目標。
 要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-欠損なし。}
+欠損不可。
+要素に名前がついている場合、スロット名とみなされるので、
+名前を付けるならばすべての要素に重複なく名前をつけること。}
 
-\item{nCAT_MAX}{an integer.
+\item{nCAT_MAX}{a integer.
 ある対象者に割り付けるカテゴリ数の上限。}
 
 \item{nSLOT_MAX}{an integer.
@@ -67,10 +70,15 @@ makeSetting(
    対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
    対象者数が母集団サイズの10倍を超えても
    割付対象者数が目標に到達しなかったときはエラーとなる。}
+
+\item{sVERBOSE}{a string.
+画面表示レベル。}
 }
 \value{
 an object of `assignsetting` class.
         その実体は、この関数の引数を要素として持つリスト。
+        ただし、引数lSLOT_REQUESTの要素に名前がついていない場合は、
+        名前"Slot_(j)_(k)"が付与される。
 }
 \description{
 割付のセッティングを作成する。

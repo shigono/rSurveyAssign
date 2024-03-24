@@ -4,7 +4,12 @@
 \alias{makeRetrial}
 \title{Internal: run execAssign() once}
 \usage{
-makeRetrial(lSURVEY, bREDRAW, nMAXSIZE, sVERBOSE)
+makeRetrial(
+  lSURVEY,
+  bREDRAW,
+  nMAXSIZE,
+  sVERBOSE = c("simple", "detail", "none")
+)
 }
 \arguments{
 \item{lSURVEY}{a `surveydata`-class object.

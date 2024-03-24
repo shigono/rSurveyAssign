@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -69,7 +72,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-22</h4>
+            <h4 data-toc-skip class="date">2024-03-25</h4>
       
       
       <div class="d-none name"><code>vignette_size.Rmd</code></div>
@@ -93,13 +96,13 @@ in web surveys”</a>を参照して下さい。</p>
 <p><code>rSurveyAssign</code>は、母集団データをつくる機能は提供していません。
 過去の調査結果や既存の知識に基づき、なんとかして作ってください。</p>
 <p>以下では、母集団メンバーを<span class="math inline">\(i
-(=1,\ldots,I)\)</span>, カテゴリを<span class="math inline">\(j(=1,\ldots,J)\)</span>, カテゴリ<span class="math inline">\(j\)</span>のスロットを<span class="math inline">\(k (=1,\ldots,K[j])\)</span>と表記します。</p>
+(=1,\ldots,I)\)</span>, カテゴリを<span class="math inline">\(j(=1,\ldots,J)\)</span>, カテゴリ<span class="math inline">\(j\)</span>のスロットを<span class="math inline">\(k (=1,\ldots,K_j)\)</span>と表記します。</p>
 <p>データのサイズ(<span class="math inline">\(I, J,
-K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\(I\)</span>
+K_1,...,K_J\)</span>)に制限はありません。母集団のメンバー数 <span class="math inline">\(I\)</span>
 はできるだけ大きくしたほうがよいでしょう。</p>
 <p>母集団データの例として、<code>popdata</code>が用意されています。
 <code>popdata</code>は、サイズ10000の有限集団のデータを持つデータフレームで、
-カテゴリ数は3, スロット数は 各カテゴリについて10です(すなわち、<span class="math inline">\(I=10000, J=3, K[1]=K[2]=K[3]=10\)</span>)。</p>
+カテゴリ数は3, スロット数は 各カテゴリについて10です(すなわち、<span class="math inline">\(I=10000, J=3, K_1=K_2=K_3=10\)</span>)。</p>
 <p>内容をみてみましょう。</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shigono.github.io/rSurveyAssign/">rSurveyAssign</a></span><span class="op">)</span></span>
@@ -161,7 +164,7 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 <li>
 <span class="math inline">\(I\)</span>行<span class="math inline">\(J\)</span>列の整数行列。</li>
 <li>
-<span class="math inline">\(i\)</span>行<span class="math inline">\(j\)</span>列の値は、「母集団メンバー<span class="math inline">\(i\)</span>にとってカテゴリ<span class="math inline">\(j\)</span>は割付可能か」 を表し、<span class="math inline">\(0\)</span>は割付不能, <span class="math inline">\(1\)</span>は割付不能を表します。</li>
+<span class="math inline">\(i\)</span>行<span class="math inline">\(j\)</span>列の値は、「母集団メンバー<span class="math inline">\(i\)</span>にとってカテゴリ<span class="math inline">\(j\)</span>は割付可能か」 を表し、<span class="math inline">\(0\)</span>は割付不能, <span class="math inline">\(1\)</span>は割付可能を表します。</li>
 <li>欠損は許容されません。</li>
 </ul>
 </li>
@@ -169,8 +172,8 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 <code>lSLOT</code>: スロット割付可能性。
 <ul>
 <li>
-<span class="math inline">\(J\)</span>個の要素からなるリスト。<span class="math inline">\(j\)</span>番目の要素は、<span class="math inline">\(I\)</span>行<span class="math inline">\(K[j]\)</span>列の整数行列。</li>
-<li>要素<span class="math inline">\(j\)</span>の行列の<span class="math inline">\(i\)</span>行<span class="math inline">\(k\)</span>列の値は、「母集団メンバー<span class="math inline">\(i\)</span>にとって カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>は割付可能か」を表し、<span class="math inline">\(0\)</span>は割付不能, <span class="math inline">\(1\)</span>は割付不能を表します。</li>
+<span class="math inline">\(J\)</span>個の要素からなるリスト。<span class="math inline">\(j\)</span>番目の要素は、<span class="math inline">\(I\)</span>行<span class="math inline">\(K_j\)</span>列の整数行列。</li>
+<li>要素<span class="math inline">\(j\)</span>の行列の<span class="math inline">\(i\)</span>行<span class="math inline">\(k\)</span>列の値は、「母集団メンバー<span class="math inline">\(i\)</span>にとって カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>は割付可能か」を表し、<span class="math inline">\(0\)</span>は割付不能, <span class="math inline">\(1\)</span>は割付可能を表します。</li>
 <li>
 <code>mbCAT[i,j] == 1</code>のとき、<code>lSLOT[[j]][i,]}</code>の欠損は許容されません。
 すなわち、割付可能カテゴリに属するスロットの割付可能性は指定する必要があります。</li>
@@ -188,6 +191,7 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">popdata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_3_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="va">lPop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makePop.html">makePop</a></span><span class="op">(</span>mbCAT <span class="op">=</span> <span class="va">mbCat</span>, lSLOT <span class="op">=</span> <span class="va">lSlot</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [makePop] assign colnames to lSLOT ...</span></span>
 <span><span class="co">#&gt; [makePop] # of categories: 3 </span></span>
 <span><span class="co">#&gt; [makePop] # of slots: 10,10,10 </span></span>
 <span><span class="co">#&gt; [makePop] # of members: 10000 </span></span>
@@ -215,9 +219,10 @@ K[1],...,K[J]\)</span>)に制限はありません。<span class="math inline">\
 <code>lSLOT_REQUEST</code>: 各スロットの目標対象者数。
 <ul>
 <li>
-<span class="math inline">\(J\)</span>個の要素を持つリスト。<span class="math inline">\(j\)</span>番目の要素は長さ<span class="math inline">\(K[j]\)</span>の整数ベクトル。</li>
+<span class="math inline">\(J\)</span>個の要素を持つリスト。<span class="math inline">\(j\)</span>番目の要素は長さ<span class="math inline">\(K_j\)</span>の整数ベクトル。</li>
 <li>
-<span class="math inline">\(j\)</span>番目の要素であるベクトルの<span class="math inline">\(k\)</span>番目の要素は、カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>に割り付ける対象者数の下限を表します。欠損は許容されません。</li>
+<span class="math inline">\(j\)</span>番目の要素であるベクトルの<span class="math inline">\(k\)</span>番目の要素は、カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>に割り付ける対象者数の下限を表します。
+欠損は許容されません。</li>
 </ul>
 </li>
 <li>
@@ -262,7 +267,8 @@ subjects”</a>を参照して下さい。</p>
 <span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'all'</span>,</span>
 <span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'shortnum'</span>,</span>
 <span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="割付シミュレーション">3. 割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
@@ -479,6 +485,7 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'random'</span>,</span>
 <span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span> <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="fu"><a href="../reference/simSize.html">simSize</a></span> <span class="op">(</span></span>
 <span>  lPOP           <span class="op">=</span> <span class="va">lPop</span>,        </span>
@@ -488,23 +495,23 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span>  bAPPEND        <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [execTrials] start trials (serial) ...</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 2 ; extract: 1303 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 3 ; extract: 1201 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 2 ; extract: 1303 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 3 ; extract: 1201 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1380 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 1234 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 1234 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 8 ; extract: 1371 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 9 ; extract: 1041 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1385 ; 0.05 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1385 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.04 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 979 ; 0.04 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 14 ; extract: 1495 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 15 ; extract: 1128 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 16 ; extract: 1072 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.05 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 18 ; extract: 1157 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1158 ; 0.03 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 991 ; 0.03 sec.</span></span>
@@ -552,7 +559,7 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Shigeru ONO.</p>
+<p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

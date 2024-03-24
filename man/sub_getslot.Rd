@@ -45,7 +45,7 @@ sub_getslot(
 \item{sSLOT_EXCLUDE}{文字列。
 スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
 
-\item{DEBUG}{as logical.
+\item{bDEBUG}{as logical.
 デバッグモード}
 }
 \value{

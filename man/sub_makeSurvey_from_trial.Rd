@@ -22,6 +22,11 @@ sub_makeSurvey_from_trial(
 \item{dfSubject}{データフレーム。
 execTrials()の返し値。}
 
+\item{bUSE_INFO_UNASSIGNED_CAT}{論理値。
+非割付カテゴリに属するスロットへの割付可能性を利用するか。
+TRUEの場合、すべての割付可能カテゴリに属するスロット割付可能性を格納。
+FALSEの場合、割付カテゴリに属するスロット割付可能性のみを格納。}
+
 \item{sVERBOSE}{文字列。
 画面表示レベル。}
 }

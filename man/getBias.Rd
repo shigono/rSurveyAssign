@@ -6,7 +6,6 @@
 \usage{
 getBias(
   sDBPATH,
-  sDBTABLE_SUBJECT = "subject",
   sDBTABLE_CAT = "weight_cat",
   sDBTABLE_SLOT = "weight_slot",
   sTYPE = c("cat", "slot")
@@ -15,9 +14,6 @@ getBias(
 \arguments{
 \item{sDBPATH}{文字列。
 シミュレーションの結果を保存したSQLite DBのフルパス}
-
-\item{sDBTABLE_SUBJECT}{文字列。
-シミュレーションの結果得られたカテゴリ割付頻度を保存したSQLite DBのテーブル名}
 
 \item{sDBTABLE_CAT}{文字列。
 シミュレーションの結果得られたカテゴリ割付頻度を保存したSQLite DBのテーブル名}
@@ -28,34 +24,44 @@ getBias(
 \item{sTYPE}{文字列。
 取得する結果のタイプ。
 \itemize{
-\item \code{"cat"}: 試行xカテゴリ別のバイアス
+\item \code{"cat"}:  試行xカテゴリ別のバイアス
 \item \code{"slot"}: 試行xスロット別のバイアス
 }}
 }
 \value{
 データフレーム。
 
-   \code{sTYPE == "cat"}のとき、行はある試行におけるあるカテゴリを表す。
+   \code{sTYPE == "cat"}のとき、行はある割付試行におけるあるカテゴリを表す。
    列は以下のとおり:
    \itemize{
    \item \code{nTrial}: 試行番号
    \item \code{nCat}: カテゴリ番号
-   \item \code{nFreq_Cat}: 割り付けられた対象者の数
-   \item \code{gVarWeight_Cat}: 割り付けられた対象者に与えられたウェイトの分散
-   \item \code{gDeff_Cat}: 割り付けられた対象者の回答のデザイン効果
-   \item \code{gESS_Cat}: 割り付けられた対象者の回答の実質標本サイズ
+   \item \code{nNumAssignable}: 割付可能な対象者数
+   \item \code{nNumAssign}:     割付された対象者数
+   \item \code{gCVHatP}: 割付確率の推定値の変動係数
+   \item \code{gHatCVP}: 割付確率の変動係数の推定値
+   \item \code{gHatDeff}: デザイン効果の推定値
+   \item \code{gHatESS}: 実質標本サイズの推定値
+   \item \code{gCovHatQR}: スケーリングした割り付け確率の推定値と割付可能レシオ(全カテゴリに占める割付可能カテゴリの割合)との共分散の推定値
+   \item \code{gBarR_P}: 割付可能対象者における割付可能レシオの平均
+   \item \code{gBarR_S}: 割り付けられた対象者における割付可能レシオの平均
    }
 
-   \code{sTYPE == "slot"}のとき、行はある試行におけるあるカテゴリを表す。
+   \code{sTYPE == "slot"}のとき、行はある試行におけるあるカテゴリのあるスロットを表す。
    列は以下のとおり:
    \itemize{
    \item \code{nTrial}: 試行番号
    \item \code{nCat}: カテゴリ番号
    \item \code{nSlot}: スロット番号
-   \item \code{nFreq_Slot}: 割り付けられた調査対象者の数
-   \item \code{gVarWeight_Slot}: 割り付けられた対象者に与えられたウェイトの分散
-   \item \code{gDeff_Slot}: 割り付けられた対象者の回答のデザイン効果
-   \item \code{gESS_Slot}: 割り付けられた対象者の回答の実質標本サイズ
+   \item \code{nNumAssignable}: 割付可能な対象者数
+   \item \code{nNumAssign}:     割付された対象者数
+   \item \code{gCVHatP}: 割付確率の推定値の変動係数
+   \item \code{gHatCVP}: 割付確率の変動係数の推定値
+   \item \code{gHatDeff}: デザイン効果の推定値
+   \item \code{gHatESS}: 実質標本サイズの推定値
+   \item \code{gCovHatQR}: スケーリングした割り付け確率の推定値と割付可能レシオ(全カテゴリに占める割付可能カテゴリの割合)との共分散の推定値
+   \item \code{gBarR_P}: 割付可能対象者における割付可能レシオの平均
+   \item \code{gBarR_S}: 割り付けられた対象者における割付可能レシオの平均
    }
 }
 \description{
