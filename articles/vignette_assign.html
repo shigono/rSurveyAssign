@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -69,7 +72,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-22</h4>
+            <h4 data-toc-skip class="date">2024-03-24</h4>
       
       
       <div class="d-none name"><code>vignette_assign.Rmd</code></div>
@@ -81,21 +84,17 @@ ONO</h4>
 assignment in web surveys”</a>で述べたように、
 <code>rSurveyAssign</code>パッケージは以下の調査手続きを想定します。</p>
 <ol style="list-style-type: decimal">
-<li>ある人が調査に参加したとき、その人について、各カテゴリについて割付可能であるかどうかを調べる。</li>
+<li>ある人が調査に参加したとき、その対象者について、各カテゴリについて割付可能であるかどうかを調べる。</li>
 <li>
-<strong>なんらかの方法で</strong>、その対象者のすべての割付可能カテゴリのうちいくつかを選ぶ。
-これを、「対象者をカテゴリに割り付ける」と呼び、
-選択されたカテゴリを「割付カテゴリ」と呼ぶ。もし割付できなかったら、その対象者に
-対する調査は中止する。</li>
-<li>対象者に、それぞれの割付カテゴリについて、スロットのリストを提示し、
-それぞれについて割付可能かどうかを調べる。</li>
+<strong>なんらかの方法で</strong>、その対象者をその人の割付可能カテゴリのうちいくつかへと割り付ける。
+もし割付できなかったら、その対象者に対する聴取は終了する。</li>
+<li>対象者に、それぞれの割付カテゴリについてスロットのリストを提示し、
+それぞれのスロットについて割付可能かどうかを調べる。</li>
 <li>
-<strong>なんらかの方法で</strong>、その対象者のいずれかの割付カテゴリの割付可能スロットのなかから、いくつかのスロットを選ぶ。
-これを、「対象者をスロットに割り付ける」と表現し、
-選択されたカテゴリを「割付スロット」と呼ぶ。もし割付できなかったら、
-その対象者に対する調査は中止する。</li>
-<li>割付スロットについての詳細な設問を提示し、回答を得る。</li>
-<li>すべてのカテゴリがクローズドになったら、調査を終了する。</li>
+<strong>なんらかの方法で</strong>、その対象者を、いずれかの割付カテゴリの割付可能スロットのうちいくつかへと割り付ける。
+もし割付できなかったら、その対象者に対する聴取は中止する。</li>
+<li>それぞれの割付スロットについて聴取する。</li>
+<li>これを各対象者について繰り返す。すべてのカテゴリがクローズドになったら、調査を終了する。</li>
 </ol>
 <p>この文書では、上記のうち太字部分について説明します。すなわち、Step
 2.におけるカテゴリの割付方法、ならびにStep 4.における
@@ -103,14 +102,14 @@ assignment in web surveys”</a>で述べたように、
 <div class="section level2">
 <h2 id="カテゴリの割付方法">1. カテゴリの割付方法<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%AE%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
 </h2>
-<p>割付カテゴリを決める方法は、次の4つの特徴によって整理することができます。</p>
+<p>割付カテゴリを決める方法は多様です。<code>rSurveyAssign</code>パッケージは、割付方法を次の4つの特徴によって整理します。</p>
 <ul>
 <li>割付タイプ</li>
 <li>絞り込み条件</li>
 <li>順序付け条件</li>
 <li>除外条件</li>
 </ul>
-<p>順に説明します。 以下では、対象者に割り付けるカテゴリの最大数を<span class="math inline">\(J\)</span>とします。</p>
+<p>順に説明します。 対象者に割り付けるカテゴリの最大数を<span class="math inline">\(J\)</span>とします。</p>
 <div class="section level4">
 <h4 id="割付タイプ">割付タイプ<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%82%BF%E3%82%A4%E3%83%97"></a>
 </h4>
@@ -123,17 +122,17 @@ assignment in web surveys”</a>で述べたように、
 <li>Step 1. <strong>絞り込み</strong>:
 <ul>
 <li>その人の割付可能カテゴリのなかから、指定した条件
-(絞り込み条件)を満たすカテゴリを選び、割付カテゴリの候補とする。</li>
+(絞り込み条件)を満たすカテゴリを選ぶ。</li>
 </ul>
 </li>
 <li>Step 2. <strong>順序付け</strong>:
 <ul>
-<li>選んだ候補のなかから、指定された優先順位(順序付け条件)に従って <span class="math inline">\(J\)</span>個までのカテゴリを抜き出し、割付カテゴリとする。</li>
+<li>選んだ候補のなかから、指定された優先順位(順序付け条件)に従って <span class="math inline">\(J\)</span>個までのカテゴリを選ぶ。</li>
 </ul>
 </li>
 <li>Step 3. <strong>除外</strong>:
 <ul>
-<li>割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
+<li>選ばれたカテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
 </ul>
 </li>
 </ul>
@@ -144,17 +143,17 @@ assignment in web surveys”</a>で述べたように、
 <li>各対象者について以下の手順で割り付けを行います。</li>
 <li>Step 1. <strong>順序付け</strong>:
 <ul>
-<li>その対象者にとっての割付可能性は無視し、すべてのカテゴリのなかから、指定された優先順位(順序付け条件)に従って<span class="math inline">\(J\)</span>個までのカテゴリを抜き出し、割付カテゴリの候補とする。</li>
+<li>その対象者にとっての割付可能性を無視し、すべてのカテゴリのなかから、指定された優先順位(順序付け条件)に従って<span class="math inline">\(J\)</span>個までのカテゴリを選ぶ。</li>
 </ul>
 </li>
 <li>Step 2. <strong>絞り込み</strong>:
 <ul>
-<li>抜き出されたカテゴリのなかから、指定した条件(絞り込み条件)に該当するカテゴリを選び、割付カテゴリとする。</li>
+<li>抜き出されたカテゴリのなかから、指定した条件(絞り込み条件)に該当するカテゴリを選ぶ。</li>
 </ul>
 </li>
 <li>Step 3. <strong>除外</strong>:
 <ul>
-<li>割付カテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
+<li>選ばれたカテゴリが所定の条件(除外条件)に該当する場合は、割付を中止する。</li>
 </ul>
 </li>
 </ul>
@@ -163,14 +162,14 @@ assignment in web surveys”</a>で述べたように、
 <p>ふたつの割付タイプは、絞り込みを先に行うか、順序付けを先に行うかという点が違います。</p>
 <ul>
 <li>適応的な方法では、まず割付可能なカテゴリに絞り込み、それらのなかから優先順位の高い
-<span class="math inline">\(J\)</span>個までのカテゴリを抜き出します。
+<span class="math inline">\(J\)</span>個までのカテゴリを選びます。
 <ul>
 <li>これは非適応的方法に比べて効率の良いやり方です。</li>
-<li>その反面、割付バイアスが生じます。割付可能なカテゴリが多い人は、ある割付可能カテゴリに
+<li>その反面、割付バイアスが生じます。割付可能なカテゴリが多い人ほど、ある割付可能カテゴリに
 割り付けられる確率が低くなるためです。</li>
 </ul>
 </li>
-<li>いっぽう非適応的な方法では、まず割付可能性を無視して<span class="math inline">\(J\)</span>個までのカテゴリを抜き出してしまい、
+<li>非適応的な方法では、まず割付可能性を無視して<span class="math inline">\(J\)</span>個までのカテゴリを選んでしまい、
 それらを割付可能なカテゴリへと絞り込みます。
 <ul>
 <li>その結果、割付カテゴリが少なくなってしまったり、
@@ -190,14 +189,14 @@ assignment in web surveys”</a>で述べたように、
 <li>
 <code>all</code>: その対象者の割付可能カテゴリを選ぶ。
 <ul>
-<li>このとき、割付カテゴリはクローズドでありうる点に注意してください。つまり、すでに目標票数に達しているカテゴリについても聴取する場合が生じます。いいかえれば、「無駄な」回答収集を行うことになります。</li>
+<li>このとき、割付カテゴリはクローズドでありうる点に注意してください。つまり、すでに十分な量の回答を収集しているカテゴリについても聴取する場合が生じます。いいかえれば、「無駄な」回答収集を行うことになります。</li>
 </ul>
 </li>
 <li>
 <code>open</code>:
 その対象者の割付可能カテゴリのうちオープンなカテゴリを選ぶ。</li>
 </ul>
-<p>どちらを選んでも必要な調査対象者数は変わりませんが、対象者の回答負荷は<code>all</code>のほうが高く、また割付バイアスは<code>open</code>のほうが強くなると考えられます。</p>
+<p>どちらを選んでも必要な調査対象者数は変わりませんが、対象者の回答負荷は<code>all</code>のほうが高く、割付バイアスは<code>open</code>のほうが強くなると考えられます。</p>
 </div>
 <div class="section level4">
 <h4 id="順序付け条件">順序付け条件<a class="anchor" aria-label="anchor" href="#%E9%A0%86%E5%BA%8F%E4%BB%98%E3%81%91%E6%9D%A1%E4%BB%B6"></a>
@@ -230,11 +229,11 @@ assignment in web surveys”</a>で述べたように、
 <code>none</code>: なし。</li>
 <li>
 <code>allclosed</code>:
-割付カテゴリとして選ばれたカテゴリがすべてクローズドであったら、割付しない。</li>
+選ばれたカテゴリがすべてクローズドであったら、割付を中止する。</li>
 </ul>
 <p>絞り込み条件が<code>open</code>であるとき、
-割付カテゴリはオープンなカテゴリなので、除外条件は意味を持ちません。
-絞り込み条件が<code>all</code>であるとき、除外条件として<code>allclosed</code>を指定すれば、
+選ばれたカテゴリはすでにオープンなカテゴリなので、除外条件は意味を持ちません。
+絞り込み条件が<code>all</code>であるとき、除外条件として<code>allclosed</code>を指定すると、
 「割付カテゴリのうち少なくともどれかひとつはオープンでなければならない」と指定したことになります。</p>
 </div>
 <div class="section level4">
@@ -452,25 +451,6 @@ assignment in web surveys”</a>で述べたように、
 </ul>
 <p>ある対象者の割付スロットは、必ず同一カテゴリのスロットとなります。</p>
 </div>
-<div class="section level2">
-<h2 id="割付に伴うバイアスはいつ生じるか">4. 割付に伴うバイアスはいつ生じるか<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%81%AB%E4%BC%B4%E3%81%86%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AF%E3%81%84%E3%81%A4%E7%94%9F%E3%81%98%E3%82%8B%E3%81%8B"></a>
-</h2>
-<p>割付バイアスはどのような場面で生じるでしょうか。</p>
-<p>まず、すべての対象者がすべてのカテゴリとスロットに割付可能である場合には、上記に述べたどの方法で割り付けを行っても、
-割付バイアスは生じませんし、そもそも<code>rSurveyAssign</code>パッケージを使う理由がありません。
-以下では、いずれかの対象者において割付不能なカテゴリないしスロットが存在する場合について考えます。</p>
-<p>カテゴリについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件をすべて満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
-<ul>
-<li>カテゴリ割付において非適応的方法を選んでいるか、割付カテゴリの最大数が十分に大きく、順序付けに意味がなくなっている</li>
-<li>カテゴリ割付において除外条件をnoneにしている</li>
-</ul>
-<p>スロットについての回答において割付バイアスが<strong>生じない</strong>のは、割付方法が以下の条件をすべて満たすときに限られます。他の方法ではなんらかのバイアスが生じることになります。</p>
-<ul>
-<li>割付カテゴリの最大数を1にしている</li>
-<li>スロット割付において非適応的方法を選んでいるか、割付スロットの最大数が十分に大きく、順序付けに意味がなくなっている</li>
-<li>スロット割付において除外条件をnoneにしている</li>
-</ul>
-</div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>
@@ -479,7 +459,7 @@ assignment in web surveys”</a>で述べたように、
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Shigeru ONO.</p>
+<p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

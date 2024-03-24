@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -54,7 +57,6 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getBias</span><span class="op">(</span></span>
 <span>  <span class="va">sDBPATH</span>,</span>
-<span>  sDBTABLE_SUBJECT <span class="op">=</span> <span class="st">"subject"</span>,</span>
 <span>  sDBTABLE_CAT <span class="op">=</span> <span class="st">"weight_cat"</span>,</span>
 <span>  sDBTABLE_SLOT <span class="op">=</span> <span class="st">"weight_slot"</span>,</span>
 <span>  sTYPE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cat"</span>, <span class="st">"slot"</span><span class="op">)</span></span>
@@ -66,11 +68,6 @@
     <dl><dt>sDBPATH</dt>
 <dd><p>文字列。
 シミュレーションの結果を保存したSQLite DBのフルパス</p></dd>
-
-
-<dt>sDBTABLE_SUBJECT</dt>
-<dd><p>文字列。
-シミュレーションの結果得られたカテゴリ割付頻度を保存したSQLite DBのテーブル名</p></dd>
 
 
 <dt>sDBTABLE_CAT</dt>
@@ -85,7 +82,7 @@
 
 <dt>sTYPE</dt>
 <dd><p>文字列。
-取得する結果のタイプ。</p><ul><li><p><code>"cat"</code>: 試行xカテゴリ別のバイアス</p></li>
+取得する結果のタイプ。</p><ul><li><p><code>"cat"</code>:  試行xカテゴリ別のバイアス</p></li>
 <li><p><code>"slot"</code>: 試行xスロット別のバイアス</p></li>
 </ul></dd>
 
@@ -96,26 +93,36 @@
 
 <p>データフレーム。</p>
 <p></p>
-<p><code>sTYPE == "cat"</code>のとき、行はある試行におけるあるカテゴリを表す。
+<p><code>sTYPE == "cat"</code>のとき、行はある割付試行におけるあるカテゴリを表す。
    列は以下のとおり:</p>
 <p></p>
 <ul><li><p><code>nTrial</code>: 試行番号</p></li>
 <li><p><code>nCat</code>: カテゴリ番号</p></li>
-<li><p><code>nFreq_Cat</code>: 割り付けられた対象者の数</p></li>
-<li><p><code>gVarWeight_Cat</code>: 割り付けられた対象者に与えられたウェイトの分散</p></li>
-<li><p><code>gDeff_Cat</code>: 割り付けられた対象者の回答のデザイン効果</p></li>
-<li><p><code>gESS_Cat</code>: 割り付けられた対象者の回答の実質標本サイズ</p></li>
+<li><p><code>nNumAssignable</code>: 割付可能な対象者数</p></li>
+<li><p><code>nNumAssign</code>:     割付された対象者数</p></li>
+<li><p><code>gCVHatP</code>: 割付確率の推定値の変動係数</p></li>
+<li><p><code>gHatCVP</code>: 割付確率の変動係数の推定値</p></li>
+<li><p><code>gHatDeff</code>: デザイン効果の推定値</p></li>
+<li><p><code>gHatESS</code>: 実質標本サイズの推定値</p></li>
+<li><p><code>gCovHatQR</code>: スケーリングした割り付け確率の推定値と割付可能レシオ(全カテゴリに占める割付可能カテゴリの割合)との共分散の推定値</p></li>
+<li><p><code>gBarR_P</code>: 割付可能対象者における割付可能レシオの平均</p></li>
+<li><p><code>gBarR_S</code>: 割り付けられた対象者における割付可能レシオの平均</p></li>
 </ul><p></p>
-<p><code>sTYPE == "slot"</code>のとき、行はある試行におけるあるカテゴリを表す。
+<p><code>sTYPE == "slot"</code>のとき、行はある試行におけるあるカテゴリのあるスロットを表す。
    列は以下のとおり:</p>
 <p></p>
 <ul><li><p><code>nTrial</code>: 試行番号</p></li>
 <li><p><code>nCat</code>: カテゴリ番号</p></li>
 <li><p><code>nSlot</code>: スロット番号</p></li>
-<li><p><code>nFreq_Slot</code>: 割り付けられた調査対象者の数</p></li>
-<li><p><code>gVarWeight_Slot</code>: 割り付けられた対象者に与えられたウェイトの分散</p></li>
-<li><p><code>gDeff_Slot</code>: 割り付けられた対象者の回答のデザイン効果</p></li>
-<li><p><code>gESS_Slot</code>: 割り付けられた対象者の回答の実質標本サイズ</p></li>
+<li><p><code>nNumAssignable</code>: 割付可能な対象者数</p></li>
+<li><p><code>nNumAssign</code>:     割付された対象者数</p></li>
+<li><p><code>gCVHatP</code>: 割付確率の推定値の変動係数</p></li>
+<li><p><code>gHatCVP</code>: 割付確率の変動係数の推定値</p></li>
+<li><p><code>gHatDeff</code>: デザイン効果の推定値</p></li>
+<li><p><code>gHatESS</code>: 実質標本サイズの推定値</p></li>
+<li><p><code>gCovHatQR</code>: スケーリングした割り付け確率の推定値と割付可能レシオ(全カテゴリに占める割付可能カテゴリの割合)との共分散の推定値</p></li>
+<li><p><code>gBarR_P</code>: 割付可能対象者における割付可能レシオの平均</p></li>
+<li><p><code>gBarR_S</code>: 割り付けられた対象者における割付可能レシオの平均</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -123,7 +130,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

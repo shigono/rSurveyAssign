@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -151,13 +154,57 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。</p></dd>
            sDBPATHが存在しない場合は新規作成する。</p></li>
 </ul><p>シミュレーションの結果は次の3つのデータフレームからなる。</p>
 <p></p>
-<ul><li><p><code>dfSubject</code>:
-           行はある試行のある調査参加者を表す。
-           列は<code>execTrial()</code>の出力に試行番号 <code>nTrial</code>を追加したもの。</p></li>
-<li><p><code>dfStat_Cat</code>: 行はある試行のあるカテゴリを表す。
-           列は<code>execRetrial()</code>の出力のうち<code>dfStat_Cat</code>に試行番号 <code>nTrial</code>を追加したもの。</p></li>
-<li><p><code>dfStat_Slot</code>: 行はある試行のあるカテゴリのあるスロットを表す。
-           列は<code>execRetrial()</code>の出力のうち<code>dfStat_Slot</code>に試行番号 <code>nTrial</code>を追加したもの。</p></li>
+<ul><li><p><code>dfSubject</code>: 割付シミュレーションの結果</p></li>
+<li><p><code>dfStat_Cat</code>: 再割付シミュレーションにおけるカテゴリ割付頻度</p></li>
+<li><p><code>dfStat_Slot</code>: 再割付シミュレーションにおけるスロット割付頻度</p></li>
+</ul><p>割付シミュレーションの結果:
+   行はある割付試行のある調査参加者を表す。
+   列は以下のとおり(順不同):</p>
+<p></p>
+<ul><li><p><code>nTrial</code>:           試行番号</p></li>
+<li><p><code>nSubject</code>:         対象者番号 (調査参加順の連番)</p></li>
+<li><p><code>nPerson</code>:          母集団メンバー番号 (<code>lPOP$mbCAT</code>の行番号)</p></li>
+<li><p><code>sRowname</code>:         <code>lPOP$mbCAT</code>の行名。<code>lPOP$mbCAT</code>に行名がない場合はas.character(SEQ)となる</p></li>
+<li><p><code>nCat_1</code>:           割付カテゴリ<code>1</code>のカテゴリ番号(<code>lPOP$mbCAT</code>の列番号)、ないし<code>NA</code></p></li>
+<li><p>...</p></li>
+<li><p><code>nCat_</code>(nMAXCAT):   割付カテゴリ<code>nMAXCAT</code>のカテゴリ番号(<code>lPOP$mbCAT</code>の列番号)、ないし<code>NA</code></p></li>
+<li><p><code>nCat</code>:             割付スロットが属するカテゴリ番号(<code>lPOP$mbCAT</code>の列番号)、ないし<code>NA</code></p></li>
+<li><p><code>nSlot_1</code>:          割付スロット<code>1</code>のスロット番号(<code>lPOP$mbSLOT[[nCat]]</code>の列番号)、ないし<code>NA</code></p></li>
+<li><p>...</p></li>
+<li><p><code>nSlot_</code>(nMAXSLOT): 割付スロット<code>nMAXSLOT</code>のスロット番号(<code>lPOP$mbSLOT[[nCat]]</code>の列番号)、ないし<code>NA</code></p></li>
+</ul><p>再割付シミュレーションにおけるカテゴリ割付頻度:
+   行は調査対象者x割付可能カテゴリを表す。
+   列は以下のとおり(順不同):</p>
+<p></p>
+<ul><li><p><code>nTrial</code>:            試行番号</p></li>
+<li><p><code>nBlock</code>:            ブロック番号</p></li>
+<li><p><code>nBlockSize</code>:        ブロックサイズ(ブロック内の再割付試行数)</p></li>
+<li><p><code>nSubject</code>:          調査対象者番号</p></li>
+<li><p><code>nCat</code>:              カテゴリ番号</p></li>
+<li><p><code>sRowname</code>:           <code>lPOP$mbCAT</code>の行名。<code>lPOP$mbCAT</code>に行名がない場合はas.character(SEQ)となる</p></li>
+<li><p><code>nPerson</code>:            母集団メンバー番号 (<code>lPOP$mbCAT</code>の行番号)</p></li>
+<li><p><code>bAssign</code>            割付試行で割付が起きていたか</p></li>
+<li><p><code>nCount_Subject</code>:    ブロック内の再割付試行で調査対象者が出現した回数</p></li>
+<li><p><code>nCount_SubjectCat</code>: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数</p></li>
+<li><p><code>gAssignablity_Cat</code>: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)</p></li>
+</ul><p>再割付シミュレーションにおけるスロット割付頻度:
+   行は調査対象者x割付可能スロットを表す。
+   割付試行において割付可能性が判明しているスロットに
+   限定されることに注意(つまり、代替対象者のスロットは含まれない)
+   列は以下のとおり(順不同):</p>
+<p></p>
+<ul><li><p><code>nTrial</code>:             試行番号</p></li>
+<li><p><code>nBlock</code>:             ブロック番号</p></li>
+<li><p><code>nBlockSize</code>:         ブロックサイズ(ブロック内の再割付試行数)</p></li>
+<li><p><code>nSubject</code>:           調査対象者番号</p></li>
+<li><p><code>sRowname</code>:           <code>lPOP$mbCAT</code>の行名。<code>lPOP$mbCAT</code>に行名がない場合はas.character(SEQ)となる</p></li>
+<li><p><code>nPerson</code>:            母集団メンバー番号 (<code>lPOP$mbCAT</code>の行番号)</p></li>
+<li><p><code>nCat</code>:               スロットが属するカテゴリ番号</p></li>
+<li><p><code>nSlot</code>:              スロット番号</p></li>
+<li><p><code>bAssign</code>             割付試行で割付が起きていたか</p></li>
+<li><p><code>nCount_Subject</code>:     ブロック内の再割付試行で調査対象者が出現した回数</p></li>
+<li><p><code>nCount_SubjectSlot</code>: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数</p></li>
+<li><p><code>gAssignablity_Slot</code>: スロット割付可能度(全スロットに占める割付可能スロットの割合)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -170,7 +217,7 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

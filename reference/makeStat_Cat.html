@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -52,7 +55,11 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeStat_Cat</span><span class="op">(</span><span class="va">dfReplicateBlock</span>, <span class="va">lSURVEY</span>, <span class="va">bVERBOSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeStat_Cat</span><span class="op">(</span></span>
+<span>  <span class="va">dfReplicateBlock</span>,</span>
+<span>  <span class="va">lSURVEY</span>,</span>
+<span>  sVERBOSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"detail"</span>, <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,7 +67,7 @@
     <dl><dt>dfReplicateBlock</dt>
 <dd><p>a data frame
 対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
-以下の列を持つと期待される</p><ul><li><p><code>nSubject</code>:          対象者番号</p></li>
+以下の列を持つと期待される</p><ul><li><p><code>nSubject</code>:         対象者番号</p></li>
 <li><p><code>nCat_1</code>:           割付カテゴリ<code>1</code>のカテゴリ番号、ないし<code>NA</code></p></li>
 <li><p>...</p></li>
 <li><p><code>nCat_</code>(nMAXCAT):   割付カテゴリ<code>nMAXCAT</code>のカテゴリ番号、ないし<code>NA</code></p></li>
@@ -76,9 +83,9 @@
 survey data. See the document of `makeSurvey` for details.</p></dd>
 
 
-<dt>bVERBOSE</dt>
-<dd><p>a logical.
-詳細を画面表示する</p></dd>
+<dt>sVERBOSE</dt>
+<dd><p>文字列。
+画面表示レベル。</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -86,12 +93,13 @@ survey data. See the document of `makeSurvey` for details.</p></dd>
     
 
 <p>a data frame
-   行は対象者x割付カテゴリ</p>
+   行は対象者x割付可能カテゴリ</p>
 <p></p>
 <ul><li><p><code>nSubject</code>          対象者番号</p></li>
-<li><p><code>nCat</code>             親カテゴリ番号</p></li>
-<li><p><code>nCount_SubjectCat</code> その人にそのカテゴリが割り付けられた回数</p></li>
-<li><p><code>nCount_Subject</code>    その人の出現回数</p></li>
+<li><p><code>nCat</code>              カテゴリ番号</p></li>
+<li><p><code>bAssign</code>           lSURVEY上で割付が起きていたか</p></li>
+<li><p><code>nCount_SubjectCat</code> 再試行においてその人にそのカテゴリが割り付けられた回数</p></li>
+<li><p><code>nCount_Subject</code>    再試行におけるその人の出現回数</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -99,7 +107,7 @@ survey data. See the document of `makeSurvey` for details.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

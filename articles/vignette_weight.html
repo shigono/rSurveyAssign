@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,9 @@
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -69,7 +72,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-22</h4>
+            <h4 data-toc-skip class="date">2024-03-24</h4>
       
       
       <div class="d-none name"><code>vignette_weight.Rmd</code></div>
@@ -87,20 +90,22 @@ in web surveys”</a>を参照して下さい。</p>
 このウェイトは、調査において広く用いられている標本ウェイトと似た概念です。
 標本ウェイトについての詳細は、標本調査についての参考書、たとえば土屋「概説
 標本調査法」(朝倉書店)を参照してください。</p>
-<p>たとえば、ある製品カテゴリのたくさんのブランドについて、消費者が抱いているイメージを調べたとします。
+<p>たとえば、ある製品カテゴリのたくさんのブランドについて購入意向を調べたとします。
 消費者から無作為抽出した調査対象者を、なんらかの割付方法によって、
 その人が知っているブランドのなかから<span class="math inline">\(J\)</span>個までのブランドへと割り付け、
-割付ブランドについてイメージを問う設問を提示し、回答を求めました。</p>
-<p>次の場合について考えます(説明のため、人数が非現実的に少なくなっています)。
-調査対象ブランドのひとつであるブランドXについて知っている人は、調査対象者のうち10人でした。
-そのうち、ブランドXに対して割り付けた対象者(つまりブランドXのイメージについて回答を求めた対象者)は
-5人でした。割付方法に起因し、割付確率はその対象者の他のブランドへの割付可能性に応じて変動していました。</p>
+割付ブランドについて購入意向を聴取しました。</p>
+<p>次の場合について考えます(説明のため、人数が非現実的に少なくなっています)。</p>
+<ul>
+<li>調査対象ブランドのひとつであるブランドAについて知っている人は、調査対象者のうち10人でした。</li>
+<li>そのうち、ブランドAに割り付けた対象者(つまりブランドAの購入意向を聴取した対象者)は5人でした。</li>
+<li>10人の対象者それぞれにAを割り付ける確率は、その対象者の他のブランドへの割付可能性に応じて変動していました。</li>
+</ul>
 <p>割付確率を下表に示します。割付確率順に並べています。</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">対象者番号</th>
-<th align="left">ブランドXへの割付確率</th>
-<th align="left">ブランドXへの割付有無</th>
+<th align="left">ブランドAへの割付確率</th>
+<th align="left">ブランドAへの割付有無</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -155,15 +160,15 @@ in web surveys”</a>を参照して下さい。</p>
 </tr>
 </tbody>
 </table>
-<p>たとえば対象者1は、ブランドXへの割付確率が非常に低く(他のたくさんのブランドを知っていたのでしょう)、
-実際にXに割り付けられなかった人です。対象者2は、Xへの割付確率は低かったにも関わらず、
-たまたまXに割り付けられた人です。</p>
-<p>私たちが手に入れる調査データは、下表の5人の対象者の回答です。</p>
+<p>たとえば対象者1は、ブランドAへの割付確率が非常に低く(他のたくさんのブランドを知っていたのでしょう)、
+実際にAに割り付けられなかった人です。対象者2は、Aへの割付確率は低かったにも関わらず、
+たまたまAに割り付けられた人です。</p>
+<p>私たちが手に入れる調査データは、下表のA人の対象者の回答です。</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">対象者番号</th>
-<th align="left">ブランドXへの割付確率</th>
-<th align="left">ブランドXへの割付有無</th>
+<th align="left">ブランドAへの割付確率</th>
+<th align="left">ブランドAへの割付有無</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -193,7 +198,7 @@ in web surveys”</a>を参照して下さい。</p>
 </tr>
 </tbody>
 </table>
-<p>これらの対象者は、ブランドXを知っていた10人に比べ、割付確率が高かった人(おそらく他のブランドをあまり知らなかった人)へと
+<p>これらの対象者は、ブランドAを知っていた10人に比べ、割付確率が高かった人(おそらく他のブランドをあまり知らなかった人)へと
 偏っています。</p>
 <p>この割付バイアスを集計値から取り除くためにはどうしたらよいでしょうか？</p>
 <p>その方法のひとつが、集計の際に、割付確率が低かった人に大きな重み、高かった人に小さな重みを与えることです。</p>
@@ -207,7 +212,7 @@ in web surveys”</a>を参照して下さい。</p>
 2.5 x_6 + 2 x_7 + 1.67 x_8 + 1.11 x_{10}) \]</span>
 つまり、各対象者の回答を「その対象者が何人分を代表していたか」で重みづけて合計し、重みの和(代表されている人々の人数)で
 割るわけです。なお、私たちはブランドXを知っていた対象者数が10であることを知っていますから、
-<span class="math inline">\(10+2.5+2+1.97+1.11\)</span>ではなくて<span class="math inline">\(10\)</span>で割るという考え方もできますが、いくつかの理由により、上の考え方のほうが良いことが
+<span class="math inline">\(10+2.5+2+1.97+1.11\)</span>ではなくて<span class="math inline">\(10\)</span>で割るという考え方もできます。しかし、いくつかの理由により、上の考え方のほうが良いことが
 わかっています(土屋(前掲書), p.78)。</p>
 <p>この方法で、集計値から割付バイアスを取り除くことができます。
 集計の際に用いる重み、すなわち割付確率の逆数のことを<strong>ウェイト</strong>と呼びます。</p>
@@ -503,47 +508,48 @@ subjects”</a>を参照して下さい。</li>
 <span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.043 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.034 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.031 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.038 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.04 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.024 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.035 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.423 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.04 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.029 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.027 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.032 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.029 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.034 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.031 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.025 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.029 sec.</span></span>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.421 sec.</span></span></code></pre></div>
 <p>画面に表示されたメッセージをみてみましょう。上から2行目以降のメッセージは再割付試行について表示しています。最初の再割付試行では、調査対象者を690人抽出したところで、目標対象者数が満たされ、調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。
 <code>simWeight</code>の返し値は2つの要素からなるリストです。</p>
 <p>要素<code>dfStat_Cat</code>は、試行を通じ、ある対象者があるカテゴリに何回割り付けられたかを示しています。</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Cat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nCount_SubjectCat nCount_Subject nBlock nBlockSize</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     3                 4              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2                 8              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2     3                 3              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1                 4              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        3     2                 5              7      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        3     1                 5              7      1         10</span></span></code></pre></div>
-<p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ9回にわたり調査に参加し、そのうち4回においてカテゴリ3に割り付けられた、ということを示しています。シミュレーションを繰り返せば、対象者1がカテゴリ3に割り付けられる確率を推定することができます。</p>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
+<span><span class="co">#&gt;   nSubject  nCat bAssign nCount_SubjectCat nCount_Subject nBlock nBlockSize</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     1       0                 5              9      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2       1                 8              9      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1     3       1                 4              9      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1       1                 4              6      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2     2       0                 5              6      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        2     3       1                 3              6      1         10</span></span></code></pre></div>
+<p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ9回にわたり調査に参加し、そのうち5回においてカテゴリ1に割り付けられた、ということを示しています。シミュレーションを繰り返せば、対象者1がカテゴリ1に割り付けられる確率を推定することができます。</p>
 <p>要素<code>dfStat_Slot</code>は、試行を通じ、ある対象者があるスロットに何回割り付けられたかを示しています。</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Slot</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nSlot nCount_SubjectSlot nCount_Subject nBlock nBlockSize</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     3     7                  1              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2     3     9                  1              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2     3    10                  1              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4     2     7                  9             14      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4     2     5                  6             14      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        5     1     7                  2              5      1         10</span></span></code></pre></div>
-<p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ9回にわたり調査参加し、そのうち1回においてカテゴリ3のスロット7に割り付けられた、ということを示しています。
-シミュレーション試行を繰り返せば、対象者1がカテゴリ3のスロット7に割り付けられる確率を推定することができます。</p>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
+<span><span class="co">#&gt;   nSubject  nCat nSlot bAssign nCount_SubjectSlot nCount_Subject nBlock</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        4     1     2       0                  3             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        4     1     3       0                  0             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        4     1     4       0                  0             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4     1     6       0                  2             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4     1     9       0                  1             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        4     1    10       0                  0             14      1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: nBlockSize &lt;dbl&gt;</span></span></span></code></pre></div>
+<p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ14回にわたり調査参加し、そのうち3回においてカテゴリ1のスロット2に割り付けられた、ということを示しています。
+シミュレーション試行を繰り返せば、対象者1がカテゴリ1のスロット2に割り付けられる確率を推定することができます。</p>
 </div>
 <div class="section level3">
 <h3 id="少数の試行の実行と保存">3.2 少数の試行の実行と保存<a class="anchor" aria-label="anchor" href="#%E5%B0%91%E6%95%B0%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%81%A8%E4%BF%9D%E5%AD%98"></a>
@@ -557,15 +563,28 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vig
 データベースファイルは必要がなくなったら自分で消してください。</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
-<span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="co"># lResult &lt;- simWeight(</span></span>
-<span><span class="co">#   lSURVEY    = lSurvey,</span></span>
-<span><span class="co">#   nBLOCKSIZE = 10,</span></span>
-<span><span class="co">#   nNUMBLOCK  = 1,</span></span>
-<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_1.sqlite",</span></span>
-<span><span class="co">#   bPARALLEL  = FALSE, </span></span>
-<span><span class="co">#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
-<span><span class="co"># )</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
+<span><span class="va">lResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simWeight.html">simWeight</a></span><span class="op">(</span></span>
+<span>  lSURVEY    <span class="op">=</span> <span class="va">lSurvey</span>,</span>
+<span>  nBLOCKSIZE <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  sDBPATH    <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_weight_1.sqlite"</span>,</span>
+<span>  bPARALLEL  <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  bAPPEND    <span class="op">=</span> <span class="cn">FALSE</span>  <span class="co"># すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.103 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.032 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.036 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.042 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.028 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.028 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.033 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.033 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.022 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.027 sec.</span></span>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.491 sec. </span></span>
+<span><span class="co">#&gt; [simWeight] # Accumlated Trials: 10</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="多くの試行の実行">3.3 多くの試行の実行<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E3%81%8F%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C"></a>
@@ -588,12 +607,12 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
 <span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="co"># lResult &lt;- simWeight(</span></span>
-<span><span class="co">#   lSURVEY    = lSurvey,</span></span>
-<span><span class="co">#   nNUMBLOCK  = 10,</span></span>
-<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
-<span><span class="co">#   bPARALLEL  = TRUE,</span></span>
-<span><span class="co">#   sLOGFILE   = "c:/work/simWeight.log",</span></span>
-<span><span class="co">#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="co">#  lSURVEY    = lSurvey,</span></span>
+<span><span class="co">#  nNUMBLOCK  = 10,</span></span>
+<span><span class="co">#  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
+<span><span class="co">#  bPARALLEL  = TRUE,</span></span>
+<span><span class="co">#  sLOGFILE   = "c:/work/simWeight.log",</span></span>
+<span><span class="co">#  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
 <p>データベースに1000試行の結果が格納されました。</p>
 <p>なお、これまでにデータベースに格納した試行数は、格納した際に表示されますが、
@@ -707,7 +726,7 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Shigeru ONO.</p>
+<p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

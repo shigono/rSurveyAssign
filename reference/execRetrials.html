@@ -12,7 +12,7 @@ simWeight(), simBias()からコールされる。"><!-- mathjax --><script src="
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,9 @@ simWeight(), simBias()からコールされる。"><!-- mathjax --><script src="
     <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
     <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -62,7 +65,7 @@ simWeight(), simBias()からコールされる。</p>
 <span>  <span class="va">nNUMBLOCK</span>,</span>
 <span>  <span class="va">bPARALLEL</span>,</span>
 <span>  <span class="va">sLOGFILE</span>,</span>
-<span>  <span class="va">sVERBOSE</span></span>
+<span>  sVERBOSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"detail"</span>, <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -111,24 +114,28 @@ simWeight(), simBias()からコールされる。</p>
 <p></p>
 <ul><li><p><code>dfStat_Cat</code>: カテゴリ割付頻度</p></li>
 <li><p><code>dfStat_Slot</code>: スロット割付頻度</p></li>
-</ul><p>カテゴリ割付頻度: 行は調査対象者x割付カテゴリを表す。
+</ul><p>カテゴリ割付頻度: 行は調査対象者x割付可能カテゴリを表す。
    列は以下のとおり(順不同):</p>
 <p></p>
-<ul><li><p><code>nBlock</code>:           ブロック番号</p></li>
-<li><p><code>nBlockSize</code>:       ブロックサイズ(ブロック内の再割付試行数)</p></li>
-<li><p><code>nSubject</code>:         調査対象者番号</p></li>
-<li><p><code>nCat</code>:             カテゴリ番号</p></li>
+<ul><li><p><code>nBlock</code>:            ブロック番号</p></li>
+<li><p><code>nBlockSize</code>:        ブロックサイズ(ブロック内の再割付試行数)</p></li>
+<li><p><code>nSubject</code>:          調査対象者番号</p></li>
+<li><p><code>nCat</code>:              カテゴリ番号</p></li>
+<li><p><code>bAssign</code>            割付試行で割付が起きていたか</p></li>
 <li><p><code>nCount_Subject</code>:    ブロック内の再割付試行で調査対象者が出現した回数</p></li>
 <li><p><code>nCount_SubjectCat</code>: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数</p></li>
-</ul><p>スロット割付頻度: 行は調査対象者x割付スロットを表す。
+</ul><p>スロット割付頻度: 行は調査対象者x割付可能スロットを表す。
+   割付試行において割付可能性が判明しているスロットに
+   限定されることに注意(つまり、代替対象者のスロットは含まれない)
    列は以下のとおり(順不同):</p>
 <p></p>
-<ul><li><p><code>nBlock</code>:           ブロック番号</p></li>
-<li><p><code>nBlockSize</code>:       ブロックサイズ(ブロック内の再割付試行数)</p></li>
-<li><p><code>nSubject</code>:         調査対象者番号</p></li>
-<li><p><code>nCat</code>:             スロットが属するカテゴリ番号</p></li>
-<li><p><code>nSlot</code>:            スロット番号</p></li>
-<li><p><code>nCount_Subject</code>:   ブロック内の再割付試行で調査対象者が出現した回数</p></li>
+<ul><li><p><code>nBlock</code>:             ブロック番号</p></li>
+<li><p><code>nBlockSize</code>:         ブロックサイズ(ブロック内の再割付試行数)</p></li>
+<li><p><code>nSubject</code>:           調査対象者番号</p></li>
+<li><p><code>nCat</code>:               スロットが属するカテゴリ番号</p></li>
+<li><p><code>nSlot</code>:              スロット番号</p></li>
+<li><p><code>bAssign</code>             割付試行で割付が起きていたか</p></li>
+<li><p><code>nCount_Subject</code>:     ブロック内の再割付試行で調査対象者が出現した回数</p></li>
 <li><p><code>nCount_SubjectSlot</code>: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数</p></li>
 </ul></div>
 
@@ -137,7 +144,7 @@ simWeight(), simBias()からコールされる。</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Shigeru ONO.</p>
+  <p></p><p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
