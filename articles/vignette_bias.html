@@ -197,7 +197,7 @@ assignment in web surveys”</a>で
 割付バイアスが生じます。従って、以下の条件がすべて満たされているときは
 割付バイアスが生じます。</p>
 <ul>
-<li>カテゴリ数<span class="math inline">\(K\)</span>が2以上であること
+<li>カテゴリ数<span class="math inline">\(J\)</span>が2以上であること
 <ul>
 <li>もしカテゴリ数が1ならば、そのカテゴリに割付可能な対象者のすべてが
 そのカテゴリに割り付けられますから、割付バイアスは起きません。</li>
@@ -209,7 +209,7 @@ assignment in web surveys”</a>で
 <li>たとえば、もしすべての対象者の割付可能カテゴリ数が0か1ならば、
 あるカテゴリの割付可能対象者はほかに割付可能カテゴリを
 持っていませんので、割付バイアスは生じません。</li>
-<li>また、もしすべての対象者の割付可能カテゴリ数が0か<span class="math inline">\(K\)</span>ならば、
+<li>また、もしすべての対象者の割付可能カテゴリ数が0か<span class="math inline">\(J\)</span>ならば、
 あるカテゴリの割付可能対象者はほかのすべてのカテゴリにも割付可能ですので、
 割付バイアスは生じません。</li>
 <li>対象者が2群に分かれており、一方の群の人々はカテゴリ1,2,3に割付可能であり、
@@ -534,7 +534,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.961 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.929 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
