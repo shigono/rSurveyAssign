@@ -156,10 +156,7 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。</p></dd>
            sDBPATHが存在しない場合は新規作成する。</p></li>
 </ul><p>シミュレーションの結果は次の3つのデータフレームからなる。</p>
 <p></p>
-<ul><li><p><code>dfSubject</code>: 割付シミュレーションの結果</p></li>
-<li><p><code>dfStat_Cat</code>: 再割付シミュレーションにおけるカテゴリ割付頻度</p></li>
-<li><p><code>dfStat_Slot</code>: 再割付シミュレーションにおけるスロット割付頻度</p></li>
-</ul><p>割付シミュレーションの結果:
+<p><code>dfSubject</code>: 割付シミュレーションの結果。
    行はある割付試行のある調査参加者を表す。
    列は以下のとおり(順不同):</p>
 <p></p>
@@ -174,7 +171,8 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。</p></dd>
 <li><p><code>nSlot_1</code>:          割付スロット<code>1</code>のスロット番号(<code>lPOP$mbSLOT[[nCat]]</code>の列番号)、ないし<code>NA</code></p></li>
 <li><p>...</p></li>
 <li><p><code>nSlot_</code>(nMAXSLOT): 割付スロット<code>nMAXSLOT</code>のスロット番号(<code>lPOP$mbSLOT[[nCat]]</code>の列番号)、ないし<code>NA</code></p></li>
-</ul><p>再割付シミュレーションにおけるカテゴリ割付頻度:
+</ul><p></p>
+<p><code>dfStat_Cat</code>: 再割付シミュレーションにおけるカテゴリ割付頻度。
    行は調査対象者x割付可能カテゴリを表す。
    列は以下のとおり(順不同):</p>
 <p></p>
@@ -189,7 +187,8 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。</p></dd>
 <li><p><code>nCount_Subject</code>:    ブロック内の再割付試行で調査対象者が出現した回数</p></li>
 <li><p><code>nCount_SubjectCat</code>: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数</p></li>
 <li><p><code>gAssignablity_Cat</code>: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)</p></li>
-</ul><p>再割付シミュレーションにおけるスロット割付頻度:
+</ul><p></p>
+<p><code>dfStat_Slot</code>: 再割付シミュレーションにおけるスロット割付頻度。
    行は調査対象者x割付可能スロットを表す。
    割付試行において割付可能性が判明しているスロットに
    限定されることに注意(つまり、代替対象者のスロットは含まれない)
