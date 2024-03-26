@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="rSurveyAssign">
-<title>How to estimate bias • rSurveyAssign</title>
+<title>3. How to estimate bias • rSurveyAssign</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="How to estimate bias">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="3. How to estimate bias">
 <meta property="og:description" content="rSurveyAssign">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,17 +36,19 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+  <a class="nav-link" href="../articles/vignette.html">Get Started</a>
 </li>
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/vignette.html">rSurveyAssign: tools for simulation of assignment in web surveys</a>
-    <a class="dropdown-item" href="../articles/vignette_assign.html">How to assign subjects</a>
-    <a class="dropdown-item" href="../articles/vignette_bias.html">How to estimate bias</a>
-    <a class="dropdown-item" href="../articles/vignette_size.html">How to forecast sample size</a>
-    <a class="dropdown-item" href="../articles/vignette_weight.html">How to compute survey weights</a>
+    <a class="dropdown-item" href="../articles/vignette_assign.html">1. How to assign subjects</a>
+    <a class="dropdown-item" href="../articles/vignette_size.html">2. How to forecast sample size</a>
+    <a class="dropdown-item" href="../articles/vignette_bias.html">3. How to estimate bias</a>
+    <a class="dropdown-item" href="../articles/vignette_weight.html">4. How to compute survey weights</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
@@ -68,11 +70,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>How to estimate bias</h1>
+      <img src="" class="logo" alt=""><h1>3. How to estimate bias</h1>
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-25</h4>
+            <h4 data-toc-skip class="date">2024-03-26</h4>
       
       
       <div class="d-none name"><code>vignette_bias.Rmd</code></div>
@@ -84,7 +86,7 @@ ONO</h4>
 説明します。</p>
 <p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
 in web surveys”</a>を参照して下さい。</p>
-<p>この解説では、1-3章で割付バイアスの性質と推定・評価の方法について述べ、4-6章で具体的な手順を紹介します。このパッケージの使い方に関心がある方は、1-3章をスキップし4章からご覧いただいてもかまいません。</p>
+<p>この解説では、1-3章で割付バイアスの性質と推定・評価の方法について述べ、4-7章で具体的な手順を紹介します。このパッケージの使い方に関心がある方は、1-3章をスキップし4章からご覧いただいてもかまいません。</p>
 <div class="section level2">
 <h2 id="割付バイアスの定義と性質">1. 割付バイアスの定義と性質<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E6%80%A7%E8%B3%AA"></a>
 </h2>
@@ -114,7 +116,7 @@ x_i \]</span></p>
 <span class="math display">\[E[\bar{x}_S] - \bar{x}_P = E \left[
 \frac{1}{n} \sum_{i=1}^N I_i x_i \right]  - \frac{1}{N} \sum_{i=1}^N
 x_i\]</span></p>
-<p>対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。このパッケージが想定している調査手続きでは、割り付けられた調査対象者数<span class="math inline">\(n\)</span>は原則として定数です(実際にはAについての回答者が<span class="math inline">\(n\)</span>人に到達する前に調査を打ち切ってしまう場合もありえますが、ここでは無視します)。また、割付可能な調査対象者数<span class="math inline">\(N\)</span>は実際には確率的に決まるのですが、A以外のたくさんのカテゴリ・スロットの割付可能性によって規定されますので、ここでは所与の定数であるとみなします。</p>
+<p>対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。このパッケージが想定している調査手続きでは、割り付けられた調査対象者数<span class="math inline">\(n\)</span>は定数です(実際にはAについての回答者が<span class="math inline">\(n\)</span>人に到達する前に調査を打ち切ってしまう場合もありえますが、ここでは無視します)。また、割付可能な調査対象者数<span class="math inline">\(N\)</span>は実際には確率的に決まるのですが、A以外のたくさんのカテゴリ・スロットの割付可能性によって規定されますので、ここでは所与の定数であるとみなします。</p>
 <p>すると、 <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N
 \frac{N}{n} E[I_i]x_i  - \frac{1}{N} \sum_{i=1}^N x_i\]</span> <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
 E[I_i] -1 \right) x_i \]</span> <span class="math display">\[ =
@@ -142,12 +144,13 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 <h3 id="割付バイアスはいつ生じるか">1.3 割付バイアスはいつ生じるか<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AF%E3%81%84%E3%81%A4%E7%94%9F%E3%81%98%E3%82%8B%E3%81%8B"></a>
 </h3>
 <p>では、このパッケージが想定している調査手続きにおいて、カテゴリないしスロットAについての関心ある変数<span class="math inline">\(x_i\)</span>と、 Aへの割付確率<span class="math inline">\(p_i\)</span>との間に関連が生じるのはどんな場合でしょうか。</p>
-<p>このパッケージが想定している調査手続きにおいて、 Aへの割付確率<span class="math inline">\(p_i\)</span>を決めているのは次の2つの要因です。</p>
+<p>このパッケージが想定している調査手続きにおいて、 対象者<span class="math inline">\(i\)</span>のAへの割付確率<span class="math inline">\(p_i\)</span>を決めているのは次の3つの要因です。</p>
 <ul>
-<li>その人がA以外のどのカテゴリ・スロットに対して割付可能であったか。たとえば、たくさんのカテゴリ・スロットについて割付可能である人ほど、Aに割り付けられる確率は低くなりやすいでしょう。</li>
-<li>調査対象者を参加順に並べたときのその人の位置。たとえば、参加順序が遅いほど、AがすでにクローズドとなっておりAへと割り付けられない可能性が高まるでしょう。</li>
+<li>対象者<span class="math inline">\(i\)</span>がA以外のどのカテゴリ・スロットに対して割付可能であったか。たとえば、たくさんのカテゴリ・スロットについて割付可能である人ほど、Aに割り付けられる確率は低くなりやすいでしょう。</li>
+<li>対象者<span class="math inline">\(i\)</span>以外の対象者たちが、どのカテゴリ・スロットに対して割付可能であったか。たとえば、Aに対して割付可能な対象者が他に大勢いるほど、<span class="math inline">\(i\)</span>がAに割り付けられる確率は低くなりやすいでしょう。</li>
+<li>対象者を参加順に並べたときの対象者<span class="math inline">\(i\)</span>その位置。たとえば、参加順序が遅いほど、AがすでにクローズドとなっておりAへと割り付けられない可能性が高まるでしょう。</li>
 </ul>
-<p>従って、<span class="math inline">\(x_i\)</span>と<span class="math inline">\(p_i\)</span>とのあいだに関連が生じる理由として、次のふたつが考えられます。</p>
+<p>従って、<span class="math inline">\(x_i\)</span>と<span class="math inline">\(p_i\)</span>とのあいだに関連が生じる理由として、次の3つが考えられます。</p>
 <ul>
 <li>
 <span class="math inline">\(x_i\)</span>が他のカテゴリ・スロットへの割付可能性と関連しているとき
@@ -160,9 +163,15 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 </ul>
 </li>
 <li>
+<span class="math inline">\(x_i\)</span>が他の対象者の割付可能性と関連しているとき
+<ul>
+<li>ふつう、このような関連性はないでしょう。</li>
+</ul>
+</li>
+<li>
 <span class="math inline">\(x_i\)</span>が調査参加順序と関連しているとき
 <ul>
-<li>ふつう、この関連性については無視できるでしょう。たとえば調査開始が早朝であったため、早起きの人ほど調査に参加しやすく、
+<li>ふつう、この関連性についても無視できるでしょう。たとえば調査開始が早朝であったため、早起きの人ほど調査に参加しやすく、
 かつ早起きな人とそうでない人のあいだでAについての回答に差がある…
 といったケースを想像することはできますが、
 現実の調査においては生じにくいと思われます。</li>
@@ -171,11 +180,11 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 </ul>
 <p><a href="vignette.html">“rSurveyAssign: tools for simulation of
 assignment in web surveys”</a>で
-述べたように、このパッケージでは調査対象者の回答と調査参加順序の間に関連がないと仮定します。つまり、後者は無視します。</p>
-<p>従って、つぎのようにいえます。このパッケージが想定している調査手続きにおいて、あるカテゴリ・スロットについての回答に割付バイアスが生じるのは、</p>
+述べたように、このパッケージでは、対象者の回答と割付可能性は対象者間で独立であり、ある対象者の回答と調査参加順序の間には関連がないと仮定します。つまり、3つのうち後ろのふたつは無視できます。</p>
+<p>従って、つぎのようにいえます。このパッケージが想定している調査手続きにおいて、あるカテゴリ・スロットAにおいて割付バイアスが生じるのは、</p>
 <ol style="list-style-type: decimal">
-<li>関心ある変数<span class="math inline">\(x_i\)</span>と、他のカテゴリ・スロットへの割付可能性との間に関連があり、</li>
-<li>他のカテゴリ・スロットへの割付可能性と、当該のカテゴリ・スロットへの割付確率<span class="math inline">\(p_i\)</span>との間に関連があるときです。</li>
+<li>関心ある変数<span class="math inline">\(x_i\)</span>と、各対象者の他のカテゴリ・スロットへの割付可能性との間に関連があり、</li>
+<li>各対象者の他のカテゴリ・スロットへの割付可能性と、Aへの割付確率<span class="math inline">\(p_i\)</span>との間に関連があるときです。</li>
 </ol>
 <p>1.は常に成り立つと考えるべきでしょう。いっぽう、2.はカテゴリ・スロットの割付方法によって決まります。
 仮に、他のカテゴリ・スロットへの割付可能性とAに対する割付確率<span class="math inline">\(p_i\)</span>とのあいだに関連がない割付方法を用いていれば、いかなる変数においても割付バイアスは生じません。</p>
@@ -194,8 +203,9 @@ assignment in web surveys”</a>で
 <h4 id="カテゴリ割付方法と割付バイアス">カテゴリ割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h4>
 <p>Aがカテゴリである場合、A以外のカテゴリへの割付可能性とAへの割付確率とのあいだに関連があるときに
-割付バイアスが生じます。従って、以下の条件がすべて満たされているときは
 割付バイアスが生じます。</p>
+<p>従って、割付方法以外の側面に目を向けると、割付バイアスが生じうるのは
+以下の条件がすべて満たされているときです。</p>
 <ul>
 <li>カテゴリ数<span class="math inline">\(J\)</span>が2以上であること
 <ul>
@@ -217,7 +227,10 @@ assignment in web surveys”</a>で
 割付バイアスは起きません。</li>
 </ul>
 </li>
-<li>カテゴリ割付方法が以下のいずれかにあてはまること。
+</ul>
+<p>では、これらの条件が満たされているとして、どのような割付方法の下で
+割付バイアスが生じるでしょうか。
+それは、割付方法が以下のいずれかにあてはまるときです。</p>
 <ul>
 <li>割付タイプとして<code>adaptive</code>を選び、順序付けによるカテゴリ選択が生じうる
 <ul>
@@ -232,17 +245,17 @@ assignment in web surveys”</a>で
 </ul>
 </li>
 </ul>
-</li>
-</ul>
 </div>
 <div class="section level4">
 <h4 id="スロット割付方法と割付バイアス">スロット割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h4>
-<p>Aがスロットである場合は、</p>
+<p>Aがスロットである場合、割付バイアスが生じる原因として、次の3つを考えることができます。</p>
 <ul>
 <li>カテゴリにおいて割付バイアスが生じていれば、スロットにおいても割付バイアスが生じます。割付スロットは割付カテゴリから選ばれるからです。</li>
 <li>割付カテゴリの最大数が2以上であるときには、割付バイアスが生じます。あるカテゴリにおけるスロット割付が試みられるかどうかが、他のカテゴリでスロット割付が成立するかどうかに依存するからです。</li>
-<li>Aが属するカテゴリのA以外のスロットへの割付可能性と、Aへの割付確率とのあいだに関連があるとき、割付バイアスが生じます。従って、以下の条件がすべて満たされているときに割付バイアスが生じます。
+<li>Aが属するカテゴリのA以外のスロットへの割付可能性と、Aへの割付確率とのあいだに関連があるとき、割付バイアスが生じます。</li>
+</ul>
+<p>3番目の割付バイアスが生じるのは、カテゴリにおける割付バイアスと同様に、以下の条件がすべて満たされているときです。</p>
 <ul>
 <li>スロット数<span class="math inline">\(K_j\)</span>が2以上であること</li>
 <li>あるスロットに割付可能な対象者に注目したとき、他の割付可能スロットが対象者によって異なること</li>
@@ -253,13 +266,11 @@ assignment in web surveys”</a>で
 </ul>
 </li>
 </ul>
-</li>
-</ul>
 </div>
 <div class="section level4">
 <h4 id="割付バイアスを生まない割付方法">割付バイアスを生まない割付方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E7%94%9F%E3%81%BE%E3%81%AA%E3%81%84%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
 </h4>
-<p>逆に、カテゴリにおいてもスロットにおいても常に割付バイアスが生じない割付方法について考えてみましょう。以下の条件を満たす割付方法では、カテゴリ数・スロット数や対象者の割付可能性に関わらず、割付バイアスが生じません。</p>
+<p>上記の議論は過度に煩雑なので、逆に、「カテゴリ数・スロット数や対象者の割付可能性がどうであれ、カテゴリにおいてもスロットにおいても常に割付バイアスが生じない割付方法」について考えてみましょう。それは以下の条件を満たす割付方法です。</p>
 <ul>
 <li>割付カテゴリ最大数を1としている。</li>
 <li>カテゴリとスロットの割付方法を(<code>nonadaptive</code>,
@@ -274,9 +285,9 @@ assignment in web surveys”</a>で
 <code>none</code>)は、「すべてのもの(カテゴリないしスロット)から<span class="math inline">\(L\)</span>個を等確率に抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
 <li>割付方法(<code>nonadaptive</code>, <code>open</code>,
 <code>shortnum</code>,
-<code>none</code>)は、「現時点で回収が終わっていないものから回収数が足りない順に<span class="math inline">\(L\)</span>個までを抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
+<code>none</code>)は、「現時点で割付人数が目標に到達していないものから、割付人数が不足している順に<span class="math inline">\(L\)</span>個までを抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
 </ul>
-<p>調査に必要な対象者数という観点からみると後者のほうがはるかに効率的でしょう。しかし、調査参加順と回答の間に関連がないと仮定する限り、どちらの方法でも割付バイアスは生じません。</p>
+<p>調査に必要な対象者数という観点からみると後者のほうがはるかに効率的でしょう。しかし、(調査参加順と回答の間に関連がないと仮定する限り)どちらの方法でも割付バイアスは生じません。</p>
 <p>このように、「必要な対象者数が少ない割付方法ほど強い割付バイアスが生じる」とは必ずしもいえないわけです。</p>
 </div>
 </div>
@@ -306,7 +317,7 @@ assignment in web surveys”</a>で
 </h2>
 <p><code>rSurveyAssign</code>パッケージは、 推定された<span class="math inline">\(p_i\)</span>, <span class="math inline">\(V_i\)</span>に基づいて、これから行う調査が持つであろう割付バイアスを評価します。
 本項では、評価の際に用いる指標について説明します。</p>
-<p>割付バイアスを評価するための指標として、次の5つを提供しています。</p>
+<p>このパッケージは、割付バイアスを評価するための指標として次の5つを提供しています。</p>
 <ul>
 <li>割付確率の変動に注目する指標
 <ul>
@@ -390,7 +401,7 @@ p_i)^2]\)</span>の推定値と捉えることができるので、 <span class=
 <h3 id="hatmathrmdeff-デザイン効果の推定値">3.3 <span class="math inline">\(\hat{\mathrm{Deff}}\)</span>:
 デザイン効果の推定値<a class="anchor" aria-label="anchor" href="#hatmathrmdeff-%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E5%8A%B9%E6%9E%9C%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
 </h3>
-<p>各対象者の各カテゴリ・スロットへの割付確率<span class="math inline">\(p_i\)</span>が既知ならば、その逆数<span class="math inline">\(1/p_i\)</span>をウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。そこでこのパッケージでは、すでに行った調査についてウェイトを算出する機能も提供しています。詳細は<a href="vignette_weight.html">“How to compute survey
+<p>各対象者の各カテゴリ・スロットへの割付確率<span class="math inline">\(p_i\)</span>が既知ならば、その逆数<span class="math inline">\(1/p_i\)</span>をウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。そこでこのパッケージでは、すでに行った調査についてウェイトを算出する機能を提供しています。詳細は<a href="vignette_weight.html">“4. How to compute survey
 weights”</a>をご覧ください。</p>
 <p>その反面、一般に、ウェイトを用いて集計すると集計値の分散は拡大します。その拡大の程度は、ウェイトの相対的な分散が大きいときに大きくなります。</p>
 <p><strong>デザイン効果</strong>とは、調査データ分析において用いられている概念で、ウェイトを用いた集計における集計値の分散の拡大を、ウェイトの相対的な分散という観点から表現したものです。
@@ -412,7 +423,8 @@ w_i\)</span>とします。 <span class="math display">\[ \mathrm{Deff} = 1 +
 <p>以下の点に注意してください。</p>
 <ul>
 <li>この指標は、<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>や<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>とは異なり、割付可能対象者ではなく割り付けられた対象者についての指標です。ウェイトを用いた集計において何が起きるかを表す指標だからです。</li>
-<li>また、<span class="math inline">\(\hat{p}_i\)</span>の推定誤差については考慮していません。推定誤差があろうとも、集計のウェイトとしては<span class="math inline">\(\hat{w}_i =
+<li>
+<span class="math inline">\(\hat{p}_i\)</span>の推定誤差については考慮していません。推定誤差があろうとも、集計のウェイトとしては<span class="math inline">\(\hat{w}_i =
 1/\hat{p}_i\)</span>を用いざるを得ないからです。そのため、たとえ真の<span class="math inline">\(p_i\)</span>にばらつきがなくても、この指標は1より大きくなります。</li>
 </ul>
 </div>
@@ -420,13 +432,13 @@ w_i\)</span>とします。 <span class="math display">\[ \mathrm{Deff} = 1 +
 <h3 id="hatmathrmess-実質標本サイズの推定値">3.4 <span class="math inline">\(\hat{\mathrm{ESS}}\)</span>:
 実質標本サイズの推定値<a class="anchor" aria-label="anchor" href="#hatmathrmess-%E5%AE%9F%E8%B3%AA%E6%A8%99%E6%9C%AC%E3%82%B5%E3%82%A4%E3%82%BA%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
 </h3>
-<p>いっぱんに、集計値の分散は標本サイズが少ないときに大きくなります。また、ウェイトを用いた集計では、相対的な分散が大きいときにも大きくなります。つまり、ウェイトを用いた集計は、あたかも標本サイズを減らしたかのような集計になるわけです。</p>
-<p>標本サイズをデザイン効果で割った値は、<strong>実質標本サイズ</strong>と呼ばれています。</p>
+<p>一般に、標本サイズが少ないとき、集計値の分散は大きくなります。また、ウェイトを用いた集計では、ウェイトの相対的な分散が大きいとき、集計値の分散は大きくなります。つまり、ウェイトを用いた集計は、あたかも標本サイズを減らしたかのような集計になるわけです。</p>
+<p>標本サイズをデザイン効果で割った値は<strong>実質標本サイズ</strong>と呼ばれています。</p>
 <p>たとえば、実質標本サイズが50であるとしましょう。これは、「ウェイトを用いた集計値は、あたかもウェイトを用いない標本サイズ50の集計値のような分散を持っている」ということを表しています。私たちはふつう、ウェイトの相対的な分散やデザイン効果について直観的に解釈できませんが、標本サイズについてはなんらかの直観を持っていることが多いでしょう。いま、ウェイトが不要であるような調査を実現できるとして、その調査における標本サイズが100以下であったら「標本サイズが小さすぎる、集計値の精度は低すぎるかもしれない」と感じるとしましょう。この場合、実質標本サイズが100以下であったら「ウェイトを用いた集計値の精度は低すぎるかもしれない」と考えることができるわけです。</p>
 <p><code>rSurveyAssign</code>パッケージは、下式に従って求めた<strong>実質標本サイズの推定値</strong>を提供します。
 <span class="math display">\[ \hat{\mathrm{ESS}} =
 \frac{n}{\hat{\mathrm{Deff}}}\]</span></p>
-<p>デザイン効果の推定値<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>と同じく、この指標も、割付可能対象者ではなく割り付けられた対象者についての指標です。また、割付確率の推定値<span class="math inline">\(\hat{p}_i\)</span>が含む推定誤差については考慮していません。そのため、たとえ真の割付確率<span class="math inline">\(p_i\)</span>にばらつきがなくても、この指標は割付られた対象者数<span class="math inline">\(n\)</span>より小さくなります。</p>
+<p>デザイン効果の推定値<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>と同じく、この指標も、割付可能対象者ではなく割り付けられた対象者についての指標です。また、割付確率の推定値<span class="math inline">\(\hat{p}_i\)</span>が含む推定誤差については考慮していません。そのため、たとえ真の割付確率<span class="math inline">\(p_i\)</span>にばらつきがなくても、この指標は割り付けられた対象者数<span class="math inline">\(n\)</span>より小さくなります。</p>
 </div>
 <div class="section level3">
 <h3 id="mathrmcovhatqr-スケーリングした割付確率の推定値と割付可能レシオとの共分散の推定値">3.5 <span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>:
@@ -465,14 +477,14 @@ r^{(s)}_{ij}\]</span> <span class="math display">\[
 この指標は、「割付可能レシオ」という変数のおおまかさを脇におけば、割付バイアスを評価する5つの
 指標の中でもっとも適切な指標だといえます。割付確率ではなく、割付確率と「他のカテゴリ・スロットへの割付可能性」との関連に注目しているからです。</p>
 <p>また、次のようにとらえることもできます。</p>
-<p>いま、あるカテゴリないしスロットに割付可能である人々の割付可能レシオそのものに関心があるとしましょう。たとえば、あるブランドを知っている人々が、市場に存在するブランド群のうち何割を知っているかに関心がある、というような場面を想像してください。</p>
-<p>割付可能レシオ(<span class="math inline">\(r^{(c)}_i\)</span>ないし<span class="math inline">\(r^{(s)}_{ij}\)</span>)を<span class="math inline">\(r_i\)</span>と略記します。推定したい対象は、当該カテゴリないしスロットに割付可能である人々の<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
+<p>いま、あるカテゴリないしスロットに割付可能である人々の割付可能レシオそのものに関心があるとしましょう。たとえば、「このブランドを知っている人々が、市場に存在するブランド群のうち何割を知っているか」に関心がある、というような場面を想像してください。</p>
+<p>割付可能レシオ(<span class="math inline">\(r^{(c)}_i\)</span>ないし<span class="math inline">\(r^{(s)}_{ij}\)</span>)を<span class="math inline">\(r_i\)</span>と略記します。推定したい対象は、当該カテゴリないしスロットに割付可能な人々を通じた<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
 \bar{r}_P = \frac{1}{N} \sum_{i=1}^N r_i\]</span>
 です。しかし、私たちが知ることができるのは、当該カテゴリないしスロットに割り付けられた人々の<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
 \bar{r}_S = \frac{1}{n} \sum_{i=1}^n r_i\]</span>
 です。多くの割付手法において、割付可能レシオが高い人ほど、当該カテゴリないしスロットへの割付確率が低くなりますから、<span class="math inline">\(\bar{r}_S\)</span>は<span class="math inline">\(\bar{r}_P\)</span>よりも低めになります。すなわち、割付バイアスのせいで<span class="math inline">\(\bar{r}_S\)</span>は低めになるわけです。</p>
-<p>すでに述べたように、割付バイアスとは、割付可能対象者において平均1になるようにスケーリングした割付確率<span class="math inline">\(q_i\)</span>と、関心ある変数との共分散でした。つまり<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、関心ある変数が割付可能レシオ<span class="math inline">\(r_i\)</span>
-であるときの割付バイアスの大きさを推定した値だと捉えることもできます。</p>
+<p>すでに述べたように、割付バイアスとは、割付可能対象者において平均1になるようにスケーリングした割付確率<span class="math inline">\(q_i\)</span>と、関心ある変数との共分散でした。いっぽう<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、<span class="math inline">\(q_i\)</span>の推定値<span class="math inline">\(\hat{q}_i\)</span>と割付可能レシオ<span class="math inline">\(r_i\)</span>との共分散です。つまり<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、関心ある変数が割付可能レシオ<span class="math inline">\(r_i\)</span>
+であるときの割付バイアスそのものの推定値だと捉えることもできます。</p>
 </div>
 </div>
 <div class="section level2">
@@ -534,7 +546,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.929 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 4.102 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
