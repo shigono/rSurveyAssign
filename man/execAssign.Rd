@@ -9,18 +9,7 @@ execAssign(
   mnSEQ_CAT_PERSON,
   mbPERSON_CAT_USE,
   lPERSON_SLOT_HIT,
-  lSLOT_REQUEST,
-  nCAT_MAX,
-  sCAT_TYPE,
-  sCAT_FILTER,
-  sCAT_ORDER,
-  sCAT_EXCLUDE,
-  nSLOT_MAX,
-  sSLOT_TYPE,
-  sSLOT_FILTER,
-  sSLOT_ORDER,
-  sSLOT_EXCLUDE,
-  bCHECKCOMPLETE = TRUE,
+  lSETTING,
   sVERBOSE = c("simple", "detail", "none")
 )
 }
@@ -56,43 +45,7 @@ execAssign(
 \code{mbPERSON_CAT_USE[i,j] == 1}のとき、
 \code{lPERSON_SLOT_HIT[[j]][i, ]}における欠損は不可。}
 
-\item{lSLOT_REQUEST}{a list of integer vectors.
-各スロットに割り付ける対象者数の下限。
-要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。}
-
-\item{nCAT_MAX}{an integer.
-ある対象者に割り付けるカテゴリ数の上限。}
-
-\item{sCAT_TYPE}{a string.
-カテゴリ割付タイプ。詳細はvignetteを参照。}
-
-\item{sCAT_FILTER}{a string.
-カテゴリ割付の際の絞り込み条件。詳細はvignetteを参照。}
-
-\item{sCAT_ORDER}{a string.
-カテゴリ割付の際の順序付け条件。詳細はvignetteを参照。}
-
-\item{sCAT_EXCLUDE}{a.string
-カテゴリ割付の際の除外条件。詳細はvignetteを参照。}
-
-\item{nSLOT_MAX}{an integer.
-ある対象者に割り付けるスロット数の上限。}
-
-\item{sSLOT_TYPE}{a string.
-スロット割付タイプ。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_FILTER}{a string.
-スロット割付の際の絞り込み条件。詳細はvignetteを参照。}
-
-\item{sSLOT_ORDER}{a string.
-スロット割付の際の順序付け条件。詳細はvignetteを参照。}
-
-\item{sSLOT_EXCLUDE}{a string.
-スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
-
-\item{bCHECKCOMPLETE}{a logical.
-\code{anSEQ_PERSON}を使い切っても
-全スロットがクローズしなかったらエラーを発生させる}
+\item{lSETTING}{`assignsetting`クラスのオブジェクト。}
 
 \item{sVERBOSE}{a string.
 画面表示レベル。}

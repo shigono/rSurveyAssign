@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,19 +60,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeSurvey</span><span class="op">(</span></span>
 <span>  <span class="va">mbCAT</span>,</span>
 <span>  <span class="va">lSLOT</span>,</span>
-<span>  <span class="va">lSLOT_REQUEST</span>,</span>
+<span>  <span class="va">lSETTING</span>,</span>
 <span>  <span class="va">mnASSIGNCAT</span>,</span>
 <span>  <span class="va">anPARENTCAT</span>,</span>
 <span>  <span class="va">mnASSIGNSLOT</span>,</span>
-<span>  sCAT_TYPE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adaptive"</span>, <span class="st">"nonadaptive"</span><span class="op">)</span>,</span>
-<span>  sCAT_FILTER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"open"</span><span class="op">)</span>,</span>
-<span>  sCAT_ORDER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"openclosed"</span>, <span class="st">"shortnum"</span>, <span class="st">"shortratio"</span><span class="op">)</span>,</span>
-<span>  sCAT_EXCLUDE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"allclosed"</span><span class="op">)</span>,</span>
-<span>  sSLOT_TYPE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adaptive"</span>, <span class="st">"nonadaptive"</span><span class="op">)</span>,</span>
-<span>  sSLOT_FILTER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"open"</span><span class="op">)</span>,</span>
-<span>  sSLOT_ORDER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"openclosed"</span>, <span class="st">"shortnum"</span>, <span class="st">"shortratio"</span><span class="op">)</span>,</span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"allclosed"</span><span class="op">)</span>,</span>
-<span>  nSUBJECT_MAX <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sVERBOSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"none"</span>, <span class="st">"detail"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,25 +81,23 @@
 
 <dt>lSLOT</dt>
 <dd><p>整数行列のリスト。
-調査対象者のスロット割付可能性。
-<code>lSLOT[[j]][i,k]</code>は以下を表す。</p><ul><li><p>1: 調査対象者iはカテゴリjのスロットkについて割付可能。</p></li>
+   調査対象者のスロット割付可能性。
+   <code>lSLOT[[j]][i,k]</code>は以下を表す。</p><ul><li><p>1: 調査対象者iはカテゴリjのスロットkについて割付可能。</p></li>
 <li><p>0: 調査対象者iはカテゴリjのスロットkについて割付不能。</p></li>
-</ul><p>欠損についてはDetailsを参照。
-列に名前を付けるとスロット名とみなされる。
-名前を付けるならばすべての列に重複なく名前をつけること。</p></dd>
+</ul><p>欠損についてはDetailsを参照。</p>
+<p>要素の各列に名前を付けたときはスロット名とみなされ、
+   各列の列名がlSETTING$lSLOT_REQUESTと一致していないと
+   エラーとなる。</p></dd>
 
 
-<dt>lSLOT_REQUEST</dt>
-<dd><p>整数ベクトルのリスト。
-各スロットに割り付ける対象者数の下限。
-要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-欠損なし。
-要素の列名はlSLOTの要素の列名と一致していること。</p></dd>
+<dt>lSETTING</dt>
+<dd><p>`assignsetting'クラスのオブジェクト。
+調査データを得た際の割付のセッティング。<code><a href="makeSetting.html">makeSetting</a></code>で生成する。</p></dd>
 
 
 <dt>mnASSIGNCAT</dt>
 <dd><p>整数行列。
-調査対象者の割付カテゴリ。列数は、割付カテゴリ数の上限。
+調査対象者の割付カテゴリ。列数はlSETTING$nCAT_MAXと一致すること。
 <code>mnASSIGNCAT[i,j]</code>は、調査対象者iのj番目の割付カテゴリ番号(mbCATの列番号)を表す。
 調査対象者iの割付カテゴリ数が列数より小さい場合はNAを埋める。
 列順には意味がない。</p></dd>
@@ -123,63 +112,10 @@
 
 <dt>mnASSIGNSLOT</dt>
 <dd><p>整数行列。
-調査対象者の割付スロット。列数は、割付スロット数の上限。
+調査対象者の割付スロット。列数は、列数はlSETTING$nSLOT_MAXと一致すること。
 <code>mnASSIGNSLOT[i,j]</code>は、調査対象者iの割付スロット番号(lSLOT[[anPARENTCAT[i]]]の列番号)を
 表す。調査対象者iの割付スロット数が列数より小さい場合はNAを埋める。
 列順には意味がない。</p></dd>
-
-
-<dt>sCAT_TYPE</dt>
-<dd><p>文字列。
-カテゴリ割付タイプ。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sCAT_FILTER</dt>
-<dd><p>文字列。
-カテゴリ割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sCAT_ORDER</dt>
-<dd><p>文字列。
-カテゴリ割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sCAT_EXCLUDE</dt>
-<dd><p>文字列。
-カテゴリ割付の際の除外条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sSLOT_TYPE</dt>
-<dd><p>文字列。
-スロット割付タイプ。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sSLOT_FILTER</dt>
-<dd><p>文字列。
-スロット割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sSLOT_ORDER</dt>
-<dd><p>文字列。
-スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>sSLOT_EXCLUDE</dt>
-<dd><p>文字列。
-スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。</p></dd>
-
-
-<dt>nSUBJECT_MAX</dt>
-<dd><p>整数。
-   抽出する対象者数の上限。</p>
-<p><code>nSUBJECT_MAX</code>が指定された場合、
-   対象者抽出は、
-   対象者数がnSUBJECT_MAXに達するか、すべてのスロットの割付対象者数が
-   lSLOT_REQUESTに設定された目標に達したときに終了する。</p>
-<p><code>nSUBJECT_MAX</code>がNULLの場合、
-   対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
-   対象者数が母集団サイズの10倍を超えても
-   割付対象者数が目標に到達しなかったときはエラーとなる。</p></dd>
 
 
 <dt>sVERBOSE</dt>
@@ -191,29 +127,14 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>`surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。</p><ul><li><p><code>mbCAT</code>         整数行列。引数mbCATの値。
+<p>`surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。</p><ul><li><p><code>lSETTING</code>      リスト。引数lSETTINGの値。</p></li>
+<li><p><code>mbCAT</code>         整数行列。引数mbCATの値。
                            列名がついていなかった場合は、
                            列名"Cat_(j)"が付与される。</p></li>
 <li><p><code>lSLOT</code>         整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
                            スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
                            その行はみなNAに変更される。
-                           列名がついていなかった場合は、
-                           列名"Slot_(j)_(k)"が付与される。</p></li>
-<li><p><code>lSLOT_REQUEST</code> 整数ベクトルのリスト。引数lSLOT_REQUESTの値。
-                           名前がついていなかった場合は、
-                           名前"Slot_(j)_(k)"が付与される。</p></li>
-<li><p><code>sCAT_TYPE</code>     文字列。引数sCAT_TYPEの値。</p></li>
-<li><p><code>sCAT_FILTER</code>   文字列。引数sCAT_FILTERの値。</p></li>
-<li><p><code>sCAT_ORDER</code>    文字列。引数sCAT_ORDERの値。</p></li>
-<li><p><code>sCAT_EXCLUDE</code>  文字列。引数sCAT_EXCLUDEの値。</p></li>
-<li><p><code>sSLOT_TYPE</code>    文字列。引数sSLOT_TYPEの値。</p></li>
-<li><p><code>sSLOT_FILTER</code>  文字列。引数sSLOT_FILTERの値。</p></li>
-<li><p><code>sSLOT_ORDER</code>   文字列。引数sSLOT_ORDERの値。</p></li>
-<li><p><code>sSLOT_EXCLUDE</code> 文字列。引数sSLOT_EXCLUDEの値。</p></li>
-<li><p><code>mnASSIGNCAT</code>   整数行列。引数mnASSIGNCATの値。</p></li>
-<li><p><code>anPARENTCAT</code>   整数ベクトル。引数anPARENTCATの値。</p></li>
-<li><p><code>mnASSIGNSLOT</code>  整数行列。引数mnASSIGNSLOTの値。</p></li>
-<li><p><code>nSUBJECT_MAX</code>  整数。引数nSUBJECT_MAXの値。</p></li>
+                           列名がついていなかった場合はlSETTING$lSLOT_REQUESTの要素名が付与される。</p></li>
 <li><p><code>manSubjectCat_AltSubject</code> 整数ベクトルを要素とする行列。行は対象者(mbCATの行),
                                       列はカテゴリ(mbCATの列),
                                       要素はその対象者のスロット割付可能性を調べるときに
@@ -261,6 +182,52 @@
   出現した場合には警告を表示する。</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">surveydata</span>, package <span class="op">=</span> <span class="st">"rSurveyAssign"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lSurvey</span> <span class="op">&lt;-</span> <span class="fu">makeSurvey</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  mbCAT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bCat_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lSLOT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_1_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_2_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_3_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lSETTING <span class="op">=</span> <span class="fu"><a href="makeSetting.html">makeSetting</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    nCAT_MAX      <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>    sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>,</span></span>
+<span class="r-in"><span>    sCAT_FILTER   <span class="op">=</span> <span class="st">"open"</span>,</span></span>
+<span class="r-in"><span>    sCAT_ORDER    <span class="op">=</span> <span class="st">"random"</span>,</span></span>
+<span class="r-in"><span>    sCAT_EXCLUDE  <span class="op">=</span> <span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>    nSLOT_MAX      <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>    sSLOT_TYPE    <span class="op">=</span> <span class="st">"adaptive"</span>,</span></span>
+<span class="r-in"><span>    sSLOT_FILTER  <span class="op">=</span> <span class="st">"all"</span>,</span></span>
+<span class="r-in"><span>    sSLOT_ORDER   <span class="op">=</span> <span class="st">"shortnum"</span>,</span></span>
+<span class="r-in"><span>    sSLOT_EXCLUDE <span class="op">=</span> <span class="st">"allclosed"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mnASSIGNCAT   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nAssignedCat_1"</span>, <span class="st">"nAssignedCat_2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  anPARENTCAT   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">$</span><span class="va">nAssignedCat_Slots</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mnASSIGNSLOT  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nAssignedSlot_1"</span>, <span class="st">"nAssignedSlot_2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSetting] assign names to lSLOT_REQUEST ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey] # of categories: 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey] # of slots: 10,10,10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey] # subjects: 504 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey] # of pairs of subject-category:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   total: 1512 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   assignable: 1337 (445.7/category) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   assigned: 1767 (589.0/category) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   assignable but assignabilities to slots are unknown: 447 (149.0/category) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]     each of these subjects will be complemented by:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]     a subject who has the same pattern of assignable categories: 447 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]     a subject who has the same number of assignable categories: 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]     a subject who is randomly selected: 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey] # of pairs of subject-slot:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   in assignable categories: 13370 (445.7/slot) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   known to be assignable: 1829 (61.0/slot) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSurvey]   assigned: 346 (11.5/slot) </span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -63,3 +63,13 @@ an object of `popdata` class.
 \description{
 母集団データを作成する。
 }
+\examples{
+data(popdata, package = "rSurveyAssign")
+mbCat <- as.matrix(popdata[, paste0("bCat_", 1:3)])
+lSlot <- list(
+  as.matrix(popdata[, paste0("bSlot_1_", 1:10)]),
+  as.matrix(popdata[, paste0("bSlot_2_", 1:10)]),
+  as.matrix(popdata[, paste0("bSlot_3_", 1:10)])
+)
+lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
+}

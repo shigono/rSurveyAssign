@@ -7,19 +7,10 @@
 makeSurvey(
   mbCAT,
   lSLOT,
-  lSLOT_REQUEST,
+  lSETTING,
   mnASSIGNCAT,
   anPARENTCAT,
   mnASSIGNSLOT,
-  sCAT_TYPE = c("adaptive", "nonadaptive"),
-  sCAT_FILTER = c("all", "open"),
-  sCAT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
-  sCAT_EXCLUDE = c("none", "allclosed"),
-  sSLOT_TYPE = c("adaptive", "nonadaptive"),
-  sSLOT_FILTER = c("all", "open"),
-  sSLOT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
-  sSLOT_EXCLUDE = c("none", "allclosed"),
-  nSUBJECT_MAX = NULL,
   sVERBOSE = c("simple", "none", "detail")
 )
 }
@@ -35,24 +26,23 @@ makeSurvey(
 名前を付けるならばすべての列に重複なく名前をつけること。}
 
 \item{lSLOT}{整数行列のリスト。
-調査対象者のスロット割付可能性。
-\code{lSLOT[[j]][i,k]}は以下を表す。
-\itemize{
-\item 1: 調査対象者iはカテゴリjのスロットkについて割付可能。
-\item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
-}
-欠損についてはDetailsを参照。
-列に名前を付けるとスロット名とみなされる。
-名前を付けるならばすべての列に重複なく名前をつけること。}
+   調査対象者のスロット割付可能性。
+   \code{lSLOT[[j]][i,k]}は以下を表す。
+   \itemize{
+   \item 1: 調査対象者iはカテゴリjのスロットkについて割付可能。
+   \item 0: 調査対象者iはカテゴリjのスロットkについて割付不能。
+   }
+   欠損についてはDetailsを参照。
 
-\item{lSLOT_REQUEST}{整数ベクトルのリスト。
-各スロットに割り付ける対象者数の下限。
-要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-欠損なし。
-要素の列名はlSLOTの要素の列名と一致していること。}
+   要素の各列に名前を付けたときはスロット名とみなされ、
+   各列の列名がlSETTING$lSLOT_REQUESTと一致していないと
+   エラーとなる。}
+
+\item{lSETTING}{`assignsetting'クラスのオブジェクト。
+調査データを得た際の割付のセッティング。\code{\link{makeSetting}}で生成する。}
 
 \item{mnASSIGNCAT}{整数行列。
-調査対象者の割付カテゴリ。列数は、割付カテゴリ数の上限。
+調査対象者の割付カテゴリ。列数はlSETTING$nCAT_MAXと一致すること。
 \code{mnASSIGNCAT[i,j]}は、調査対象者iのj番目の割付カテゴリ番号(mbCATの列番号)を表す。
 調査対象者iの割付カテゴリ数が列数より小さい場合はNAを埋める。
 列順には意味がない。}
@@ -63,47 +53,10 @@ makeSurvey(
 調査対象者iがスロットに割り付けられなかった場合はNAを埋める。}
 
 \item{mnASSIGNSLOT}{整数行列。
-調査対象者の割付スロット。列数は、割付スロット数の上限。
+調査対象者の割付スロット。列数は、列数はlSETTING$nSLOT_MAXと一致すること。
 \code{mnASSIGNSLOT[i,j]}は、調査対象者iの割付スロット番号(lSLOT[[anPARENTCAT[i]]]の列番号)を
 表す。調査対象者iの割付スロット数が列数より小さい場合はNAを埋める。
 列順には意味がない。}
-
-\item{sCAT_TYPE}{文字列。
-カテゴリ割付タイプ。指定は必須。詳細はvignetteを参照。}
-
-\item{sCAT_FILTER}{文字列。
-カテゴリ割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sCAT_ORDER}{文字列。
-カテゴリ割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sCAT_EXCLUDE}{文字列。
-カテゴリ割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_TYPE}{文字列。
-スロット割付タイプ。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_FILTER}{文字列。
-スロット割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_ORDER}{文字列。
-スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_EXCLUDE}{文字列。
-スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
-
-\item{nSUBJECT_MAX}{整数。
-   抽出する対象者数の上限。
-
-  \code{nSUBJECT_MAX}が指定された場合、
-   対象者抽出は、
-   対象者数がnSUBJECT_MAXに達するか、すべてのスロットの割付対象者数が
-   lSLOT_REQUESTに設定された目標に達したときに終了する。
-
-  \code{nSUBJECT_MAX}がNULLの場合、
-   対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
-   対象者数が母集団サイズの10倍を超えても
-   割付対象者数が目標に到達しなかったときはエラーとなる。}
 
 \item{sVERBOSE}{文字列。
 画面表示レベル。}
@@ -111,42 +64,27 @@ makeSurvey(
 \value{
 `surveydata`クラスのオブジェクト。その実体は以下の要素を持つリスト。
 \itemize{
+\item \code{lSETTING}      リスト。引数lSETTINGの値。
 \item \code{mbCAT}         整数行列。引数mbCATの値。
                            列名がついていなかった場合は、
                            列名"Cat_(j)"が付与される。
 \item \code{lSLOT}         整数行列のリスト。引数lSLOTの値。ただし、割付不能カテゴリの
                            スロット割付可能性はすべてNAに変更される。また、要素の行にひとつでもNAがあったら
                            その行はみなNAに変更される。
-                           列名がついていなかった場合は、
-                           列名"Slot_(j)_(k)"が付与される。
-\item \code{lSLOT_REQUEST} 整数ベクトルのリスト。引数lSLOT_REQUESTの値。
-                           名前がついていなかった場合は、
-                           名前"Slot_(j)_(k)"が付与される。
-\item \code{sCAT_TYPE}     文字列。引数sCAT_TYPEの値。
-\item \code{sCAT_FILTER}   文字列。引数sCAT_FILTERの値。
-\item \code{sCAT_ORDER}    文字列。引数sCAT_ORDERの値。
-\item \code{sCAT_EXCLUDE}  文字列。引数sCAT_EXCLUDEの値。
-\item \code{sSLOT_TYPE}    文字列。引数sSLOT_TYPEの値。
-\item \code{sSLOT_FILTER}  文字列。引数sSLOT_FILTERの値。
-\item \code{sSLOT_ORDER}   文字列。引数sSLOT_ORDERの値。
-\item \code{sSLOT_EXCLUDE} 文字列。引数sSLOT_EXCLUDEの値。
-\item \code{mnASSIGNCAT}   整数行列。引数mnASSIGNCATの値。
-\item \code{anPARENTCAT}   整数ベクトル。引数anPARENTCATの値。
-\item \code{mnASSIGNSLOT}  整数行列。引数mnASSIGNSLOTの値。
-\item \code{nSUBJECT_MAX}  整数。引数nSUBJECT_MAXの値。
+                           列名がついていなかった場合はlSETTING$lSLOT_REQUESTの要素名が付与される。
 \item \code{manSubjectCat_AltSubject} 整数ベクトルを要素とする行列。行は対象者(mbCATの行),
                                       列はカテゴリ(mbCATの列),
                                       要素はその対象者のスロット割付可能性を調べるときに
                                       参照すべき対象者番号のベクトル。
 \item \code{mnSubjectCat_AltStatus}   整数ベクトルの行列。行は対象者(mbCATの行),
                                       列はカテゴリ(mbCATの列), 要素は以下のいずれか:
-\itemize{
-\item NA: 割付不能カテゴリ
-\item 0: スロット割付可能性が既知
-\item 1: スロット割付可能性が未知であるためカテゴリ割付可能性が同じ対象者で代替
-\item 2: スロット割付可能性が未知であるため割付カテゴリ数が同じ対象者で代替
-\item 3: スロット割付可能性が未知であるためランダムに選んだ対象者で代替
-}
+  \itemize{
+  \item NA: 割付不能カテゴリ
+  \item 0: スロット割付可能性が既知
+  \item 1: スロット割付可能性が未知であるためカテゴリ割付可能性が同じ対象者で代替
+  \item 2: スロット割付可能性が未知であるため割付カテゴリ数が同じ対象者で代替
+  \item 3: スロット割付可能性が未知であるためランダムに選んだ対象者で代替
+  }
 }
 }
 \description{
@@ -192,4 +130,31 @@ makeSurvey(
   \code{makeSurvey}は、今後のシミュレーションの際に
   上記の手順での補完が可能かどうかをチェックし、Step 1で補完できない人が
   出現した場合には警告を表示する。
+}
+\examples{
+data(surveydata, package = "rSurveyAssign")
+lSurvey <- makeSurvey(
+  mbCAT = as.matrix(surveydata[, paste0("bCat_", 1:3)]),
+  lSLOT = list(
+    as.matrix(surveydata[, paste0("bSlot_1_", 1:10)]),
+    as.matrix(surveydata[, paste0("bSlot_2_", 1:10)]),
+    as.matrix(surveydata[, paste0("bSlot_3_", 1:10)])
+  ),
+  lSETTING = makeSetting(
+    lSLOT_REQUEST = list(rep(10, 10), rep(10, 10), rep(10, 10)),
+    nCAT_MAX      = 2,
+    sCAT_TYPE     = 'adaptive',
+    sCAT_FILTER   = "open",
+    sCAT_ORDER    = "random",
+    sCAT_EXCLUDE  = "none",
+    nSLOT_MAX      = 2,
+    sSLOT_TYPE    = "adaptive",
+    sSLOT_FILTER  = "all",
+    sSLOT_ORDER   = "shortnum",
+    sSLOT_EXCLUDE = "allclosed"
+  ),
+  mnASSIGNCAT   = as.matrix(surveydata[, c("nAssignedCat_1", "nAssignedCat_2")]),
+  anPARENTCAT   = as.vector(surveydata$nAssignedCat_Slots),
+  mnASSIGNSLOT  = as.matrix(surveydata[, c("nAssignedSlot_1", "nAssignedSlot_2")])
+)
 }

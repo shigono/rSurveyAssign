@@ -616,18 +616,7 @@ execAssign <- function(
   mnSEQ_CAT_PERSON,
   mbPERSON_CAT_USE,
   lPERSON_SLOT_HIT,
-  lSLOT_REQUEST,
-  nCAT_MAX,
-  sCAT_TYPE,
-  sCAT_FILTER,
-  sCAT_ORDER,
-  sCAT_EXCLUDE,
-  nSLOT_MAX,
-  sSLOT_TYPE,
-  sSLOT_FILTER,
-  sSLOT_ORDER,
-  sSLOT_EXCLUDE,
-  bCHECKCOMPLETE = TRUE,
+  lSETTING,
   sVERBOSE = c("simple", "detail", "none")
 ){
   #' Internal: Assign participants into 'categories' and 'slots'
@@ -669,35 +658,7 @@ execAssign <- function(
   #'    \code{mbPERSON_CAT_USE[i,j] == 1}のとき、
   #'    \code{lPERSON_SLOT_HIT[[j]][i, ]}における欠損は不可。
   #'
-  #' @param lSLOT_REQUEST a list of integer vectors.
-  #'    各スロットに割り付ける対象者数の下限。
-  #'    要素jのベクトルの要素kは, カテゴリjのスロットkに割り付ける対象者の下限を表す。
-  #'
-  #' @param nCAT_MAX an integer.
-  #'    ある対象者に割り付けるカテゴリ数の上限。
-  #' @param sCAT_TYPE a string.
-  #'    カテゴリ割付タイプ。詳細はvignetteを参照。
-  #' @param sCAT_FILTER a string.
-  #'    カテゴリ割付の際の絞り込み条件。詳細はvignetteを参照。
-  #' @param sCAT_ORDER a string.
-  #'    カテゴリ割付の際の順序付け条件。詳細はvignetteを参照。
-  #' @param sCAT_EXCLUDE a.string
-  #'    カテゴリ割付の際の除外条件。詳細はvignetteを参照。
-  #'
-  #' @param nSLOT_MAX an integer.
-  #'    ある対象者に割り付けるスロット数の上限。
-  #' @param sSLOT_TYPE a string.
-  #'    スロット割付タイプ。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_FILTER a string.
-  #'    スロット割付の際の絞り込み条件。詳細はvignetteを参照。
-  #' @param sSLOT_ORDER a string.
-  #'    スロット割付の際の順序付け条件。詳細はvignetteを参照。
-  #' @param sSLOT_EXCLUDE a string.
-  #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
-  #'
-  #' @param bCHECKCOMPLETE a logical.
-  #'    \code{anSEQ_PERSON}を使い切っても
-  #'    全スロットがクローズしなかったらエラーを発生させる
+  #' @param lSETTING `assignsetting`クラスのオブジェクト。
   #'
   #' @param sVERBOSE a string.
   #'    画面表示レベル。
@@ -777,57 +738,35 @@ execAssign <- function(
     # }
 
     ## lSLOT_REQUEST
-    ## 要素数はmnSEQ_CAT_PERSONの列数と一致する
-    ## 各要素の長さはlPERSON_SLOT_HITの各要素の長さと同じ
+    ## クラス
+    stopifnot("assignsetting" %in% class(lSETTING))
+    ## lSLOT_REQUESTの要素数はmnSEQ_CAT_PERSONの列数と同じ
+    stopifnot(length(lSETTING$lSLOT_REQUEST) == ncol(mnSEQ_CAT_PERSON))
+    ## lSLOT_REQUESTの各要素の長さはlPERSON_SLOT_HITの各要素の長さと同じ
+    stopifnot( sapply(lSETTING$lSLOT_REQUEST, length) == sapply(lPERSON_SLOT_HIT, ncol) )
     ## 欠損はない
-    stopifnot(length(lSLOT_REQUEST) == ncol(mnSEQ_CAT_PERSON))
-    stopifnot(sapply(lSLOT_REQUEST, length) == sapply(lPERSON_SLOT_HIT, ncol))
-    stopifnot(sapply(lSLOT_REQUEST, function(x) sum(is.na(x))) == 0)
-
-    ## nCAT_MAX
-    ## 欠損無し
-    stopifnot(!is.na(nCAT_MAX))
-
-    ## sCAT_TYPE, sCAT_FILTER, sCAT_ORDER, sCAT_EXCLUDE
-    stopifnot(sCAT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sCAT_FILTER  %in% c("all", "open"))
-    stopifnot(sCAT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sCAT_EXCLUDE %in% c("none", "allclosed"))
-
-    ## nSLOT_MAX
-    ## 欠損無し
-    stopifnot(!is.na(nSLOT_MAX))
-
-    ## sSLOT_TYPE, sSLOT_FILTER, sSLOT_ORDER, sSLOT_EXCLUDE
-    stopifnot(sSLOT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sSLOT_FILTER  %in% c("all", "open"))
-    stopifnot(sSLOT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sSLOT_EXCLUDE %in% c("none", "allclosed"))
-
-    ## bCHECKCOMPLETE
-    ## 値は期待通り
-    stopifnot(bCHECKCOMPLETE %in% c(TRUE, FALSE))
+    stopifnot(sapply(lSETTING$lSLOT_REQUEST, function(x) sum(is.na(x))) == 0)
   }
 
   ## ここからメイン - - - - - - - -
 
   # 引数のコピーに過ぎないベクトル(状態を表現しないベクトル)
   # カテゴリ番号からスロット数を引くベクトル
-  anCatNo_NumSlot <- sapply(lSLOT_REQUEST, length)
+  anCatNo_NumSlot <- sapply(lSETTING$lSLOT_REQUEST, length)
   # スロット通番から目標票数を引くベクトル
-  anLoc_Request <- unlist(lSLOT_REQUEST)
+  anLoc_Request <- unlist(lSETTING$lSLOT_REQUEST)
   # スロット通番からカテゴリ番号を引くベクトル
-  anLoc_CatNo <- rep(seq_along(lSLOT_REQUEST), sapply(lSLOT_REQUEST, length))
+  anLoc_CatNo <- rep(seq_along(lSETTING$lSLOT_REQUEST), sapply(lSETTING$lSLOT_REQUEST, length))
 
   # スロットの状態ベクトル
   # スロット通番から現在の獲得票数を引くベクトル。ここでは初期値0
-  anLoc_Count <- rep(0, length(unlist(lSLOT_REQUEST)))
+  anLoc_Count <- rep(0, length(unlist(lSETTING$lSLOT_REQUEST)))
   # スロット通番からオープン有無を引くベクトル。目標票数がすべてゼロかもなので真面目に算出
   abLoc_Open <- as.integer( anLoc_Count < anLoc_Request)
 
   # カテゴリの状態ベクトル
   # カテゴリ番号からオープンしているスロット数を引くベクトル。ここでは目標票数が0以上であるスロットの数
-  anCatNo_Count <- sapply(lSLOT_REQUEST, function(x) sum(x>0))
+  anCatNo_Count <- sapply(lSETTING$lSLOT_REQUEST, function(x) sum(x>0))
   # カテゴリ番号からオープン有無を引くベクトル。目標票数がすべてゼロかもなので真面目に算出
   abCatNo_Open <- as.integer(anCatNo_Count > 0)
 
@@ -837,15 +776,19 @@ execAssign <- function(
   mnOut <- matrix(
     NA,
     nrow = length(anSEQ_PERSON),
-    ncol = 2 + nCAT_MAX + 1 + nSLOT_MAX
+    ncol = 2 + lSETTING$nCAT_MAX + 1 + lSETTING$nSLOT_MAX
   )
   colnames(mnOut) <- c(
     "SEQ",
     "nPerson",
-    paste0("nCat", seq_len(nCAT_MAX)),
+    paste0("nCat", seq_len(lSETTING$nCAT_MAX)),
     "nCat",
-    paste0("nSlot", seq_len(nSLOT_MAX))
+    paste0("nSlot", seq_len(lSETTING$nSLOT_MAX))
   )
+
+  nNumSubject <- 0
+  nNumCatSubject <- 0
+  nNumSlotSubject <- 0
 
   if (all(abCatNo_Open == 0)) {
     # もしすべてのカテゴリが最初からクローズドだったら
@@ -856,6 +799,8 @@ execAssign <- function(
     # 通常はこちら
     # ひとりづつ抽出し、スロット割付を行う
     for (i in seq_along(anSEQ_PERSON)){
+
+      nNumSubject <- i
 
       # 行番号
       nPerson <- anSEQ_PERSON[i]
@@ -877,11 +822,11 @@ execAssign <- function(
         abCatNo_Open,
         anCatNo_Count,
         anCatNo_NumSlot,
-        nCAT_MAX,
-        sCAT_TYPE,
-        sCAT_FILTER,
-        sCAT_ORDER,
-        sCAT_EXCLUDE,
+        lSETTING$nCAT_MAX,
+        lSETTING$sCAT_TYPE,
+        lSETTING$sCAT_FILTER,
+        lSETTING$sCAT_ORDER,
+        lSETTING$sCAT_EXCLUDE,
         bDEBUG = bDEBUG
       )
       if (bDEBUG){
@@ -890,10 +835,12 @@ execAssign <- function(
 
       # NAをとる
       anAssignedCat_Compress <- anAssignedCat[!is.na(anAssignedCat)]
+      # nNumCatSubjectをカウント
+      nNumCatSubject <- nNumCatSubject + (length(anAssignedCat_Compress) > 0)
 
       # 割付カテゴリについてループ
       nParentCat <- NA
-      anAssignedSlot <- rep(NA, nSLOT_MAX)
+      anAssignedSlot <- rep(NA, lSETTING$nSLOT_MAX)
       for (nAssignedCat in anAssignedCat_Compress){
         if (bDEBUG){
           cat("[execAssign] searching slots of assigned category", nAssignedCat, "... \n")
@@ -918,11 +865,11 @@ execAssign <- function(
           abLoc_Open[anLoc_CatNo == nAssignedCat],
           anLoc_Count[anLoc_CatNo == nAssignedCat],
           anLoc_Request[anLoc_CatNo == nAssignedCat],
-          nSLOT_MAX,
-          sSLOT_TYPE,
-          sSLOT_FILTER,
-          sSLOT_ORDER,
-          sSLOT_EXCLUDE,
+          lSETTING$nSLOT_MAX,
+          lSETTING$sSLOT_TYPE,
+          lSETTING$sSLOT_FILTER,
+          lSETTING$sSLOT_ORDER,
+          lSETTING$sSLOT_EXCLUDE,
           bDEBUG = bDEBUG
         )
 
@@ -936,6 +883,9 @@ execAssign <- function(
         cat("[execAssign] parent category of assigned slots:", nParentCat, "\n")
         cat("[execAssign] assigned slots:", anAssignedSlot, "\n")
       }
+
+      # nNumSubjectWithSlotをカウント
+      nNumSlotSubject <- nNumSlotSubject + (length(anAssignedSlot) > 0)
 
       # 割付履歴に書き込む
       anOut <- c(i, nPerson, anAssignedCat, nParentCat, anAssignedSlot)
@@ -981,23 +931,32 @@ execAssign <- function(
         }
       }
 
+      # 上限に達した時の脱出処理
+      if (
+        (lSETTING$nSUBJECT_MAX > 0 & nNumSubject >= lSETTING$nSUBJECT_MAX)
+        | (lSETTING$nCATSUBJECT_MAX > 0 & nNumCatSubject >= lSETTING$nCATSUBJECT_MAX)
+        | (lSETTING$nSLOTSUBJECT_MAX > 0 & nNumSlotSubject >= lSETTING$nSLOTSUBJECT_MAX)
+      ){
+         # すべてのカテゴリをスロットを強制的にクローズする
+         abCatNo_Open <- rep(0, length(abCatNo_Open))
+         anLoc_Count  <- anLoc_Request
+      }
+
       # すべてのカテゴリがクローズしたら脱出
       if (all(abCatNo_Open == 0)) break
     }
-    # 割付履歴のうち、実際には値を格納しなかった行を削除して結合
+    # 割付履歴のうち、実際には値を格納しなかった行を削除
     out <- mnOut[seq_len(i), ]
-    # 行名として, mbPERSON_CAT_USEの行名を与える
+    # 行名として mbPERSON_CAT_USEの行名を与える
     rownames(out) <- rownames(mbPERSON_CAT_USE)[anSEQ_PERSON[seq_len(i)]]
   }
 
-  if (bCHECKCOMPLETE){
-    # すべてのスロットがクローズしていなかったらエラー
-    if (any(anLoc_Count < anLoc_Request))
-      stop("[execAssign] Error: A survey was terminated with insufficient sample size.")
-  }
+  # すべてのスロットがクローズしていなかったらエラー
+  if (any(anLoc_Count < anLoc_Request))
+    stop("[execAssign] Error: A survey was terminated with insufficient sample size.")
 
   if (sVERBOSE == "detail"){
-    cat("[execAssign] End\n")
+    cat("[execAssign] end.\n")
   }
   return(out)
 }
@@ -1069,7 +1028,7 @@ checkSurvey <- function(
   # スロット通番から現在の獲得票数を引くベクトル。ここでは初期値0
   anLoc_Count <- rep(0, sum(anCatNo_NumSlot))
   # スロット通番から目標票数を引くベクトル。
-  anLoc_Request <- unlist(lSURVEY$lSLOT_REQUEST)
+  anLoc_Request <- unlist(lSURVEY$lSETTING$lSLOT_REQUEST)
   # スロット通番からオープン有無を引くベクトル。ここでは初期値1
   abLoc_Open <- rep(1, sum(anCatNo_NumSlot))
   # スロット通番からカテゴリ番号を引くベクトル
@@ -1126,10 +1085,10 @@ checkSurvey <- function(
       anCatNo_Count,
       anCatNo_NumSlot,
       ncol(lSURVEY$mnASSIGNCAT),
-      lSURVEY$sCAT_TYPE,
-      lSURVEY$sCAT_FILTER,
-      lSURVEY$sCAT_ORDER,
-      lSURVEY$sCAT_EXCLUDE,
+      lSURVEY$lSETTING$sCAT_TYPE,
+      lSURVEY$lSETTING$sCAT_FILTER,
+      lSURVEY$lSETTING$sCAT_ORDER,
+      lSURVEY$lSETTING$sCAT_EXCLUDE,
       bDEBUG = bDEBUG
     )
 
@@ -1202,10 +1161,10 @@ checkSurvey <- function(
           anLoc_Count[anLoc_CatNo == nAssignCat],
           anLoc_Request[anLoc_CatNo == nAssignCat],
           ncol(lSURVEY$mnASSIGNSLOT),
-          lSURVEY$sSLOT_TYPE,
-          lSURVEY$sSLOT_FILTER,
-          lSURVEY$sSLOT_ORDER,
-          lSURVEY$sSLOT_EXCLUDE,
+          lSURVEY$lSETTING$sSLOT_TYPE,
+          lSURVEY$lSETTING$sSLOT_FILTER,
+          lSURVEY$lSETTING$sSLOT_ORDER,
+          lSURVEY$lSETTING$sSLOT_EXCLUDE,
           bDEBUG = bDEBUG
         )
         return(lPossibleSlot)
@@ -1262,10 +1221,10 @@ checkSurvey <- function(
         anLoc_Count[anLoc_CatNo == nParentCat],
         anLoc_Request[anLoc_CatNo == nParentCat],
         ncol(lSURVEY$mnASSIGNSLOT),
-        lSURVEY$sSLOT_TYPE,
-        lSURVEY$sSLOT_FILTER,
-        lSURVEY$sSLOT_ORDER,
-        lSURVEY$sSLOT_EXCLUDE,
+        lSURVEY$lSETTING$sSLOT_TYPE,
+        lSURVEY$lSETTING$sSLOT_FILTER,
+        lSURVEY$lSETTING$sSLOT_ORDER,
+        lSURVEY$lSETTING$sSLOT_EXCLUDE,
         bDEBUG = bDEBUG
       )
       if (bDEBUG){

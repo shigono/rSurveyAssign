@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,16 +60,18 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeSetting</span><span class="op">(</span></span>
 <span>  <span class="va">lSLOT_REQUEST</span>,</span>
 <span>  <span class="va">nCAT_MAX</span>,</span>
-<span>  <span class="va">nSLOT_MAX</span>,</span>
 <span>  sCAT_TYPE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adaptive"</span>, <span class="st">"nonadaptive"</span><span class="op">)</span>,</span>
 <span>  sCAT_FILTER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"open"</span><span class="op">)</span>,</span>
 <span>  sCAT_ORDER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"openclosed"</span>, <span class="st">"shortnum"</span>, <span class="st">"shortratio"</span><span class="op">)</span>,</span>
 <span>  sCAT_EXCLUDE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"allclosed"</span><span class="op">)</span>,</span>
+<span>  <span class="va">nSLOT_MAX</span>,</span>
 <span>  sSLOT_TYPE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adaptive"</span>, <span class="st">"nonadaptive"</span><span class="op">)</span>,</span>
 <span>  sSLOT_FILTER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"open"</span><span class="op">)</span>,</span>
 <span>  sSLOT_ORDER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"random"</span>, <span class="st">"openclosed"</span>, <span class="st">"shortnum"</span>, <span class="st">"shortratio"</span><span class="op">)</span>,</span>
 <span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"allclosed"</span><span class="op">)</span>,</span>
 <span>  nSUBJECT_MAX <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  nCATSUBJECT_MAX <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  nSLOTSUBJECT_MAX <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  sVERBOSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"simple"</span>, <span class="st">"none"</span>, <span class="st">"detail"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,11 +92,6 @@
 ある対象者に割り付けるカテゴリ数の上限。</p></dd>
 
 
-<dt>nSLOT_MAX</dt>
-<dd><p>an integer.
-ある対象者に割り付けるスロット数の上限。</p></dd>
-
-
 <dt>sCAT_TYPE</dt>
 <dd><p>a string.
 カテゴリ割付タイプ。詳細はvignetteを参照。</p></dd>
@@ -113,6 +110,11 @@
 <dt>sCAT_EXCLUDE</dt>
 <dd><p>a string.
 カテゴリ割付の際の除外条件。詳細はvignetteを参照。</p></dd>
+
+
+<dt>nSLOT_MAX</dt>
+<dd><p>an integer.
+ある対象者に割り付けるスロット数の上限。</p></dd>
 
 
 <dt>sSLOT_TYPE</dt>
@@ -137,15 +139,23 @@
 
 <dt>nSUBJECT_MAX</dt>
 <dd><p>an integer.
-   抽出する対象者数の上限。0以上の整数。</p>
-<p>0より大きい値が指定された場合、
-   対象者抽出は、
-   対象者数がnSUBJECT_MAXに達するか、すべてのスロットの割付対象者数が
-   lSLOT_REQUESTに設定された目標に達したときに終了する。</p>
-<p>0が指定された場合、
-   対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
-   対象者数が母集団サイズの10倍を超えても
-   割付対象者数が目標に到達しなかったときはエラーとなる。</p></dd>
+抽出する対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+対象者数がその値に達したときに中断される。</p></dd>
+
+
+<dt>nCATSUBJECT_MAX</dt>
+<dd><p>an integer.
+カテゴリ割付対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+カテゴリ割付が生じた対象者数がその値に達したときに中断される。</p></dd>
+
+
+<dt>nSLOTSUBJECT_MAX</dt>
+<dd><p>an integer.
+スロット割付対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+スロット割付が生じた対象者数がその値に達したときに中断される。</p></dd>
 
 
 <dt>sVERBOSE</dt>
@@ -162,7 +172,33 @@
         ただし、引数lSLOT_REQUESTの要素に名前がついていない場合は、
         名前"Slot_(j)_(k)"が付与される。</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>対象者数が母集団サイズの10倍を超えても対象者抽出が終わらなかった場合は
+   エラーとなる。</p>
+    </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">lSetting</span> <span class="op">&lt;-</span> <span class="fu">makeSetting</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  nCAT_MAX      <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>,</span></span>
+<span class="r-in"><span>  sCAT_FILTER   <span class="op">=</span> <span class="st">'open'</span>,</span></span>
+<span class="r-in"><span>  sCAT_ORDER    <span class="op">=</span> <span class="st">'shortnum'</span>,</span></span>
+<span class="r-in"><span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">'allclosed'</span>,</span></span>
+<span class="r-in"><span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">'adaptive'</span>,</span></span>
+<span class="r-in"><span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'open'</span>,</span></span>
+<span class="r-in"><span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'shortnum'</span>,</span></span>
+<span class="r-in"><span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span>,</span></span>
+<span class="r-in"><span>  sVERBOSE      <span class="op">=</span> <span class="st">"detail"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSetting] start.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSetting] assign names to lSLOT_REQUEST ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [makeSetting] end.</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -7,16 +7,18 @@
 makeSetting(
   lSLOT_REQUEST,
   nCAT_MAX,
-  nSLOT_MAX,
   sCAT_TYPE = c("adaptive", "nonadaptive"),
   sCAT_FILTER = c("all", "open"),
   sCAT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
   sCAT_EXCLUDE = c("none", "allclosed"),
+  nSLOT_MAX,
   sSLOT_TYPE = c("adaptive", "nonadaptive"),
   sSLOT_FILTER = c("all", "open"),
   sSLOT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
   sSLOT_EXCLUDE = c("none", "allclosed"),
   nSUBJECT_MAX = 0,
+  nCATSUBJECT_MAX = 0,
+  nSLOTSUBJECT_MAX = 0,
   sVERBOSE = c("simple", "none", "detail")
 )
 }
@@ -31,9 +33,6 @@ makeSetting(
 \item{nCAT_MAX}{a integer.
 ある対象者に割り付けるカテゴリ数の上限。}
 
-\item{nSLOT_MAX}{an integer.
-ある対象者に割り付けるスロット数の上限。}
-
 \item{sCAT_TYPE}{a string.
 カテゴリ割付タイプ。詳細はvignetteを参照。}
 
@@ -45,6 +44,9 @@ makeSetting(
 
 \item{sCAT_EXCLUDE}{a string.
 カテゴリ割付の際の除外条件。詳細はvignetteを参照。}
+
+\item{nSLOT_MAX}{an integer.
+ある対象者に割り付けるスロット数の上限。}
 
 \item{sSLOT_TYPE}{a string.
 スロット割付タイプ。詳細はvignetteを参照。}
@@ -59,17 +61,19 @@ makeSetting(
 スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
 
 \item{nSUBJECT_MAX}{an integer.
-   抽出する対象者数の上限。0以上の整数。
+抽出する対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+対象者数がその値に達したときに中断される。}
 
-   0より大きい値が指定された場合、
-   対象者抽出は、
-   対象者数がnSUBJECT_MAXに達するか、すべてのスロットの割付対象者数が
-   lSLOT_REQUESTに設定された目標に達したときに終了する。
+\item{nCATSUBJECT_MAX}{an integer.
+カテゴリ割付対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+カテゴリ割付が生じた対象者数がその値に達したときに中断される。}
 
-   0が指定された場合、
-   対象者抽出は、すべてのスロットの割付対象者数が目標に達したときにのみ正常終了する。
-   対象者数が母集団サイズの10倍を超えても
-   割付対象者数が目標に到達しなかったときはエラーとなる。}
+\item{nSLOTSUBJECT_MAX}{an integer.
+スロット割付対象者数の上限。0以上の整数。
+0より大きい値が指定された場合、対象者抽出は、
+スロット割付が生じた対象者数がその値に達したときに中断される。}
 
 \item{sVERBOSE}{a string.
 画面表示レベル。}
@@ -82,4 +86,24 @@ an object of `assignsetting` class.
 }
 \description{
 割付のセッティングを作成する。
+}
+\details{
+対象者数が母集団サイズの10倍を超えても対象者抽出が終わらなかった場合は
+   エラーとなる。
+}
+\examples{
+lSetting <- makeSetting(
+  lSLOT_REQUEST = lapply(1:10, function(x) rep(100, 10)),
+  nCAT_MAX      = 1,
+  sCAT_TYPE     = 'adaptive',
+  sCAT_FILTER   = 'open',
+  sCAT_ORDER    = 'shortnum',
+  sCAT_EXCLUDE  = 'allclosed',
+  nSLOT_MAX     = 2,
+  sSLOT_TYPE    = 'adaptive',
+  sSLOT_FILTER  = 'open',
+  sSLOT_ORDER   = 'shortnum',
+  sSLOT_EXCLUDE = 'allclosed',
+  sVERBOSE      = "detail"
+)
 }

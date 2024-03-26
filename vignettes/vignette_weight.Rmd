@@ -155,7 +155,7 @@ head(surveydata)
 `rSurveyAssign`パッケージは、調査データを表すクラス`surveydata`を用意しています。
 `surveydata`クラスのオブジェクトは、関数`makeSurvey`で作成します。
 
-`makeSurvey`の引数は次の8つです。
+`makeSurvey`の引数は次のとおりです。
 
 以下では、調査対象者を$i (=1,\ldots,I)$, カテゴリを$j(=1,\ldots,J)$, カテゴリ$j$のスロットを$k (=1,\ldots,K[j])$、
 各対象者に対する割付カテゴリ数の上限を$C$、
@@ -181,13 +181,7 @@ head(surveydata)
     そのカテゴリに属するスロットへの割付可能性は、
     利用できる限り、シミュレーションに利用されます)。
     欠損を含んでいる行は、その行全体が欠損であるとみなされます。
-- `lSLOT_REQUEST`: 各スロットの目標対象者数。
-    - $J$個の要素からなるリスト。$j$番目の要素は、長さ$K[j]$の整数ベクトル。
-    - $j$番目の要素であるベクトルの$k$番目の値は、カテゴリ$j$のスロット$k$に割り付ける対象者数の下限を表します。欠損は許容されません。
-- `sCAT_TYPE`, `sCAT_FILTER`, `sCAT_ORDER`, `sCAT_EXCLUDE`: カテゴリ割付方法。
-    - 詳細は["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
-- `sSLOT_TYPE`, `sSLOT_FILTER`, `sSLOT_ORDER`, `sSLOT_EXCLUDE`: スロット割付方法。
-    - 詳細は["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
+- `lSETTING`: 割付のセッティング。
 - `mnASSIGNCAT`: 割付カテゴリ。
     - $I$行$C$列の整数行列。
     - $i$行目は、調査対象者$i$が割り付けられた0個～C個のカテゴリの番号(`mbCAT`の列番号)を表します。
@@ -204,12 +198,25 @@ head(surveydata)
     - 調査対象者$i$にスロット割付が行われなかったときは$i$行目はすべて欠損とします。割り付けられたスロットが$S$個未満であった場合は、それらのスロット番号を格納し、残りは欠損とします。
     - ある行のなかの値の順序に意味はありません。
 
-関数`makeSurvey`は、この8つのオブジェクトの整合性をチェックしたうえで、
+関数`makeSurvey`は、これらのオブジェクトの整合性をチェックしたうえで、
 リストに格納して返します。
 
 では、データ例を`surveydata`クラスのオブジェクトに変換しましょう。
 
 ```{r}
+lSetting <- makeSetting(
+  lSLOT_REQUEST = list(rep(10, 10), rep(10, 10), rep(10, 10)),
+  nCAT_MAX      = 2,
+  sCAT_TYPE     = 'adaptive', 
+  sCAT_FILTER   = "open", 
+  sCAT_ORDER    = "random", 
+  sCAT_EXCLUDE  = "none",
+  nSLOT_MAX     = 2,
+  sSLOT_TYPE    = "adaptive", 
+  sSLOT_FILTER  = "all", 
+  sSLOT_ORDER   = "shortnum", 
+  sSLOT_EXCLUDE = "allclosed"
+)
 lSurvey <- makeSurvey(
   mbCAT <- as.matrix(surveydata[, paste0("bCat_", 1:3)]), 
   lSLOT <- list(
@@ -217,15 +224,7 @@ lSurvey <- makeSurvey(
     as.matrix(surveydata[, paste0("bSlot_2_", 1:10)]), 
     as.matrix(surveydata[, paste0("bSlot_3_", 1:10)])
   ), 
-  lSLOT_REQUEST = list(rep(10, 10), rep(10, 10), rep(10, 10)),
-  sCAT_TYPE     = 'adaptive', 
-  sCAT_FILTER   = "open", 
-  sCAT_ORDER    = "random", 
-  sCAT_EXCLUDE  = "none",
-  sSLOT_TYPE    = "adaptive", 
-  sSLOT_FILTER  = "all", 
-  sSLOT_ORDER   = "shortnum", 
-  sSLOT_EXCLUDE = "allclosed",
+  lSETTING      = lSetting,
   mnASSIGNCAT   = as.matrix(surveydata[, c("nAssignedCat_1", "nAssignedCat_2")]),
   anPARENTCAT   = as.vector(surveydata$nAssignedCat_Slots), 
   mnASSIGNSLOT  = as.matrix(surveydata[, c("nAssignedSlot_1", "nAssignedSlot_2")])
@@ -297,15 +296,15 @@ SQLiteデータベースファイルとして、`../tools/rSurveyAssign_vignette
 
 ```{r}
 ### 都合によりコメントアウトしています
-set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
-lResult <- simWeight(
-  lSURVEY    = lSurvey,
-  nBLOCKSIZE = 10,
-  nNUMBLOCK  = 1,
-  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_1.sqlite",
-  bPARALLEL  = FALSE, 
-  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
-)
+# set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
+# lResult <- simWeight(
+#   lSURVEY    = lSurvey,
+#   nBLOCKSIZE = 10,
+#   nNUMBLOCK  = 1,
+#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_1.sqlite",
+#   bPARALLEL  = FALSE, 
+#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
+# )
 ```
 
 ### 3.3 多くの試行の実行
@@ -332,13 +331,13 @@ RStudioを使っているなら、Terminalウィンドウで`tail -F C:/work/sim
 ```{r}
 ### 都合によりコメントアウトしています
 # set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
-# lResult <- simWeight(
-#  lSURVEY    = lSurvey,
-#  nNUMBLOCK  = 10,
-#  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",
-#  bPARALLEL  = TRUE,
-#  sLOGFILE   = "c:/work/simWeight.log",
-#  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
+#   lResult <- simWeight(
+#   lSURVEY    = lSurvey,
+#   nNUMBLOCK  = 10,
+#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",
+#   bPARALLEL  = TRUE,
+#   sLOGFILE   = "c:/work/simWeight.log",
+#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
 # )
 ```
 データベースに1000試行の結果が格納されました。

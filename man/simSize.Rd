@@ -21,7 +21,8 @@ simSize(
 母集団データ。\code{\link{makePop}}で生成する。}
 
 \item{lSETTING}{`assignsetting`クラスのオブジェクト。
-割付のセッティング。\code{\link{makeSetting}} で生成する。}
+割付のセッティング。\code{\link{makeSetting}} で生成する。
+lSLOT_REQUESTに指定されたスロット名はlPOPのスロット名と一致すること。}
 
 \item{nNUMTRIAL}{整数。
 割付シミュレーションの試行数。}

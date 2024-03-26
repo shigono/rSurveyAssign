@@ -446,7 +446,7 @@ head(lResult1$dfStat_Slot)
 
 シミュレーションの結果はサイズが大きいので、SQLiteデータベース上に
 保存したほうがよいでしょう。
-以下の例では、SQLiteデータベースファイルとして`..\tools\rSurveyAssign_vignette_bias_1.sqlite`を
+以下の例では、SQLiteデータベースファイルとして`../tools/rSurveyAssign_vignette_bias_1.sqlite`を
 作成しています。実際には、適切なフォルダとファイル名を指定してください。また、
 データベースファイルは、必要がなくなったら自分で消してください。
 
@@ -466,7 +466,7 @@ RStudioを使っているなら、Terminalウィンドウで`tail -F C:/work/sim
 # simBias (
 #   lPOP        = lPop, 
 #   lSETTING    = lSetting1, 
-#   sDBPATH     = "..\tools\rSurveyAssign_vignette_bias_1.sqlite",
+#   sDBPATH     = "../tools/rSurveyAssign_vignette_bias_1.sqlite",
 #   nNUMTRIAL   = 10,
 #   nNUMRETRIAL = 1000,
 #   bAPPEND     = FALSE, 

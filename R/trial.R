@@ -17,6 +17,7 @@ execTrials <- function(
   #'    母集団データ。\code{\link{makePop}}で生成する。
   #' @param lSETTING `assignsetting`クラスのオブジェクト。
   #'    割付のセッティング。\code{\link{makeSetting}} で生成する。
+  #'    スロット名はlPOPと一致すること。
   #' @param nNUMTRIAL 整数。
   #'    割付シミュレーションの試行数。
   #' @param bPARALLEL a logical.
@@ -178,18 +179,7 @@ execTrials <- function(
         mnSEQ_CAT_PERSON  = mnFrameRowCat_Person[anSEQ_FrameRow, , drop = FALSE],
         mbPERSON_CAT_USE  = lPOP$mbCAT,
         lPERSON_SLOT_HIT  = lPOP$lSLOT,
-        lSLOT_REQUEST     = lSETTING$lSLOT_REQUEST,
-        nCAT_MAX          = lSETTING$nCAT_MAX,
-        sCAT_TYPE         = lSETTING$sCAT_TYPE,
-        sCAT_FILTER       = lSETTING$sCAT_FILTER,
-        sCAT_ORDER        = lSETTING$sCAT_ORDER,
-        sCAT_EXCLUDE      = lSETTING$sCAT_EXCLUDE,
-        nSLOT_MAX         = lSETTING$nSLOT_MAX,
-        sSLOT_TYPE        = lSETTING$sSLOT_TYPE,
-        sSLOT_FILTER      = lSETTING$sSLOT_FILTER,
-        sSLOT_ORDER       = lSETTING$sSLOT_ORDER,
-        sSLOT_EXCLUDE     = lSETTING$sSLOT_EXCLUDE,
-        bCHECKCOMPLETE    = (lSETTING$nSUBJECT_MAX == 0), # nSUBJECT_MAXがNULLだったら充足が必要
+        lSETTING          = lSETTING,
         sVERBOSE          = sVERBOSE
       )
       # 結果に、試行番号, 列名をつける
@@ -230,18 +220,7 @@ execTrials <- function(
         mnSEQ_CAT_PERSON  = mnFrameRowCat_Person[anSEQ_FrameRow, , drop = FALSE],
         mbPERSON_CAT_USE  = lPOP$mbCAT,
         lPERSON_SLOT_HIT  = lPOP$lSLOT,
-        lSLOT_REQUEST     = lSETTING$lSLOT_REQUEST,
-        nCAT_MAX          = lSETTING$nCAT_MAX,
-        sCAT_TYPE         = lSETTING$sCAT_TYPE,
-        sCAT_FILTER       = lSETTING$sCAT_FILTER,
-        sCAT_ORDER        = lSETTING$sCAT_ORDER,
-        sCAT_EXCLUDE      = lSETTING$sCAT_EXCLUDE,
-        nSLOT_MAX         = lSETTING$nSLOT_MAX,
-        sSLOT_TYPE        = lSETTING$sSLOT_TYPE,
-        sSLOT_FILTER      = lSETTING$sSLOT_FILTER,
-        sSLOT_ORDER       = lSETTING$sSLOT_ORDER,
-        sSLOT_EXCLUDE     = lSETTING$sSLOT_EXCLUDE,
-        bCHECKCOMPLETE    = (lSETTING$nSUBJECT_MAX == 0), # nSUBJECT_MAXがNULLだったら充足が必要
+        lSETTING          = lSETTING,
         sVERBOSE          = sVERBOSE
       )
       # 結果に、試行番号, 列名をつける
@@ -367,18 +346,7 @@ makeRetrial <- function(
     mnSEQ_CAT_PERSON  = mnSEQCat_Subject,
     mbPERSON_CAT_USE  = lSURVEY$mbCAT,
     lPERSON_SLOT_HIT  = lSURVEY$lSLOT,
-    lSLOT_REQUEST     = lSURVEY$lSLOT_REQUEST,
-    nCAT_MAX          = ncol(lSURVEY$mnASSIGNCAT),
-    sCAT_TYPE         = lSURVEY$sCAT_TYPE,
-    sCAT_FILTER       = lSURVEY$sCAT_FILTER,
-    sCAT_ORDER        = lSURVEY$sCAT_ORDER,
-    sCAT_EXCLUDE      = lSURVEY$sCAT_EXCLUDE,
-    nSLOT_MAX         = ncol(lSURVEY$mnASSIGNSLOT),
-    sSLOT_TYPE        = lSURVEY$sSLOT_TYPE,
-    sSLOT_FILTER      = lSURVEY$sSLOT_FILTER,
-    sSLOT_ORDER       = lSURVEY$sSLOT_ORDER,
-    sSLOT_EXCLUDE     = lSURVEY$sSLOT_EXCLUDE,
-    bCHECKCOMPLETE    = FALSE,  # 終わらなくても気にしない
+    lSETTING          = lSURVEY$lSETTING,
     sVERBOSE          = sVERBOSE
   )
 
@@ -426,11 +394,11 @@ makeRetrialBlock <- function(
   #'    \item \code{SEQ}:              再割付試行における調査参加順(連番)
   #'    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
-  #'    \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{lSURVEY$nMAXCAT}のカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nCat_}(nCAT_MAX):  割付カテゴリ\code{lSURVEY$lSETTING$nCAT_MAX}のカテゴリ番号、ないし\code{NA}
   #'    \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
   #'    \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
   #'    \item ...
-  #'    \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{lSURVEY$nMAXSLOT}のスロット番号、ないし\code{NA}
+  #'    \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{lSURVEY$lSETTING$nSLOT_MAX}のスロット番号、ないし\code{NA}
   #'    }
   #'
   #' @importFrom stats runif

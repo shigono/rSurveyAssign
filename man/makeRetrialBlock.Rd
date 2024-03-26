@@ -44,11 +44,11 @@ a data frame.
    \item \code{SEQ}:              再割付試行における調査参加順(連番)
    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
    \item ...
-   \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{lSURVEY$nMAXCAT}のカテゴリ番号、ないし\code{NA}
+   \item \code{nCat_}(nCAT_MAX):  割付カテゴリ\code{lSURVEY$lSETTING$nCAT_MAX}のカテゴリ番号、ないし\code{NA}
    \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
    \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
    \item ...
-   \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{lSURVEY$nMAXSLOT}のスロット番号、ないし\code{NA}
+   \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{lSURVEY$lSETTING$nSLOT_MAX}のスロット番号、ないし\code{NA}
    }
 }
 \description{
