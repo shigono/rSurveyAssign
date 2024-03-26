@@ -546,7 +546,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 2.34 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 2.29 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
@@ -697,7 +697,7 @@ r)\)</span>。通常は負の値となり、割付バイアスが大きいほど
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1     1     4           <span style="text-decoration: underline;">1</span>273        100   0.874   0.867     4.33   23.1 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      1     1     5            271        100   0.159   0.154     1.02   98.5 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1     1     6           <span style="text-decoration: underline;">1</span>212        100   0.809   0.802     1.96   51.0 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: gBarR_P &lt;dbl&gt;, gBarR_S &lt;dbl&gt;, gCovHatQR &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: gCovHatQR &lt;dbl&gt;, gBarR_P &lt;dbl&gt;, gBarR_S &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>行は各割付試行における各カテゴリの各スロットを表しています。各変数の意味はカテゴリの場合と同様です。</p>
 </div>
 </div>
@@ -746,7 +746,7 @@ r)\)</span>。通常は負の値となり、割付バイアスが大きいほど
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1     1     4           <span style="text-decoration: underline;">2</span>516        100  0.218   0          1.07    93.9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      1     1     5            565        100  0.097<span style="text-decoration: underline;">2</span>  0.012<span style="text-decoration: underline;">9</span>     1.01    99.0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1     1     6           <span style="text-decoration: underline;">2</span>352        100  0.216   0.042<span style="text-decoration: underline;">1</span>     1.07    93.8</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: gBarR_P &lt;dbl&gt;, gBarR_S &lt;dbl&gt;, gCovHatQR &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: gCovHatQR &lt;dbl&gt;, gBarR_P &lt;dbl&gt;, gBarR_S &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>どうやら、この割付方法では割付バイアスがきわめて小さいようです。先ほどの割付方法と
 比べてみましょう。指標として<span class="math inline">\(\mathrm{Cov}(\hat{q}, r)\)</span>を使います。</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">

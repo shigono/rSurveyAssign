@@ -185,9 +185,9 @@ head(surveydata)
     - $J$個の要素からなるリスト。$j$番目の要素は、長さ$K[j]$の整数ベクトル。
     - $j$番目の要素であるベクトルの$k$番目の値は、カテゴリ$j$のスロット$k$に割り付ける対象者数の下限を表します。欠損は許容されません。
 - `sCAT_TYPE`, `sCAT_FILTER`, `sCAT_ORDER`, `sCAT_EXCLUDE`: カテゴリ割付方法。
-    - 詳細は["How to assign subjects"](vignette_assign.html)を参照して下さい。
+    - 詳細は["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
 - `sSLOT_TYPE`, `sSLOT_FILTER`, `sSLOT_ORDER`, `sSLOT_EXCLUDE`: スロット割付方法。
-    - 詳細は["How to assign subjects"](vignette_assign.html)を参照して下さい。
+    - 詳細は["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
 - `mnASSIGNCAT`: 割付カテゴリ。
     - $I$行$C$列の整数行列。
     - $i$行目は、調査対象者$i$が割り付けられた0個～C個のカテゴリの番号(`mbCAT`の列番号)を表します。
