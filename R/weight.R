@@ -48,28 +48,17 @@ simWeight <- function(
   #'    sDBTABLE_SLOTが存在しない場合はエラーとなる。
   #'
   #' @return
-  #'    sDBPATHを指定しない場合は、シミュレーションの結果を
-  #'    データフレームのリストとして返す。要素は次の通り:
   #'    \itemize{
-  #'    \item \code{dfStat_Cat}: カテゴリ割付頻度
-  #'    \item \code{dfStat_Slot}: スロット割付頻度
+  #'      \item sDBPATHを指定しない場合は、シミュレーションの結果をデータフレームのリストとして返す。
+  #'      \item sDBPATHを指定した場合はNULLを返す。シミュレーションの結果は、
+  #'            SQLiteデータベースにテーブルとして保存される。sDBPATH が存在する場合は、
+  #'            bAPPEND==FALSEであればSDBPATHに上書きし、bAPPEND==TRUEであれば追加する。
+  #'            sDBPATHが存在しない場合は新規作成する。
   #'    }
   #'
-  #'    sDBPATHを指定した場合はNULLを返す。
-  #'    シミュレーションの結果は、SQLiteデータベースにテーブルsDBTABLE_CAT,
-  #'    sDBTABLE_SLOTとして保存される。
+  #'    シミュレーションの結果は次の2つのデータフレームからなる。
   #'
-  #'    bAPPEND==FALSEの場合、SQLiteデータベースファイル sDBPATH
-  #'    が存在する場合は上書きし、存在しない場合は新規作成する。
-  #'
-  #'    bAPPEND==TRUEの場合、SQLiteデータベースファイル sDBPATH に
-  #'    テーブルsDBTABLE_CAT, sDBTABLE_SLOT が存在する場合には
-  #'    それらのテーブルに追加し、
-  #'    ファイルが存在しない場合はファイルとテーブルを新規作成する。
-  #'
-  #'    シミュレーションの結果は以下の形式を持つ。
-  #'
-  #'    カテゴリ割付頻度: 行は調査対象者x割付カテゴリを表す。
+  #'    \code{dfStat_Cat}: カテゴリ割付頻度。行は調査対象者x割付カテゴリを表す。
   #'    列は以下のとおり(順不同):
   #'    \itemize{
   #'    \item \code{nBlock}:           ブロック番号
@@ -80,7 +69,7 @@ simWeight <- function(
   #'    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
   #'    }
   #'
-  #'    スロット割付頻度: 行は調査対象者x割付スロットを表す。
+  #'    \code{dfStat_Slot}: スロット割付頻度。行は調査対象者x割付スロットを表す。
   #'    列は以下のとおり(順不同):
   #'    \itemize{
   #'    \item \code{nBlock}:           ブロック番号
@@ -339,9 +328,9 @@ countWeight <- function(
   sDBTABLE_SLOT = "weight_slot",
   sTYPE = c("retrial", "block")
 ){
-  #' count trials of simulations which are done so far
+  #' count trials of weight simulations which are done so far
   #'
-  #' これまでに実行されたシミュレーション試行の数を数える
+  #' これまでに実行されたウェイト算出シミュレーションの再割付試行数を数える
   #'
   #' @export
   #'
@@ -456,7 +445,7 @@ trimWeight <- function(
   agWEIGHT,
   gLIMIT = 5
 ){
-  #' trim Weight.
+  #' trim Weight
   #'
   #' ウェイトを切り詰める
   #'

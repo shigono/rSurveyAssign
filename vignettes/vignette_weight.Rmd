@@ -1,12 +1,12 @@
 ---
-title: "How to compute survey weights"
+title: "4. How to compute survey weights"
 author: "Shigeru ONO"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{How to compute survey weights}
+  %\VignetteIndexEntry{4. How to compute survey weights}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -180,13 +180,8 @@ simBias <- function(
   #'    }
   #'
   #'    シミュレーションの結果は次の3つのデータフレームからなる。
-  #'    \itemize{
-  #'    \item \code{dfSubject}: 割付シミュレーションの結果
-  #'    \item \code{dfStat_Cat}: 再割付シミュレーションにおけるカテゴリ割付頻度
-  #'    \item \code{dfStat_Slot}: 再割付シミュレーションにおけるスロット割付頻度
-  #'    }
   #'
-  #'    割付シミュレーションの結果:
+  #'    \code{dfSubject}: 割付シミュレーションの結果。
   #'    行はある割付試行のある調査参加者を表す。
   #'    列は以下のとおり(順不同):
   #'    \itemize{
@@ -203,7 +198,7 @@ simBias <- function(
   #'    \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号(\code{lPOP$mbSLOT[[nCat]]}の列番号)、ないし\code{NA}
   #'    }
   #'
-  #'    再割付シミュレーションにおけるカテゴリ割付頻度:
+  #'    \code{dfStat_Cat}: 再割付シミュレーションにおけるカテゴリ割付頻度。
   #'    行は調査対象者x割付可能カテゴリを表す。
   #'    列は以下のとおり(順不同):
   #'    \itemize{
@@ -220,7 +215,7 @@ simBias <- function(
   #'    \item \code{gAssignablity_Cat}: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)
   #'    }
   #'
-  #'    再割付シミュレーションにおけるスロット割付頻度:
+  #'    \code{dfStat_Slot}: 再割付シミュレーションにおけるスロット割付頻度。
   #'    行は調査対象者x割付可能スロットを表す。
   #'    割付試行において割付可能性が判明しているスロットに
   #'    限定されることに注意(つまり、代替対象者のスロットは含まれない)
@@ -665,9 +660,9 @@ countBias <- function(
   sDBTABLE_CAT      = "weight_cat",
   sDBTABLE_SLOT     = "weight_slot"
 ){
-  #' count trials of simulations which are done so far
+  #' count trials of bias simulations which are done so far
   #'
-  #' これまでに実行されたシミュレーション試行(割付試行)の数を数える
+  #' これまでに実行されたバイアス評価シミュレーションの割付試行数を数える
   #'
   #' @export
   #'

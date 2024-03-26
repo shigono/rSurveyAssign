@@ -1,10 +1,10 @@
-#' rSurveyAssign: run simulation of assignment in a web survey
+#' rSurveyAssign: tools for simulation of assignment in web surveys
 #'
-#' run simulation of assignment in a web survey
+#' tools for simulation of assignment in web surveys
 #'
 #' This package contains several tools to simulate different types of assignment
 #' processes in web surveys. With this package, users can estimate sample sizes
-#' and for future surveys, assess bias in future surveys, and calculate
+#' for future surveys, assess bias in future surveys, and calculate
 #' survey weights for actual surveys that have been conducted.
 #'
 #' このパッケージは、web調査における対象者割付についてのシミュレーションを

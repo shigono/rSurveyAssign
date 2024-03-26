@@ -5,3 +5,22 @@ template:
 authors:
   Shigeru ONO:
     href: "https://elsur.jpn.org/"
+navbar:
+  structure:
+    left: [intro, articles, reference, news]
+    right: [search]
+  components:
+    intro:
+      text: Get Started
+      href: articles/vignette.html
+    articles:
+      text: Articles
+      menu:
+      - text: 1. How to assign subjects
+        href: articles/vignette_assign.html
+      - text: 2. How to forecast sample size
+        href: articles/vignette_size.html
+      - text: 3. How to estimate bias
+        href: articles/vignette_bias.html
+      - text: 4. How to compute survey weights
+        href: articles/vignette_weight.html

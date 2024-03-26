@@ -1,14 +1,15 @@
 ---
-title: "How to forecast sample size"
+title: "2. How to forecast sample size"
 author: "Shigeru ONO"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{How to forecast sample size}
+  %\VignetteIndexEntry{2. How to forecast sample size}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ggplot2}
 ---
 
 ```{r, include = FALSE}
@@ -25,22 +26,30 @@ knitr::opts_chunk$set(
 `rSurveyAssign`パッケージの背後にある考え方については、
 ["rSurveyAssign: tools for simulation of assignment in web surveys"](vignette.html)を参照して下さい。
 
-## 1. データの準備
+## 1. 標本サイズ推定の方法
 
-### 1.1 母集団データ
+このパッケージでは、以下の方法によって、調査に必要な対象者数を調べます。
+
+- 架空の母集団データを用意します。
+- 母集団データから対象者を復元抽出し、指定した方法でカテゴリ・スロットへの割付を行い、各スロットに割り付けられた対象者数が目標対象者数に到達したら終了します。これを**割付試行**と呼びます。
+- 割付試行を十分な回数繰り返し、各試行において必要であった対象者数の分布を調べます。
+
+## 2. データの準備
+
+### 2.1 母集団データ
 まず、母集団を表現するデータを用意します。
 
 このデータは、母集団を有限集団として近似的に表現するものです。母集団メンバーそれぞれ
 について、カテゴリ・スロットへの割付可能性を記述します。
 
-`rSurveyAssign`は、母集団データをつくる機能は提供していません。
+現バージョンの`rSurveyAssign`パッケージは、母集団データをつくる機能は提供していません。
 過去の調査結果や既存の知識に基づき、なんとかして作ってください。
 
 以下では、母集団メンバーを$i (=1,\ldots,I)$, カテゴリを$j(=1,\ldots,J)$, カテゴリ$j$のスロットを$k (=1,\ldots,K_j)$と表記します。
 
 データのサイズ($I, J, K_1,...,K_J$)に制限はありません。母集団のメンバー数 $I$ はできるだけ大きくしたほうがよいでしょう。
 
-母集団データの例として、`popdata`が用意されています。
+母集団データの例として`popdata`が用意されています。
 `popdata`は、サイズ10000の有限集団のデータを持つデータフレームで、
 カテゴリ数は3, スロット数は
 各カテゴリについて10です(すなわち、$I=10000, J=3, K_1=K_2=K_3=10$)。
@@ -62,7 +71,7 @@ head(popdata)
 たとえば母集団メンバー1は、カテゴリ1のスロットのうち、スロット1, 4, 8, 9, 20に対して
 割付可能です。
 
-### 1.2 popdataオブジェクトの生成
+### 2.2 popdataオブジェクトの生成
 次に、母集団データを`rSurveyAssign`パッケージが扱える形式に変換します。
 
 `rSurveyAssign`パッケージは、母集団データを表すクラス`popdata`を用意しています。
@@ -125,13 +134,13 @@ lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
 - `sSLOT_ORDER`:   スロットの割付方法(順序付け条件)。
 - `sSLOT_EXCLUDE`: スロットの割付方法(除外条件)。
 
-カテゴリ・スロットの割付方法については ["How to assign subjects"](vignette_assign.html)を参照して下さい。
+カテゴリ・スロットの割付方法については ["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
 
 では、セッティングを指定しましょう。
 
 - すべてのカテゴリのすべてのスロットに、すくなくとも10人の対象者を割り付けることにします。
 - 回答負荷の観点から、ひとりの対象者が割り付けられるカテゴリは2つまで、スロットは2つまでとします。
-- カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(adaptive,open,random,none)を使用し、スロットの割付方法として(adaptive,all,shortnum,allclosed)を使用します。
+- カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(`adaptive`,`open`,`random`,`none`)を使用し、スロットの割付方法として(`adaptive`,`all`,`shortnum`,`allclosed`)を使用します。
 
 ```{r}
 lSetting <- makeSetting(
@@ -153,14 +162,8 @@ lSetting <- makeSetting(
 
 では、必要な標本サイズを推定するために、シミュレーションを行ってみましょう。
 
-このシミュレーションでは、母集団データから対象者を復元抽出し、
-それぞれの対象者に、指定した方法でカテゴリ・スロットへの割付を行います。
-これを**割付試行**と呼びます。
 
-割付試行を十分な回数繰り返せば、指定した方法で割付を行ったときに必要な標本サイズを
-推定することができます。
-
-### 3.1 1試行の実行
+### 3.1 単一の試行の実行
 まず、割付試行を1回行ってみます。
 
 ```{r}
@@ -171,7 +174,7 @@ dfResult <- simSize (
 )
 ```
 コンソールに表示されるメッセージは、各試行の結果を表しています。この試行では、母集団から調査対象者を573人抽出したところで、
-目標対象者数が満たされ、調査が終了しました。
+すべてのスロットにおいて目標対象者数が満たされ、調査が終了しました。
 
 シミュレーションの結果をみてみましょう。
 ```{r}
@@ -197,7 +200,7 @@ table(mnIn[,1], mnIn[,2])
 シミュレーションの結果をデータフレームとして取得しました。
 
 標本サイズを推定するには、十分な数の割付試行を繰り返す必要があります。
-そこで今度は、割付試行を20試行繰り返してみましょう。
+そこで今度は、割付試行を500試行繰り返してみましょう。
 
 シミュレーションの結果はサイズが大きいので、いったんSQLiteデータベース上に
 保存したほうがよいでしょう。
@@ -223,7 +226,7 @@ set.seed(123)  # 結果を再現するために乱数のシードを設定して
 # dfResult <- simSize (
 #   lPOP      =  lPop,          
 #   lSETTING  = lSetting, 
-#   nNUMTRIAL = 20,
+#   nNUMTRIAL = 500,
 #   bPARALLEL = TRUE,
 #   sLOGFILE  = "c:/work/simSize.log",
 #   sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", 
@@ -243,7 +246,7 @@ head(getSize_raw("../tools/rSurveyAssign_vignette_size_1.sqlite", nTRIAL = 1))
 countSize("../tools/rSurveyAssign_vignette_size_1.sqlite")
 ```
 
-この例では、試行には1秒以下しかかかりませんが、
+この例では、500試行の実行に数秒しかかかりませんが、
 もっと長い時間がかかることもあるでしょう。そうした場合に、
 試行数`nNUMTRIAL`を大きくすると、
 `simSize`の実行にとても長い時間がかかることになり、不便です。
@@ -273,18 +276,28 @@ print(dfResult_s)
 ```
 `nNum_scr`は調査対象者数, `nNum_main`はそのうち1つ以上のスロットに割り付けられた人数を表しています。
 
-ここでは試行回数はまだ20件しかありませんが、試しに`nNum_scr`の平均を求めてみましょう。
+調査対象者数の平均を求めてみましょう。
 
 ```{r}
 print(mean(dfResult_s$nNum_scr))
 ```
 
-必要な調査対象者数の平均は約520人となりました。
+必要な調査対象者数の平均は約525人となりました。
 
-試行回数を十分に増やした上で、
-`nNum_scr`を平均すると、
-必要な調査対象者数の期待値を推測することができます。
-また、`nNum_scr`のヒストグラムを描くことで、必要な調査対象者数の分布を観察できます。
+実務的には、必要な調査対象者数の平均だけではなく、その分散にも関心が持たれます。
+仮に分散が大きい場合、実際に調査を行った際の調査対象者数は運悪く大きな値となり、
+予算をオーバーしてしまいかねません。
+そこで、500回の試行を通じた調査対象者数の分布を調べてみましょう。
+
+```{r, fig.width = 5}
+
+g <- ggplot2::ggplot(data = dfResult_s, ggplot2::aes(x = nNum_scr))
+g <- g + ggplot2::geom_histogram()
+g <- g + ggplot2::theme_bw()
+print(g)
+```
+
+たいていの場合は600人程度で終了しますが、たまにはそれを超えてしまうこともあるようです。
 
 ### 4.2 カテゴリ・スロットあたり調査対象者数
 
@@ -297,7 +310,7 @@ dfResult_c <- getSize (
 )
 print(tapply(dfResult_c$nNum, dfResult_c$nCat, mean))
 ```
-カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約383人, 409人, 308人となりました。
+カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約383人, 420人, 310人となりました。
 
 関数`getSize`の引数`sTYPE`を`slot`とすると、各スロットの割付人数を調べることができます。
 
@@ -308,16 +321,19 @@ dfResult_s <- getSize (
 )
 print(tapply(dfResult_s$nNum, list(dfResult_s$nCat, dfResult_s$nSlot), mean))
 ```
-たとえば、カテゴリ1のスロット1の割付人数は、平均して約11.4人となりました。
+たとえば、カテゴリ1のスロット1の割付人数は、平均して約11.5人となりました。
+
+割付人数が目標である10人を超えるのは、スロット割付の絞り込み条件を`all`にしたため、
+すでに目標に到達しているスロットへの割付が発生する場合があるからです。
 
 ## 5. 分析例: 割付方法の比較
 調査に必要な対象者数がカテゴリ割付・スロット割付の方法によって
 どのように変わるかを、シミュレーションによって推測することができます。
 
-たとえば、スロット割付の方法を(adaptive,all,shortnum,allclosed)に変更して
+たとえば、スロット割付の方法を(`adaptive`,`all`,`random`,`allclosed`)に変更して
 シミュレーションしてみます。
 SQLiteデータベースファイルとして、`../tools/rSurveyAssign_demo2.sqlite`を
-作成します。
+作成します。20試行実行します。
 
 ```{r}
 lSetting2 <- makeSetting(
@@ -349,7 +365,7 @@ print(mean(dfResult2_s$nNum_scr))
 ```
 必要な調査対象者数の平均は約1244人となりました。
 
-スロット割付方法を(adaptive,all,shortnum,allclosed)としたときの調査対象者数の平均は約520人でしたから、
+スロット割付方法を(`adaptive`,`all`,`shortnum`,`allclosed`)としたときの調査対象者数の平均は約525人でしたから、
 こちらの割付方法のほうがはるかに多くの調査対象者を必要とすることがわかります。
 
 ## 6. まとめ: 標本サイズ推定のための関数

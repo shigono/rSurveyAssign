@@ -6,7 +6,7 @@ makePop <- function(
     lSLOT,
     sVERBOSE = c("simple", "none", "detail")
 ){
-  #' make population data.
+  #' make population data
   #'
   #' 母集団データを作成する。
   #'
@@ -198,7 +198,7 @@ makeSetting <- function(
   nSUBJECT_MAX  = 0,
   sVERBOSE = c("simple", "none", "detail")
 ){
-  #' make setting.
+  #' make setting
   #'
   #' 割付のセッティングを作成する。
   #'
@@ -583,7 +583,7 @@ makeSurvey <- function(
   nSUBJECT_MAX  = NULL,
   sVERBOSE = c("simple", "none", "detail")
 ){
-  #' make survey data.
+  #' make survey data
   #'
   #' 調査データを作成する.
   #'

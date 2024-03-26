@@ -38,19 +38,13 @@ simSize <- function(
   #'    画面表示レベル。
   #'
   #' @return
-  #'    sDBPATHを指定しなかった場合は、シミュレーションの結果を
-  #'    データフレームとして返す。
-  #'
-  #'    sDBPATHを指定した場合はNULLを返す。
-  #'    シミュレーションの結果は、SQLiteデータベースにテーブルとして
-  #'    保存される。
-  #'
-  #'    bAPPEND==FALSEの場合、SQLiteデータベースファイル sDBPATH
-  #'    が存在する場合は上書きし、存在しない場合は新規作成する。
-  #'
-  #'    bAPPEND==TRUEの場合、SQLiteデータベースファイル sDBPATH
-  #'    が存在する場合にはテーブルsDBTABLEに追加する。
-  #'    ファイルが存在しない場合はファイルとテーブルを新規作成する。
+  #'    \itemize{
+  #'      \item sDBPATHを指定しない場合は、シミュレーションの結果をデータフレームとして返す。
+  #'      \item sDBPATHを指定した場合はNULLを返す。シミュレーションの結果は、
+  #'            SQLiteデータベースにテーブルとして保存される。sDBPATH が存在する場合は、
+  #'            bAPPEND==FALSEであればSDBPATHに上書きし、bAPPEND==TRUEであれば追加する。
+  #'            sDBPATHが存在しない場合は新規作成する。
+  #'    }
   #'
   #'    シミュレーションの結果は以下の形式を持つ。
   #'    行はある試行のある調査参加者を表す。0行かもしれないことに注意。
@@ -344,9 +338,9 @@ countSize <- function(
   sDBPATH,
   sDBTABLE = "size"
 ){
-  #' count trials of simulations which are done so far
+  #' count trials of size simulations which are done so far
   #'
-  #' これまでに実行されたシミュレーション試行の数を数える
+  #' これまでに実行された標本サイズ予測シミュレーションの割付試行を数える
   #'
   #' @export
   #'
