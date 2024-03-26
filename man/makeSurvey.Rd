@@ -2,7 +2,7 @@
 % Please edit documentation in R/make.R
 \name{makeSurvey}
 \alias{makeSurvey}
-\title{make survey data.}
+\title{make survey data}
 \usage{
 makeSurvey(
   mbCAT,

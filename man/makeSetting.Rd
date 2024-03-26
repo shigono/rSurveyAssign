@@ -2,7 +2,7 @@
 % Please edit documentation in R/make.R
 \name{makeSetting}
 \alias{makeSetting}
-\title{make setting.}
+\title{make setting}
 \usage{
 makeSetting(
   lSLOT_REQUEST,

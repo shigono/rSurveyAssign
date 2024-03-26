@@ -2,7 +2,7 @@
 % Please edit documentation in R/make.R
 \name{makePop}
 \alias{makePop}
-\title{make population data.}
+\title{make population data}
 \usage{
 makePop(mbCAT, lSLOT, sVERBOSE = c("simple", "none", "detail"))
 }

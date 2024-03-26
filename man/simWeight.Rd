@@ -54,28 +54,17 @@ FALSEにすると、再割付試行においてlSURVEYの対象者順を固定�
 画面表示レベル。}
 }
 \value{
-sDBPATHを指定しない場合は、シミュレーションの結果を
-   データフレームのリストとして返す。要素は次の通り:
-   \itemize{
-   \item \code{dfStat_Cat}: カテゴリ割付頻度
-   \item \code{dfStat_Slot}: スロット割付頻度
+\itemize{
+     \item sDBPATHを指定しない場合は、シミュレーションの結果をデータフレームのリストとして返す。
+     \item sDBPATHを指定した場合はNULLを返す。シミュレーションの結果は、
+           SQLiteデータベースにテーブルとして保存される。sDBPATH が存在する場合は、
+           bAPPEND==FALSEであればSDBPATHに上書きし、bAPPEND==TRUEであれば追加する。
+           sDBPATHが存在しない場合は新規作成する。
    }
 
-   sDBPATHを指定した場合はNULLを返す。
-   シミュレーションの結果は、SQLiteデータベースにテーブルsDBTABLE_CAT,
-   sDBTABLE_SLOTとして保存される。
+   シミュレーションの結果は次の2つのデータフレームからなる。
 
-   bAPPEND==FALSEの場合、SQLiteデータベースファイル sDBPATH
-   が存在する場合は上書きし、存在しない場合は新規作成する。
-
-   bAPPEND==TRUEの場合、SQLiteデータベースファイル sDBPATH に
-   テーブルsDBTABLE_CAT, sDBTABLE_SLOT が存在する場合には
-   それらのテーブルに追加し、
-   ファイルが存在しない場合はファイルとテーブルを新規作成する。
-
-   シミュレーションの結果は以下の形式を持つ。
-
-   カテゴリ割付頻度: 行は調査対象者x割付カテゴリを表す。
+   \code{dfStat_Cat}: カテゴリ割付頻度。行は調査対象者x割付カテゴリを表す。
    列は以下のとおり(順不同):
    \itemize{
    \item \code{nBlock}:           ブロック番号
@@ -86,7 +75,7 @@ sDBPATHを指定しない場合は、シミュレーションの結果を
    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
    }
 
-   スロット割付頻度: 行は調査対象者x割付スロットを表す。
+   \code{dfStat_Slot}: スロット割付頻度。行は調査対象者x割付スロットを表す。
    列は以下のとおり(順不同):
    \itemize{
    \item \code{nBlock}:           ブロック番号

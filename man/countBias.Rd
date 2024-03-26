@@ -2,7 +2,7 @@
 % Please edit documentation in R/bias.R
 \name{countBias}
 \alias{countBias}
-\title{count trials of simulations which are done so far}
+\title{count trials of bias simulations which are done so far}
 \usage{
 countBias(
   sDBPATH,
@@ -24,7 +24,7 @@ countBias(
 整数。割付試行数。指定されたsDBPATHが存在しない場合は0となる。
 }
 \description{
-これまでに実行されたシミュレーション試行(割付試行)の数を数える
+これまでに実行されたバイアス評価シミュレーションの割付試行数を数える
 }
 \details{
 sDBPATHが存在するのにsDBTABLE_SUBJECT, sDBTABLE_CAT, sDBTABLE_SLOTが存在しない場合はエラーになる。

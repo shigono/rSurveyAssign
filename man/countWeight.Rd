@@ -2,7 +2,7 @@
 % Please edit documentation in R/weight.R
 \name{countWeight}
 \alias{countWeight}
-\title{count trials of simulations which are done so far}
+\title{count trials of weight simulations which are done so far}
 \usage{
 countWeight(
   sDBPATH,
@@ -36,7 +36,7 @@ an integer.
    指定されたsDBPATH, sDBTABLE_CAT, sDBTABLE_SLOTが存在しない場合は0となる。
 }
 \description{
-これまでに実行されたシミュレーション試行の数を数える
+これまでに実行されたウェイト算出シミュレーションの再割付試行数を数える
 }
 \details{
 sDBPATHが存在し、sDBTABLE_CAT, sDBTABLE_SLOTのいずれかのみが存在する場合は

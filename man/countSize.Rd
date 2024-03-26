@@ -2,7 +2,7 @@
 % Please edit documentation in R/size.R
 \name{countSize}
 \alias{countSize}
-\title{count trials of simulations which are done so far}
+\title{count trials of size simulations which are done so far}
 \usage{
 countSize(sDBPATH, sDBTABLE = "size")
 }
@@ -19,7 +19,7 @@ countSize(sDBPATH, sDBTABLE = "size")
    試行数。指定されたsDBPATHが存在しない場合は0。
 }
 \description{
-これまでに実行されたシミュレーション試行の数を数える
+これまでに実行された標本サイズ予測シミュレーションの割付試行を数える
 }
 \details{
 sDBPATHが存在するのにsDBTABLEが存在しない場合はエラー。

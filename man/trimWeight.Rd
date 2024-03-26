@@ -2,7 +2,7 @@
 % Please edit documentation in R/weight.R
 \name{trimWeight}
 \alias{trimWeight}
-\title{trim Weight.}
+\title{trim Weight}
 \usage{
 trimWeight(agWEIGHT, gLIMIT = 5)
 }
