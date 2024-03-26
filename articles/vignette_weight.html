@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -338,7 +338,7 @@ NAとなっています。</li>
 <p>調査データを<code>rSurveyAssign</code>パッケージが扱える形式に変換します。</p>
 <p><code>rSurveyAssign</code>パッケージは、調査データを表すクラス<code>surveydata</code>を用意しています。
 <code>surveydata</code>クラスのオブジェクトは、関数<code>makeSurvey</code>で作成します。</p>
-<p><code>makeSurvey</code>の引数は次の8つです。</p>
+<p><code>makeSurvey</code>の引数は次のとおりです。</p>
 <p>以下では、調査対象者を<span class="math inline">\(i
 (=1,\ldots,I)\)</span>, カテゴリを<span class="math inline">\(j(=1,\ldots,J)\)</span>, カテゴリ<span class="math inline">\(j\)</span>のスロットを<span class="math inline">\(k (=1,\ldots,K[j])\)</span>、
 各対象者に対する割付カテゴリ数の上限を<span class="math inline">\(C\)</span>、 割付スロット数の上限を<span class="math inline">\(S\)</span>とします。</p>
@@ -379,30 +379,7 @@ NAとなっています。</li>
 </ul>
 </li>
 <li>
-<code>lSLOT_REQUEST</code>: 各スロットの目標対象者数。
-<ul>
-<li>
-<span class="math inline">\(J\)</span>個の要素からなるリスト。<span class="math inline">\(j\)</span>番目の要素は、長さ<span class="math inline">\(K[j]\)</span>の整数ベクトル。</li>
-<li>
-<span class="math inline">\(j\)</span>番目の要素であるベクトルの<span class="math inline">\(k\)</span>番目の値は、カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>に割り付ける対象者数の下限を表します。欠損は許容されません。</li>
-</ul>
-</li>
-<li>
-<code>sCAT_TYPE</code>, <code>sCAT_FILTER</code>,
-<code>sCAT_ORDER</code>, <code>sCAT_EXCLUDE</code>: カテゴリ割付方法。
-<ul>
-<li>詳細は<a href="vignette_assign.html">“1. How to assign
-subjects”</a>を参照して下さい。</li>
-</ul>
-</li>
-<li>
-<code>sSLOT_TYPE</code>, <code>sSLOT_FILTER</code>,
-<code>sSLOT_ORDER</code>, <code>sSLOT_EXCLUDE</code>: スロット割付方法。
-<ul>
-<li>詳細は<a href="vignette_assign.html">“1. How to assign
-subjects”</a>を参照して下さい。</li>
-</ul>
-</li>
+<code>lSETTING</code>: 割付のセッティング。</li>
 <li>
 <code>mnASSIGNCAT</code>: 割付カテゴリ。
 <ul>
@@ -436,26 +413,32 @@ subjects”</a>を参照して下さい。</li>
 </ul>
 </li>
 </ul>
-<p>関数<code>makeSurvey</code>は、この8つのオブジェクトの整合性をチェックしたうえで、
+<p>関数<code>makeSurvey</code>は、これらのオブジェクトの整合性をチェックしたうえで、
 リストに格納して返します。</p>
 <p>では、データ例を<code>surveydata</code>クラスのオブジェクトに変換しましょう。</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lSurvey</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSurvey.html">makeSurvey</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">lSetting</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
+<span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  nCAT_MAX      <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>, </span>
+<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">"open"</span>, </span>
+<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">"random"</span>, </span>
+<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">"adaptive"</span>, </span>
+<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">"all"</span>, </span>
+<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">"shortnum"</span>, </span>
+<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">"allclosed"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span>
+<span><span class="va">lSurvey</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSurvey.html">makeSurvey</a></span><span class="op">(</span></span>
 <span>  <span class="va">mbCAT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bCat_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, </span>
 <span>  <span class="va">lSLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_1_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_2_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_3_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="op">)</span>, </span>
-<span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>, </span>
-<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">"open"</span>, </span>
-<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">"random"</span>, </span>
-<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">"adaptive"</span>, </span>
-<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">"all"</span>, </span>
-<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">"shortnum"</span>, </span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">"allclosed"</span>,</span>
+<span>  lSETTING      <span class="op">=</span> <span class="va">lSetting</span>,</span>
 <span>  mnASSIGNCAT   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nAssignedCat_1"</span>, <span class="st">"nAssignedCat_2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  anPARENTCAT   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">$</span><span class="va">nAssignedCat_Slots</span><span class="op">)</span>, </span>
 <span>  mnASSIGNSLOT  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nAssignedSlot_1"</span>, <span class="st">"nAssignedSlot_2"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -510,17 +493,17 @@ subjects”</a>を参照して下さい。</li>
 <span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.045 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.032 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.03 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.035 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.038 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.034 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.038 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.036 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.028 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.033 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.478 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.063 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.043 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.045 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.047 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.05 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.045 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.057 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.048 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.039 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.044 sec.</span></span>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.605 sec.</span></span></code></pre></div>
 <p>画面に表示されたメッセージをみてみましょう。上から2行目以降のメッセージは再割付試行について表示しています。最初の再割付試行では、調査対象者を690人抽出したところで、目標対象者数が満たされ、調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。
 <code>simWeight</code>の返し値は2つの要素からなるリストです。</p>
@@ -565,28 +548,15 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vig
 データベースファイルは必要がなくなったら自分で消してください。</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="va">lResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simWeight.html">simWeight</a></span><span class="op">(</span></span>
-<span>  lSURVEY    <span class="op">=</span> <span class="va">lSurvey</span>,</span>
-<span>  nBLOCKSIZE <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  sDBPATH    <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_weight_1.sqlite"</span>,</span>
-<span>  bPARALLEL  <span class="op">=</span> <span class="cn">FALSE</span>, </span>
-<span>  bAPPEND    <span class="op">=</span> <span class="cn">FALSE</span>  <span class="co"># すでにデータベースが存在する場合は上書きする</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.117 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.034 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.037 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.043 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.029 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.029 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.034 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.035 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.024 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.031 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.527 sec. </span></span>
-<span><span class="co">#&gt; [simWeight] # Accumlated Trials: 10</span></span></code></pre></div>
+<span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
+<span><span class="co"># lResult &lt;- simWeight(</span></span>
+<span><span class="co">#   lSURVEY    = lSurvey,</span></span>
+<span><span class="co">#   nBLOCKSIZE = 10,</span></span>
+<span><span class="co">#   nNUMBLOCK  = 1,</span></span>
+<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_1.sqlite",</span></span>
+<span><span class="co">#   bPARALLEL  = FALSE, </span></span>
+<span><span class="co">#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="co"># )</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="多くの試行の実行">3.3 多くの試行の実行<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E3%81%8F%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C"></a>
@@ -608,13 +578,13 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
 <span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="co"># lResult &lt;- simWeight(</span></span>
-<span><span class="co">#  lSURVEY    = lSurvey,</span></span>
-<span><span class="co">#  nNUMBLOCK  = 10,</span></span>
-<span><span class="co">#  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
-<span><span class="co">#  bPARALLEL  = TRUE,</span></span>
-<span><span class="co">#  sLOGFILE   = "c:/work/simWeight.log",</span></span>
-<span><span class="co">#  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="co">#   lResult &lt;- simWeight(</span></span>
+<span><span class="co">#   lSURVEY    = lSurvey,</span></span>
+<span><span class="co">#   nNUMBLOCK  = 10,</span></span>
+<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
+<span><span class="co">#   bPARALLEL  = TRUE,</span></span>
+<span><span class="co">#   sLOGFILE   = "c:/work/simWeight.log",</span></span>
+<span><span class="co">#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
 <p>データベースに1000試行の結果が格納されました。</p>
 <p>なお、これまでにデータベースに格納した試行数は、格納した際に表示されますが、
