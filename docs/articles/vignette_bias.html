@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-27</h4>
+            <h4 data-toc-skip class="date">2024-03-28</h4>
       
       
       <div class="d-none name"><code>vignette_bias.Rmd</code></div>
@@ -94,8 +94,8 @@ in web surveys”</a>を参照して下さい。</p>
 <li>まず割付バイアスの性質について、1節で説明します。</li>
 <li>割付バイアスの強さを評価するには、個々の対象者がカテゴリ・スロットに割り付けられる
 確率(割付確率)を推定する必要があります。その方法について2節で述べます。</li>
-<li>個々の対象者の割付確率に基づき、割付バイアスの大きさを示す指標を求めます。指標について3節で説明します。</li>
-<li>4-7節では、割付バイアス評価の具体的な手順を紹介します。</li>
+<li>個々の対象者の割付確率に基づき、割付バイアスの大きさを示す指標を求めます。3節で説明します。</li>
+<li>4-7節で、割付バイアス評価の具体的な手順を紹介します。</li>
 </ul>
 <p>このパッケージの使い方に関心がある方は、1-3節をスキップし4節からご覧いただいてもかまいません。</p>
 <div class="section level2">
@@ -108,28 +108,27 @@ in web surveys”</a>を参照して下さい。</p>
 割付バイアスについてもっと明確に定義しておきましょう。</p>
 <p>あるカテゴリないしスロットAについて考えます。ある調査を行ったとき、調査対象者(調査に参加した人)のなかにAに割付可能であった対象者が<span class="math inline">\(N\)</span>人いたとします。仮に、その人々すべてからAについての設問への回答を得たとしましょう。
 そのとき対象者<span class="math inline">\(i(=1,\ldots,
-N)\)</span>から得られる関心ある値を<span class="math inline">\(x_i\)</span>とし、その平均を<span class="math display">\[\bar{x}_P = \frac{1}{N} \sum_{i=1}^N x_i\]</span>
+N)\)</span>の回答から得られる関心ある値を<span class="math inline">\(x_i\)</span>とし、その平均を<span class="math display">\[\bar{x}_P = \frac{1}{N} \sum_{i=1}^N x_i\]</span>
 とします。添字<span class="math inline">\(P\)</span>は割付可能な調査対象者を表しています。</p>
 <p>以下では、私たちの目的は<span class="math inline">\(\bar{x}_P\)</span>を推測することだと考えます。通常の調査では、推測したいのは<span class="math inline">\(\bar{x}_P\)</span>ではなく、その背後にある対象母集団における回答の平均や、回答誤差をも取り除いた真の態度・意見の平均だと考えるのが普通です。しかし、ここではある調査のなかでの割付バイアスについて議論しているので、推測の対象は<span class="math inline">\(\bar{x}_P\)</span>だと考えることにします。</p>
-<p>さて、私たちは調査のコストや回答負荷を低減するため、Aに割付可能であった<span class="math inline">\(N\)</span>人の対象者すべてからAについての回答を得るのではなく、そのなかの<span class="math inline">\(n\)</span>人をAに割りつけ、この人たちのみからAについての回答を得たとします。対象者<span class="math inline">\(i\)</span>がAに割り付けられたとき1,
+<p>さて、調査コストや回答負荷を低減するため、Aに割付可能であった<span class="math inline">\(N\)</span>人の対象者すべてからAについての回答を得るのではなく、そのなかの<span class="math inline">\(n\)</span>人をAに割りつけ、この人たちのみからAについての回答を得たとします。対象者<span class="math inline">\(i\)</span>がAに割り付けられたとき1,
 割り付けられなかったとき0になる変数を<span class="math inline">\(I_i\)</span>とします。</p>
 <p>Aに割り付けられた<span class="math inline">\(n\)</span>人の対象者から得られる<span class="math inline">\(x_i\)</span>の平均は、以下のように表現できます。添字<span class="math inline">\(S\)</span>は割り付けられた調査対象者を表しています。
 <span class="math display">\[ \bar{x}_S = \frac{1}{n} \sum_{i=1}^N I_i
 x_i \]</span></p>
-<p>以下では<strong>割付バイアス</strong>を、<strong>割り付けられた対象者における平均の期待値と、割付可能なすべての対象者における平均とのずれ</strong>
+<p>以下では<strong>割付バイアス</strong>を、<strong>割り付けられた対象者における関心ある変数の平均の期待値と、割付可能なすべての対象者における関心ある変数の平均とのずれ</strong>
 <span class="math inline">\(E[\bar{x}_S] - \bar{x}_P\)</span>
 であると定義します。</p>
 </div>
 <div class="section level3">
 <h3 id="割付バイアスの性質">1.2 割付バイアスの性質<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E6%80%A7%E8%B3%AA"></a>
 </h3>
-<p>割付バイアスはどのような性質を持つでしょうか。上の式を変形してみましょう。
-<span class="math display">\[E[\bar{x}_S] - \bar{x}_P = E \left[
-\frac{1}{n} \sum_{i=1}^N I_i x_i \right]  - \frac{1}{N} \sum_{i=1}^N
-x_i\]</span></p>
-<p>対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。このパッケージが想定している調査手続きでは、割り付けられた調査対象者数<span class="math inline">\(n\)</span>は定数です(実際にはAについての回答者が<span class="math inline">\(n\)</span>人に到達する前に調査を打ち切ってしまう場合もありえますが、ここでは無視します)。また、割付可能な調査対象者数<span class="math inline">\(N\)</span>は実際には確率的に決まるのですが、A以外のたくさんのカテゴリ・スロットの割付可能性によって規定されますので、ここでは所与の定数であるとみなします。</p>
-<p>すると、 <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N
-\frac{N}{n} E[I_i]x_i  - \frac{1}{N} \sum_{i=1}^N x_i\]</span> <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
+<p>割付バイアスはどのような性質を持つでしょうか。</p>
+<p>以下では、対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。このパッケージが想定している調査手続きでは、割り付けられた調査対象者数<span class="math inline">\(n\)</span>は定数です(実際にはAについての回答者が<span class="math inline">\(n\)</span>人に到達する前に調査を打ち切ってしまう場合もありえますが、ここでは無視します)。また、割付可能な調査対象者数<span class="math inline">\(N\)</span>は実際には確率的に決まるのですが、A以外のたくさんのカテゴリ・スロットの割付可能性によって規定されますので、ここでは所与の定数であるとみなします。</p>
+<p>割付バイアスの式を変形してみましょう。 <span class="math display">\[E[\bar{x}_S] - \bar{x}_P = E \left[ \frac{1}{n}
+\sum_{i=1}^N I_i x_i \right]  - \frac{1}{N} \sum_{i=1}^N x_i\]</span>
+<span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \frac{N}{n}
+E[I_i]x_i  - \frac{1}{N} \sum_{i=1}^N x_i\]</span> <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
 E[I_i] -1 \right) x_i \]</span> <span class="math display">\[ =
 \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1 \right) (x_i -
 \bar{x}) + \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1
@@ -137,7 +136,7 @@ E[I_i] -1 \right) x_i \]</span> <span class="math display">\[ =
 \sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1 \right) (x_i - \bar{x}) +
 \frac{\bar{x}}{N} \left( \frac{N}{n} \sum_{i=1}^N  E[I_i] - N
 \right)\]</span> ここで<span class="math inline">\(E[I_i]\)</span>とは対象者<span class="math inline">\(i\)</span>がAに割り付けられる確率のことです。以下では<span class="math inline">\(p_i\)</span>と書きましょう。その全対象者における合計は<span class="math inline">\(\sum_{i=1}^N p_i = E \left[ \sum_{i=1}^N I_i
-\right] = n\)</span> です。従って第2項は0です。 <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
+\right] = n\)</span> ですから、第2項は0です。 <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
 p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 = \frac{N}{n} p_i\)</span>
 としましょう。割付可能対象者を通じたその平均は<span class="math inline">\(\bar{q}_P = \frac{1}{N} \sum_{i=1}^N q_i =
@@ -159,9 +158,9 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 <ul>
 <li>対象者<span class="math inline">\(i\)</span>がA以外のどのカテゴリ・スロットに対して割付可能であったか。たとえば、たくさんのカテゴリ・スロットについて割付可能である人ほど、Aに割り付けられる確率は低くなりやすいでしょう。</li>
 <li>対象者<span class="math inline">\(i\)</span>以外の対象者たちが、どのカテゴリ・スロットに対して割付可能であったか。たとえば、Aに対して割付可能な対象者が他に大勢いるほど、<span class="math inline">\(i\)</span>がAに割り付けられる確率は低くなりやすいでしょう。</li>
-<li>対象者を参加順に並べたときの対象者<span class="math inline">\(i\)</span>その位置。たとえば、参加順序が遅いほど、AがすでにクローズドとなっておりAへと割り付けられない可能性が高まるでしょう。</li>
+<li>対象者を参加順に並べたときの対象者<span class="math inline">\(i\)</span>の位置。たとえば、<span class="math inline">\(i\)</span>の参加順が遅いほど、AがすでにクローズドとなっておりAへと割り付けられない可能性が高まるでしょう。</li>
 </ul>
-<p>従って、<span class="math inline">\(x_i\)</span>と<span class="math inline">\(p_i\)</span>とのあいだに関連が生じる理由として、次の3つが考えられます。</p>
+<p>従って、Aにおいて関心ある変数<span class="math inline">\(x_i\)</span>と割付確率<span class="math inline">\(p_i\)</span>とのあいだに関連が生じる理由として、次の3つが考えられます。</p>
 <ul>
 <li>
 <span class="math inline">\(x_i\)</span>が他のカテゴリ・スロットへの割付可能性と関連しているとき
@@ -176,11 +175,11 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 <li>
 <span class="math inline">\(x_i\)</span>が他の対象者の割付可能性と関連しているとき
 <ul>
-<li>ふつう、このような関連性はないでしょう。</li>
+<li>ふつう、このような関連性はないでしょう。もちろん、カテゴリ・スロット間で比較したときに<span class="math inline">\(x_i\)</span>の平均と人々の割付可能性が関連することは大いにあり得ます。たとえば、<span class="math inline">\(x_i\)</span>がブランドへの購入意向で、割付可能性がブランドの使用経験であるなら、購入意向の平均が高いブランドのほうが使用経験率も高いでしょう)。しかしここで問題にしているのは、あるカテゴリないしスロットを所与としたときの、ある人の<span class="math inline">\(x_i\)</span>と他の人の割付可能性との関連です。ある対象者のブランドへのある人の購入意向が、他の対象者のブランドの使用経験によって川という状況は考えにくいと思います。</li>
 </ul>
 </li>
 <li>
-<span class="math inline">\(x_i\)</span>が調査参加順序と関連しているとき
+<span class="math inline">\(x_i\)</span>が調査参加順と関連しているとき
 <ul>
 <li>ふつう、この関連性についても無視できるでしょう。たとえば調査開始が早朝であったため、早起きの人ほど調査に参加しやすく、
 かつ早起きな人とそうでない人のあいだでAについての回答に差がある…
@@ -191,11 +190,11 @@ p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
 </ul>
 <p><a href="vignette.html">“rSurveyAssign: tools for simulation of
 assignment in web surveys”</a>で
-述べたように、このパッケージでは、対象者の回答と割付可能性は対象者間で独立であり、ある対象者の回答と調査参加順序の間には関連がないと仮定します。つまり、3つのうち後ろのふたつは無視できます。</p>
+述べたように、このパッケージでは、対象者の回答と割付可能性は対象者間で独立であり、ある対象者の回答と調査参加順序の間には関連がないと仮定します。つまり、上記の3つの理由のうち後ろのふたつは無視します。</p>
 <p>従って、つぎのようにいえます。このパッケージが想定している調査手続きにおいて、あるカテゴリ・スロットAにおいて割付バイアスが生じるのは、</p>
 <ol style="list-style-type: decimal">
-<li>関心ある変数<span class="math inline">\(x_i\)</span>と、各対象者の他のカテゴリ・スロットへの割付可能性との間に関連があり、</li>
-<li>各対象者の他のカテゴリ・スロットへの割付可能性と、Aへの割付確率<span class="math inline">\(p_i\)</span>との間に関連があるときです。</li>
+<li>各対象者の関心ある変数<span class="math inline">\(x_i\)</span>の値と、その対象者の他のカテゴリ・スロットへの割付可能性との間に関連があり、</li>
+<li>各対象者の他のカテゴリ・スロットへの割付可能性と、その対象者のAへの割付確率<span class="math inline">\(p_i\)</span>との間に関連があるときです。</li>
 </ol>
 <p>1.は常に成り立つと考えるべきでしょう。いっぽう、2.はカテゴリ・スロットの割付方法によって決まります。
 仮に、他のカテゴリ・スロットへの割付可能性とAに対する割付確率<span class="math inline">\(p_i\)</span>とのあいだに関連がない割付方法を用いていれば、いかなる変数においても割付バイアスは生じません。</p>
@@ -213,10 +212,9 @@ assignment in web surveys”</a>で
 <div class="section level4">
 <h4 id="カテゴリ割付方法と割付バイアス">カテゴリ割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h4>
-<p>Aがカテゴリである場合、A以外のカテゴリへの割付可能性とAへの割付確率とのあいだに関連があるときに
+<p>Aがカテゴリである場合は、A以外のカテゴリへの割付可能性とAへの割付確率とのあいだに関連があるときに
 割付バイアスが生じます。</p>
-<p>従って、割付方法以外の側面に目を向けると、割付バイアスが生じうるのは
-以下の条件がすべて満たされているときです。</p>
+<p>従って、割付バイアスが生じうるのは以下の条件がすべて満たされているときです。</p>
 <ul>
 <li>カテゴリ数<span class="math inline">\(J\)</span>が2以上であること
 <ul>
@@ -260,11 +258,11 @@ assignment in web surveys”</a>で
 <div class="section level4">
 <h4 id="スロット割付方法と割付バイアス">スロット割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h4>
-<p>Aがスロットである場合、割付バイアスが生じる原因として、次の3つを考えることができます。</p>
+<p>Aがスロットである場合、話はさらに複雑です。割付バイアスが生じる原因として次の3つが挙げられるからです。</p>
 <ul>
-<li>カテゴリにおいて割付バイアスが生じていれば、スロットにおいても割付バイアスが生じます。割付スロットは割付カテゴリから選ばれるからです。</li>
-<li>割付カテゴリの最大数が2以上であるときには、割付バイアスが生じます。あるカテゴリにおけるスロット割付が試みられるかどうかが、他のカテゴリでスロット割付が成立するかどうかに依存するからです。</li>
-<li>Aが属するカテゴリのA以外のスロットへの割付可能性と、Aへの割付確率とのあいだに関連があるとき、割付バイアスが生じます。</li>
+<li>カテゴリにおいて割付バイアスが生じているとき。割付スロットは割付カテゴリから選ばれるからです。</li>
+<li>割付カテゴリの最大数が2以上であるとき。あるカテゴリにおけるスロット割付が試みられるかどうかが、他のカテゴリでスロット割付が成立するかどうかに依存するからです。</li>
+<li>Aが属するカテゴリのA以外のスロットへの割付可能性と、Aへの割付確率とのあいだに関連があるとき。</li>
 </ul>
 <p>3番目の割付バイアスが生じるのは、カテゴリにおける割付バイアスと同様に、以下の条件がすべて満たされているときです。</p>
 <ul>
@@ -281,7 +279,8 @@ assignment in web surveys”</a>で
 <div class="section level4">
 <h4 id="割付バイアスを生まない割付方法">割付バイアスを生まない割付方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E7%94%9F%E3%81%BE%E3%81%AA%E3%81%84%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
 </h4>
-<p>上記の議論は過度に煩雑なので、逆に、「カテゴリ数・スロット数や対象者の割付可能性がどうであれ、カテゴリにおいてもスロットにおいても常に割付バイアスが生じない割付方法」について考えてみましょう。それは以下の条件を満たす割付方法です。</p>
+<p>上記の議論は過度に煩雑なので、逆に、「カテゴリ数・スロット数や対象者の割付可能性がどうであれ、カテゴリにおいてもスロットにおいても常に割付バイアスが生じない割付方法」について考えてみましょう。</p>
+<p>それは以下の条件を満たす割付方法です。</p>
 <ul>
 <li>割付カテゴリ最大数を1としている。</li>
 <li>カテゴリとスロットの割付方法を(<code>nonadaptive</code>,
@@ -298,7 +297,7 @@ assignment in web surveys”</a>で
 <code>shortnum</code>,
 <code>none</code>)は、「現時点で割付人数が目標に到達していないものから、割付人数が不足している順に<span class="math inline">\(L\)</span>個までを抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
 </ul>
-<p>調査に必要な対象者数という観点からみると後者のほうがはるかに効率的でしょう。しかし、(調査参加順と回答の間に関連がないと仮定する限り)どちらの方法でも割付バイアスは生じません。</p>
+<p>調査に必要な対象者数という観点からみると後者のほうがはるかに効率的でしょう。しかし、どちらの方法でも割付バイアスは生じません。</p>
 <p>このように、「必要な対象者数が少ない割付方法ほど強い割付バイアスが生じる」とは必ずしもいえないわけです。</p>
 </div>
 </div>
@@ -307,9 +306,9 @@ assignment in web surveys”</a>で
 <h2 id="割付確率の推定">2. 割付確率の推定<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A"></a>
 </h2>
 <p>あるカテゴリ・スロットへの回答における割付バイアスの大きさについて推測するためには、
-そのカテゴリ・スロットに割付可能であった対象者について、割付確率<span class="math inline">\(p_i\)</span>を推測する必要があります。
-このパッケージでは、仮想的な母集団を用いたシミュレーションを通じて割付確率を推定します。</p>
-<p>このシミュレーションは以下の手順に従います。</p>
+そのカテゴリ・スロットに割付可能であった対象者について割付確率<span class="math inline">\(p_i\)</span>を推測する必要があります。</p>
+<p>このパッケージでは、仮想的な母集団を用いたシミュレーションを通じて割付確率を推定します。
+このシミュレーションは以下の手順に従います。</p>
 <ul>
 <li>母集団データから対象者を抽出し、カテゴリ・スロットへの割付を行う(<strong>割付試行</strong>)。</li>
 <li>ある割付試行で得た調査データから無作為復元抽出によって仮想的な調査データを再生成し、カテゴリ・スロットへの割付をやりなおす(<strong>再割付試行</strong>)。</li>
@@ -409,16 +408,13 @@ p_i)^2]\)</span>の推定値と捉えることができるので、 <span class=
 <h3 id="hatmathrmdeff-デザイン効果の推定値">3.3 <span class="math inline">\(\hat{\mathrm{Deff}}\)</span>:
 デザイン効果の推定値<a class="anchor" aria-label="anchor" href="#hatmathrmdeff-%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E5%8A%B9%E6%9E%9C%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
 </h3>
+<p>(2024/03/28:
+この節の説明はもっとちゃんとした内容に書き換える予定です。すいません)</p>
 <p>各対象者の各カテゴリ・スロットへの割付確率<span class="math inline">\(p_i\)</span>が既知ならば、その逆数<span class="math inline">\(1/p_i\)</span>をウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。そこでこのパッケージでは、すでに行った調査についてウェイトを算出する機能を提供しています。詳細は<a href="vignette_weight.html">“4. How to compute survey
 weights”</a>をご覧ください。</p>
 <p>その反面、一般に、ウェイトを用いて集計すると集計値の分散は拡大します。その拡大の程度は、ウェイトの相対的な分散が大きいときに大きくなります。</p>
-<p><strong>デザイン効果</strong>とは、調査データ分析において用いられている概念で、ウェイトを用いた集計における集計値の分散の拡大を、ウェイトの相対的な分散という観点から表現したものです。
-多くの場合、デザイン効果は次のように求められます。対象者<span class="math inline">\(i\)</span>に与えられるウェイトを<span class="math inline">\(w_i=1/p_i\)</span>、対象者を通じたその平均を<span class="math inline">\(\bar{w} = \frac{1}{n} \sum_{i=1}^n
-w_i\)</span>とします。 <span class="math display">\[ \mathrm{Deff} = 1 +
-\left( \frac{1}{\bar{w}^2} \times \frac{1}{n} \sum_{i=1}^n (w_i -
-\bar{w})^2 \right)\]</span></p>
-<p>さて、このパッケージが想定する調査手続きでは、割付確率<span class="math inline">\(p_i\)</span>は未知であり、その推定量<span class="math inline">\(\hat{p}_i\)</span>しか手に入りません。従ってデザイン効果もわかりません。</p>
-<p>そこで<code>rSurveyAssign</code>パッケージは、<strong>デザイン効果の推定値</strong>
+<p><strong>デザイン効果</strong>とは、調査データ分析において用いられている概念で、ウェイトを用いた集計における集計値の分散の拡大を、ウェイトの相対的な分散という観点から表現したものです。</p>
+<p><code>rSurveyAssign</code>パッケージは、<strong>デザイン効果の推定値</strong>
 <span class="math inline">\(\hat{\mathrm{Deff}}\)</span>
 を提供しています。</p>
 <p>この指標は次のように求めています。 <span class="math display">\[
@@ -426,8 +422,6 @@ w_i\)</span>とします。 <span class="math display">\[ \mathrm{Deff} = 1 +
 \bar{\hat{w}}_S = \frac{1}{n} \sum_{i=1}^n \hat{w}_i\]</span> <span class="math display">\[ \hat{\mathrm{Deff}} = 1 + \left(
 \frac{1}{\bar{\hat{w}}_S^2} \times \frac{1}{n} \sum_{i=1}^n (\hat{w}_i -
 \bar{\hat{w}}_S)^2 \right) \]</span></p>
-<p>つまり、<span class="math inline">\(\mathrm{Deff}\)</span>の式におけるウェイト<span class="math inline">\(w_i = 1/p_i\)</span>を、推定されたウェイト<span class="math inline">\(\hat{w}_i =
-1/\hat{p}_i\)</span>に置き換えたものです。</p>
 <p>以下の点に注意してください。</p>
 <ul>
 <li>この指標は、<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>や<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>とは異なり、割付可能対象者ではなく割り付けられた対象者についての指標です。ウェイトを用いた集計において何が起きるかを表す指標だからです。</li>
@@ -475,24 +469,23 @@ w_i\)</span>とします。 <span class="math display">\[ \mathrm{Deff} = 1 +
 </li>
 </ul>
 <p>この変数と、スケーリングした割付確率の推定値 <span class="math inline">\(\hat{q}_i\)</span>との共分散<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>を求め、割付バイアスの評価指標とします。</p>
-<p>この指標は以下の式に従って求めます。カテゴリにおいては <span class="math display">\[ \bar{r}^{(c)}_P = \frac{1}{N} \sum_{i=1}^N
-r^{(c)}_i\]</span> <span class="math display">\[ \mathrm{Cov}(\hat{q},r)
-= \frac{1}{N} \sum_{i=1}^N (\hat{q}_i - \bar{\hat{q}}_P) (r^{(c)}_i -
-\bar{r}^{(c)}_P) \]</span> カテゴリ<span class="math inline">\(j\)</span>のスロットにおいては <span class="math display">\[ \bar{r}^{(s)}_{j,P} = \frac{1}{N} \sum_{i=1}^N
-r^{(s)}_{ij}\]</span> <span class="math display">\[
-\mathrm{Cov}(\hat{q},r) = \frac{1}{N} \sum_{i=1}^N (\hat{q}_i -
-\bar{\hat{q}}_P) (r^{(s)}_{ij} - \bar{r}^{(s)}_{j,P}) \]</span>
+<p>この指標は以下の式に従って求めます。カテゴリの場合の<span class="math inline">\(r^{(c)}_i\)</span>, スロットの場合の<span class="math inline">\(r^{(s)}_{ij}\)</span>を <span class="math inline">\(r_i\)</span>と略記します。 <span class="math display">\[ \bar{r}_P = \frac{1}{N} \sum_{i=1}^N
+r_i\]</span> <span class="math display">\[ \mathrm{Cov}(\hat{q},r) =
+\frac{1}{N} \sum_{i=1}^N (\hat{q}_i - \bar{\hat{q}}_P) (r_i - \bar{r}_P)
+\]</span>
 この指標は、「割付可能レシオ」という変数のおおまかさを脇におけば、割付バイアスを評価する5つの
 指標の中でもっとも適切な指標だといえます。割付確率ではなく、割付確率と「他のカテゴリ・スロットへの割付可能性」との関連に注目しているからです。</p>
 <p>また、次のようにとらえることもできます。</p>
 <p>いま、あるカテゴリないしスロットに割付可能である人々の割付可能レシオそのものに関心があるとしましょう。たとえば、「このブランドを知っている人々が、市場に存在するブランド群のうち何割を知っているか」に関心がある、というような場面を想像してください。</p>
-<p>割付可能レシオ(<span class="math inline">\(r^{(c)}_i\)</span>ないし<span class="math inline">\(r^{(s)}_{ij}\)</span>)を<span class="math inline">\(r_i\)</span>と略記します。推定したい対象は、当該カテゴリないしスロットに割付可能な人々を通じた<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
+<p>私たちが推定したい対象は、当該カテゴリないしスロットに割付可能な人々を通じた<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
 \bar{r}_P = \frac{1}{N} \sum_{i=1}^N r_i\]</span>
 です。しかし、私たちが知ることができるのは、当該カテゴリないしスロットに割り付けられた人々の<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
-\bar{r}_S = \frac{1}{n} \sum_{i=1}^n r_i\]</span>
-です。多くの割付手法において、割付可能レシオが高い人ほど、当該カテゴリないしスロットへの割付確率が低くなりますから、<span class="math inline">\(\bar{r}_S\)</span>は<span class="math inline">\(\bar{r}_P\)</span>よりも低めになります。すなわち、割付バイアスのせいで<span class="math inline">\(\bar{r}_S\)</span>は低めになるわけです。</p>
-<p>すでに述べたように、割付バイアスとは、割付可能対象者において平均1になるようにスケーリングした割付確率<span class="math inline">\(q_i\)</span>と、関心ある変数との共分散でした。いっぽう<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、<span class="math inline">\(q_i\)</span>の推定値<span class="math inline">\(\hat{q}_i\)</span>と割付可能レシオ<span class="math inline">\(r_i\)</span>との共分散です。つまり<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、関心ある変数が割付可能レシオ<span class="math inline">\(r_i\)</span>
-であるときの割付バイアスそのものの推定値だと捉えることもできます。</p>
+\bar{r}_S = \frac{1}{n} \sum_{i=1}^N I_i r_i\]</span>
+です。多くの割付手法において、割付可能レシオが高い人ほど当該カテゴリないしスロットへの割付確率が低くなりますから、割付バイアスによって<span class="math inline">\(\bar{r}_S\)</span>は<span class="math inline">\(\bar{r}_P\)</span>より低めになります。</p>
+<p>すでに述べたように、割付バイアス<span class="math inline">\(E[\hat{x}_S] -\hat{x}_P\)</span>とは、
+割付可能対象者において平均1になるようにスケーリングした割付確率<span class="math inline">\(q_i\)</span>と、関心ある変数<span class="math inline">\(x_i\)</span>との共分散でした。いっぽう<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、<span class="math inline">\(q_i\)</span>の推定値<span class="math inline">\(\hat{q}_i\)</span>と割付可能レシオ<span class="math inline">\(r_i\)</span>との共分散です。つまり<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、関心ある変数が割付可能レシオ<span class="math inline">\(r_i\)</span> であるときの割付バイアスそのもの
+<span class="math display">\[ E[\bar{r}_S] - \bar{r}_P = \mathrm{Cov}(q,
+r) \]</span> の推定値だと捉えることもできます。</p>
 </div>
 </div>
 <div class="section level2">
@@ -554,7 +547,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.06 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.05 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
