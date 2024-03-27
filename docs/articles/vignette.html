@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-26</h4>
+            <h4 data-toc-skip class="date">2024-03-27</h4>
       
       
       <div class="d-none name"><code>vignette.Rmd</code></div>
@@ -157,34 +157,36 @@ ONO</h4>
 できますし、ブランドをいくつ知っていても、
 対象者は購入意向についての回答を多くても<span class="math inline">\(L\)</span>回まで繰り返せば良いことになります。</p>
 <p>4つの調査手続きについて整理しておきましょう。</p>
-<table class="table"><tbody>
+<table class="table">
+<thead><tr class="header">
+<th></th>
+<th align="left">割付可能ブランド</th>
+<th align="left">割付ブランド</th>
+</tr></thead>
+<tbody>
 <tr class="odd">
-<td></td>
-<td align="left">割付可能ブランド</td>
-<td align="left">割付ブランド</td>
-</tr>
-<tr class="even">
 <td>A.</td>
 <td align="left">すべてのブランド</td>
 <td align="left">すべてのブランド</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>B.</td>
 <td align="left">すべてのブランド</td>
 <td align="left">
 <span class="math inline">\(L\)</span>個のブランド</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>C.</td>
 <td align="left">知っているブランド</td>
 <td align="left">知っているすべてのブランド</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>D.</td>
 <td align="left">知っているブランド</td>
 <td align="left">知っている<span class="math inline">\(1\)</span>～<span class="math inline">\(L\)</span>個のブランド</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>調査手続きC.やD.のように、対象者の回答(各ブランドを知っているかどうか)に応じてその後の設問を変更する手続きは、古典的な質問紙調査では困難でした。web調査ならではの調査手続きといえるでしょう。</p>
 </div>
 <div class="section level3">
@@ -198,7 +200,8 @@ ONO</h4>
 <div class="section level4">
 <h4 id="問題点1--必要な対象者数がわからない">問題点1. 必要な対象者数がわからない<a class="anchor" aria-label="anchor" href="#%E5%95%8F%E9%A1%8C%E7%82%B91--%E5%BF%85%E8%A6%81%E3%81%AA%E5%AF%BE%E8%B1%A1%E8%80%85%E6%95%B0%E3%81%8C%E3%82%8F%E3%81%8B%E3%82%89%E3%81%AA%E3%81%84"></a>
 </h4>
-<p>それぞれのブランドのイメージを測定するために、それぞれのブランドについて十分な件数の回答を得たいとしましょう。</p>
+<p>それぞれのブランドについて十分な件数の回答を集めたいとき、
+どの程度の対象者数が必要でしょうか。</p>
 <ul>
 <li>調査手続きA.では、<span class="math inline">\(N\)</span>人の対象者に調査すれば、各ブランドについて<span class="math inline">\(N\)</span>件の回答が得られます。</li>
 <li>調査手続きB.では、<span class="math inline">\(N\)</span>人の対象者に調査すれば、全ブランドを通じて延べ
@@ -443,51 +446,19 @@ aに割り付けられる確率はどうなるでしょうか。</p>
 <li>調査実施中のある時点において、オープンなスロットが1つ以上あるカテゴリを「<strong>オープン</strong>」、すべてのスロットがクローズドであるカテゴリを「<strong>クローズド</strong>」と形容することにします。</li>
 </ul>
 <p>本パッケージは以下に説明する調査手続きを想定します。</p>
-<ul>
-<li>
-<strong>Step 1.</strong>:
-<ul>
-<li>ある人が調査に参加したとき、その人(対象者)について、各カテゴリについて割付可能であるかどうかを調べる。</li>
-</ul>
-</li>
-<li>
-<strong>Step 2.</strong>
-<ul>
-<li>なんらかの方法で、その対象者のすべての割付可能カテゴリのうちいくつかを選ぶ。</li>
-<li>これを、「対象者を<strong>カテゴリに割り付ける</strong>」と呼び、
-選択されたカテゴリを「<strong>割付カテゴリ</strong>」と呼ぶ。</li>
-<li>もし割付できなかったら、その対象者に対する調査は中止する。</li>
-</ul>
-</li>
-<li>
-<strong>Step 3.</strong>
-<ul>
-<li>対象者に、それぞれの割付カテゴリについてスロットのリストを提示し、それぞれについて割付可能かどうかを調べる。</li>
-</ul>
-</li>
-<li>
-<strong>Step 4.</strong>
-<ul>
-<li>なんらかの方法で、その対象者のいずれかの割付カテゴリの割付可能スロットのなかからいくつかを選ぶ。</li>
-<li>これを、「対象者を<strong>スロットに割り付ける</strong>」と表現し、選択されたカテゴリを「<strong>割付スロット</strong>」と呼ぶ。</li>
-<li>もし割付できなかったら、その対象者に対する調査は中止する。</li>
-</ul>
-</li>
-<li>
-<strong>Step 5.</strong>
-<ul>
-<li>割付スロットについての詳細な設問を提示し、回答を得る。</li>
-</ul>
-</li>
-<li>
-<strong>Step 6.</strong>
-<ul>
-<li>すべてのカテゴリがクローズドになったら、調査を終了する。</li>
-</ul>
-</li>
-</ul>
-<p>この調査手続きにおいては、Step 2.でのカテゴリの割付方法と、Step
-4.でのスロットの割付方法に応じて、
+<ol style="list-style-type: decimal">
+<li>ある人が調査に参加したとき、その対象者について、各カテゴリについて割付可能であるかどうかを調べる。</li>
+<li>なんらかの方法で、その対象者をその人の割付可能カテゴリのうちいくつかへと割り付ける。
+もし割付できなかったら、その対象者に対する聴取は終了する。</li>
+<li>対象者に、それぞれの割付カテゴリについてスロットのリストを提示し、
+それぞれのスロットについて割付可能かどうかを調べる。</li>
+<li>なんらかの方法で、その対象者を、いずれかの割付カテゴリの割付可能スロットのうちいくつかへと割り付ける。
+もし割付できなかったら、その対象者に対する聴取は中止する。</li>
+<li>それぞれの割付スロットについて聴取する。</li>
+<li>これを各対象者について繰り返す。すべてのカテゴリがクローズドになったら、調査を終了する。</li>
+</ol>
+<p>この調査手続きにおいては、Step 2.でのカテゴリへの割付方法と、Step
+4.でのスロットへの割付方法に応じて、
 必要な対象者数が大きく変わり、また割付バイアスの大きさも変わります。</p>
 </div>
 </div>
@@ -501,7 +472,7 @@ subjects”</a>を参照して下さい。</p>
 <p>このパッケージの用途は次の3つです。</p>
 <ul>
 <li>
-<strong>標本サイズ推定</strong>:
+<strong>標本サイズ推定</strong>
 <ul>
 <li>上記の手続きによる調査を<strong>計画しているとき</strong>、
 各スロットについて必要な回答件数を得るためにはどの程度の調査対象者数が必要か、
@@ -511,7 +482,7 @@ size”</a>を参照して下さい。</li>
 </ul>
 </li>
 <li>
-<strong>バイアス評価</strong>:
+<strong>バイアス評価</strong>
 <ul>
 <li>上記の手続きによる調査を<strong>計画しているとき</strong>、
 調査結果が持つであろうバイアスをシミュレーションによって評価する。</li>
@@ -520,7 +491,7 @@ bias”</a>を参照して下さい。</li>
 </ul>
 </li>
 <li>
-<strong>ウェイト算出</strong>:
+<strong>ウェイト算出</strong>
 <ul>
 <li>上記の手続きによる調査を<strong>行ったあとで</strong>、
 集計のためのウェイトをシミュレーションによって算出する。</li>

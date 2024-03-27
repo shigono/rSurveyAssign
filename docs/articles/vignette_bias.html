@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-26</h4>
+            <h4 data-toc-skip class="date">2024-03-27</h4>
       
       
       <div class="d-none name"><code>vignette_bias.Rmd</code></div>
@@ -86,7 +86,18 @@ ONO</h4>
 説明します。</p>
 <p><code>rSurveyAssign</code>パッケージの背後にある考え方については、 <a href="vignette.html">“rSurveyAssign: tools for simulation of assignment
 in web surveys”</a>を参照して下さい。</p>
-<p>この解説では、1-3章で割付バイアスの性質と推定・評価の方法について述べ、4-7章で具体的な手順を紹介します。このパッケージの使い方に関心がある方は、1-3章をスキップし4章からご覧いただいてもかまいません。</p>
+<p>調査手続きを設計している際には、これから行う調査における割付バイアスの大きさについて、ある程度の
+目安をつけたくなります。しかし、割付バイアスの強さをかんたんに知ることはできません。
+そこで<code>rSurveyAssign</code>パッケージは、割付バイアスの強さを評価する機能を提供しています。</p>
+<p>この解説では、</p>
+<ul>
+<li>まず割付バイアスの性質について、1節で説明します。</li>
+<li>割付バイアスの強さを評価するには、個々の対象者がカテゴリ・スロットに割り付けられる
+確率(割付確率)を推定する必要があります。その方法について2節で述べます。</li>
+<li>個々の対象者の割付確率に基づき、割付バイアスの大きさを示す指標を求めます。指標について3節で説明します。</li>
+<li>4-7節では、割付バイアス評価の具体的な手順を紹介します。</li>
+</ul>
+<p>このパッケージの使い方に関心がある方は、1-3節をスキップし4節からご覧いただいてもかまいません。</p>
 <div class="section level2">
 <h2 id="割付バイアスの定義と性質">1. 割付バイアスの定義と性質<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E6%80%A7%E8%B3%AA"></a>
 </h2>
@@ -293,22 +304,19 @@ assignment in web surveys”</a>で
 </div>
 </div>
 <div class="section level2">
-<h2 id="シミュレーションによる割付確率の推定">2. シミュレーションによる割付確率の推定<a class="anchor" aria-label="anchor" href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AB%E3%82%88%E3%82%8B%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A"></a>
+<h2 id="割付確率の推定">2. 割付確率の推定<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A"></a>
 </h2>
-<p>調査手続きを設計している際には、これから行う調査における割付バイアスの大きさについて、ある程度の
-目安をつけたくなります。しかし、割付バイアスの強さをかんたんに知ることはできません。
-そこで<code>rSurveyAssign</code>パッケージは、割付バイアスの強さを評価する機能を提供しています。</p>
-<p>割付バイアスの強さを評価するには、まず、個々の対象者がカテゴリ・スロットに割り付けられる
-確率<span class="math inline">\(p_i\)</span>を推定する必要があります。このパッケージでは、仮想的な母集団を用いたシミュレーションを通じて
-割付確率を推定します。</p>
+<p>あるカテゴリ・スロットへの回答における割付バイアスの大きさについて推測するためには、
+そのカテゴリ・スロットに割付可能であった対象者について、割付確率<span class="math inline">\(p_i\)</span>を推測する必要があります。
+このパッケージでは、仮想的な母集団を用いたシミュレーションを通じて割付確率を推定します。</p>
 <p>このシミュレーションは以下の手順に従います。</p>
 <ul>
 <li>母集団データから対象者を抽出し、カテゴリ・スロットへの割付を行う(<strong>割付試行</strong>)。</li>
 <li>ある割付試行で得た調査データから無作為復元抽出によって仮想的な調査データを再生成し、カテゴリ・スロットへの割付をやりなおす(<strong>再割付試行</strong>)。</li>
-<li>再割付試行を繰り返し、各カテゴリ・スロットについて、それに割付可能である個々の対象者の割付確率の推定値<span class="math inline">\(\hat{p}_i\)</span>、ならびに推定量の分散の推定値<span class="math inline">\(\hat{V}_i\)</span>を得る。</li>
+<li>再割付試行を繰り返し、各カテゴリ・スロットについて、それに割付可能である個々の対象者の割付確率の推定値、ならびに推定量の分散の推定値を得る。</li>
 <li>以上の割付試行を複数回繰り返す。</li>
 </ul>
-<p>ある割付試行において、ふたつの推定値は次のように求めます。再割付試行の繰り返しを通じてある対象者が延べ<span class="math inline">\(s\)</span>回抽出され、そのうち<span class="math inline">\(t\)</span>回において当該のカテゴリ・スロットへの割付が生じたとします。このとき、
+<p>ある割付試行においてあるカテゴリ・スロットに割付可能であった対象者<span class="math inline">\(i\)</span>について、そのカテゴリ・スロットへの割付確率を<span class="math inline">\(p_i\)</span>とし、<span class="math inline">\(p_i\)</span>の推定量の分散を<span class="math inline">\(V_i\)</span>とします。この2つの推定値<span class="math inline">\(\hat{p},\hat{V}_i\)</span>を次のように求めます。再割付試行の繰り返しを通じてある対象者が延べ<span class="math inline">\(s\)</span>回抽出され、そのうち<span class="math inline">\(t\)</span>回において当該のカテゴリ・スロットへの割付が生じたとします。
 <span class="math display">\[ \hat{p}_i = t/s \]</span> <span class="math display">\[ \hat{V}_i =
 \frac{\hat{p}_i(1-\hat{p}_i)}{s}\]</span></p>
 </div>
@@ -546,7 +554,7 @@ size”</a>を参照して下さい。</p>
 <span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.23 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 3.06 sec.</span></span></code></pre></div>
 <p>シミュレーションの結果をみてみましょう。</p>
 <p><code>simBias</code>の返し値は3つの要素からなるリストです。
 要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
