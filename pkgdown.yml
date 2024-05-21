@@ -1,13 +1,13 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  vignette: vignette.html
   vignette_assign: vignette_assign.html
   vignette_bias: vignette_bias.html
   vignette_size: vignette_size.html
   vignette_weight: vignette_weight.html
-last_built: 2024-03-27T17:04Z
+  vignette: vignette.html
+last_built: 2024-05-21T08:15Z
 urls:
   reference: https://shigono.github.io/rSurveyAssign/reference
   article: https://shigono.github.io/rSurveyAssign/articles

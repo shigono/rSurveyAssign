@@ -11,7 +11,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="4. How to compute survey weights">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="4. How to compute survey weights">
 <meta property="og:description" content="rSurveyAssign">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -22,11 +22,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-03-27</h4>
+            <h4 data-toc-skip class="date">2024-05-21</h4>
       
       
       <div class="d-none name"><code>vignette_weight.Rmd</code></div>
@@ -430,8 +430,9 @@ NAとなっています。</li>
 <span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">"shortnum"</span>, </span>
 <span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">"allclosed"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span>
-<span><span class="va">lSurvey</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSurvey.html">makeSurvey</a></span><span class="op">(</span></span>
+<span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lSurvey</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSurvey.html">makeSurvey</a></span><span class="op">(</span></span>
 <span>  <span class="va">mbCAT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bCat_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, </span>
 <span>  <span class="va">lSLOT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">surveydata</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"bSlot_1_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>,</span>
@@ -466,7 +467,7 @@ NAとなっています。</li>
 </h3>
 <p>話を進める前に、調査データにおいてカテゴリ割付・スロット割付が
 期待通りに行われていたかどうかをチェックしておきましょう。</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfCheck</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/checkSurvey.html">checkSurvey</a></span><span class="op">(</span><span class="va">lSurvey</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [checkSurvey] 0 errors are found.</span></span></code></pre></div>
 <p>この例では、すべての対象者について、カテゴリ割付・スロット割付が期待通りに行われていました。
@@ -485,7 +486,7 @@ NAとなっています。</li>
 <h3 id="少数の試行の実行">3.1 少数の試行の実行<a class="anchor" aria-label="anchor" href="#%E5%B0%91%E6%95%B0%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C"></a>
 </h3>
 <p>まずは、シミュレーションを10試行だけ実行してみます。引数<code>nBLOCKSIZE</code>にブロックあたり試行数10を指定し、引数<code>nNUMBLOCK</code>にブロック数1を指定します。</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="va">lResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simWeight.html">simWeight</a></span><span class="op">(</span></span>
 <span>  lSURVEY    <span class="op">=</span> <span class="va">lSurvey</span>,</span>
@@ -493,45 +494,47 @@ NAとなっています。</li>
 <span>  nNUMBLOCK  <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeRetrialBlock] start replication (serial) ...</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.064 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.044 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.045 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.048 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.05 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.046 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.058 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.048 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.038 sec.</span></span>
-<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.045 sec.</span></span>
-<span><span class="co">#&gt; [execRetrials] block 1 :  0.616 sec.</span></span></code></pre></div>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 1 ; rand: 0.2875775 ; extract: 703 ; 0.058 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 2 ; rand: 0.8474248 ; extract: 465 ; 0.043 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 3 ; rand: 0.4102877 ; extract: 463 ; 0.103 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 4 ; rand: 0.8728468 ; extract: 541 ; 0.044 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 5 ; rand: 0.7231241 ; extract: 561 ; 0.054 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 6 ; rand: 0.5164188 ; extract: 563 ; 0.044 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 7 ; rand: 0.2947217 ; extract: 587 ; 0.045 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 8 ; rand: 0.5854465 ; extract: 540 ; 0.044 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 9 ; rand: 0.6935848 ; extract: 378 ; 0.03 sec.</span></span>
+<span><span class="co">#&gt; [makeRetrialBlock] retrial: 10 ; rand: 0.3121077 ; extract: 525 ; 0.038 sec.</span></span>
+<span><span class="co">#&gt; [execRetrials] block 1 :  0.941 sec.</span></span></code></pre></div>
 <p>画面に表示されたメッセージをみてみましょう。上から2行目以降のメッセージは再割付試行について表示しています。最初の再割付試行では、調査対象者を690人抽出したところで、目標対象者数が満たされ、調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。
 <code>simWeight</code>の返し値は2つの要素からなるリストです。</p>
 <p>要素<code>dfStat_Cat</code>は、試行を通じ、ある対象者があるカテゴリに何回割り付けられたかを示しています。</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Cat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat bAssign nCount_SubjectCat nCount_Subject nBlock nBlockSize</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     1       0                 5              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2       1                 8              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1     3       1                 4              9      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1       1                 4              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2     2       0                 5              6      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        2     3       1                 3              6      1         10</span></span></code></pre></div>
-<p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ9回にわたり調査に参加し、そのうち5回においてカテゴリ1に割り付けられた、ということを示しています。シミュレーションを繰り返せば、対象者1がカテゴリ1に割り付けられる確率を推定することができます。</p>
-<p>要素<code>dfStat_Slot</code>は、試行を通じ、ある対象者があるスロットに何回割り付けられたかを示しています。</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Slot</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Cat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nSlot bAssign nCount_SubjectSlot nCount_Subject nBlock</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        4     1     2       0                  3             14      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        4     1     3       0                  0             14      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        4     1     4       0                  0             14      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4     1     6       0                  2             14      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4     1     9       0                  1             14      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        4     1    10       0                  0             14      1</span></span>
+<span><span class="co">#&gt;   nSubject  nCat nNumRetrial gSumProp gSumSqProp bAssign nBlock nBlockSize</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     1           4     2.5        1.81       0      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2           4     3.67       3.44       1      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1     3           4     1.33       1.11       1      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1           6     4          4          1      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2     2           6     5          5          0      1         10</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        2     3           6     3          3          1      1         10</span></span></code></pre></div>
+<p>最初の行は次のことを示しています。対象者1(nSubject)はカテゴリ1(nCat)に割付可能ですが割付試行では割り付けられませんでした(bAssign)。第1ブロック(nBlock)のシミュレーション試行中に、対象者1は、10回(nBlockSize)の再割付試行のうち4試行(nNumRetrial)で調査に参加しました。ある試行において対象者1は複数回出現しているかもしれませんので、各試行において対象者1がカテゴリ1に割り付けられた割合を求め(たとえば2回出現し1回だけ割り付けられたら0.5です)、これを割付率と呼ぶことにすると、4試行を通じた割付率の合計は2.50(gSumProp),
+割付率の二乗の合計は1.80(gSumSqProp)です。</p>
+<p>シミュレーションを繰り返せば、対象者1がカテゴリ1に割り付けられる確率の推定値とその標準誤差を得ることができます。</p>
+<p>要素<code>dfStat_Slot</code>は、試行を通じ、ある対象者があるスロットに何回割り付けられたかを示しています。</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult</span><span class="op">$</span><span class="va">dfStat_Slot</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 9</span></span></span>
+<span><span class="co">#&gt;   nSubject nParentCat nSlot nNumRetrial gSumProp gSumSqProp bAssign nBlock</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1          3     7           4    0.333      0.111       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2          3     9           6    1          1           1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2          3    10           6    1          1           1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4          1     2           8    1.33       1.11        0      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4          1     3           8    0          0           0      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        4          1     4           8    0          0           0      1</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: nBlockSize &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ14回にわたり調査参加し、そのうち3回においてカテゴリ1のスロット2に割り付けられた、ということを示しています。
 シミュレーション試行を繰り返せば、対象者1がカテゴリ1のスロット2に割り付けられる確率を推定することができます。</p>
@@ -546,7 +549,7 @@ NAとなっています。</li>
 SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vignette_weight_1.sqlite</code>を
 作成します。実際には、適切なフォルダとファイル名を指定してください。また、
 データベースファイルは必要がなくなったら自分で消してください。</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
 <span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="co"># lResult &lt;- simWeight(</span></span>
@@ -566,7 +569,7 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vig
 <p>上の例では10試行からなる1ブロックを実行してきましたが、
 デフォルトでは、100試行を1ブロックと呼んでいます。
 ここでは、引数<code>nBLOCKSIZE</code>を指定せず、
-引数<code>nNUMBLOCK</code>にブロック数10を指定します。</p>
+引数<code>nNUMBLOCK</code>にブロック数20を指定します。</p>
 <p>実行時間を短くするため、並列処理を行うことにします。引数<code>bPARALLEL</code>にTRUEを指定します。</p>
 <p>並列処理を行う場合、各試行についてのメッセージは画面に表示されません。
 そこでログファイルを作成することにします。
@@ -575,23 +578,23 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vig
 <p>下の例では、ログファイルを<code>C:/work/simWeight.log</code>としています。
 RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/work/simWeight.log</code>を
 実行すると、ログファイルを監視できます。</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### 都合によりコメントアウトしています</span></span>
 <span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="co">#   lResult &lt;- simWeight(</span></span>
-<span><span class="co">#   lSURVEY    = lSurvey,</span></span>
-<span><span class="co">#   nNUMBLOCK  = 10,</span></span>
-<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
-<span><span class="co">#   bPARALLEL  = TRUE,</span></span>
-<span><span class="co">#   sLOGFILE   = "c:/work/simWeight.log",</span></span>
-<span><span class="co">#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="co"># lResult &lt;- simWeight(</span></span>
+<span><span class="co">#  lSURVEY    = lSurvey,</span></span>
+<span><span class="co">#  nNUMBLOCK  = 20,</span></span>
+<span><span class="co">#  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",</span></span>
+<span><span class="co">#  bPARALLEL  = TRUE,</span></span>
+<span><span class="co">#  sLOGFILE   = "c:/work/simWeight.log",</span></span>
+<span><span class="co">#  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
 <p>データベースに1000試行の結果が格納されました。</p>
 <p>なお、これまでにデータベースに格納した試行数は、格納した際に表示されますが、
 関数<code>countWeight</code>で調べることもできます。</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/countWeight.html">countWeight</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"retrial"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_weight_2.sqlite"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1000</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2000</span></span></code></pre></div>
 <p>上記の実行例では、シミュレーションの結果をデータベースに上書きしましたが、
 引数<code>bAPPEND</code>を<code>TRUE</code>にすることで、データベースに追加することもできます。</p>
 <p>この例では1ブロックに数秒しかかかりませんが、
@@ -611,50 +614,49 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 </h2>
 <p>十分な回数の再割付試行を行えば、それらの結果から、ある人があるカテゴリ・スロットに割り付けられる確率を推定し、ウェイトを求めることができます。</p>
 <p>シミュレーション試行の結果に基づきウェイトを算出するためには、関数<code>getWeight</code>を使います。</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lWeight</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWeight.html">getWeight</a></span><span class="op">(</span><span class="va">lSurvey</span>, <span class="st">"../tools/rSurveyAssign_vignette_weight_2.sqlite"</span><span class="op">)</span></span></code></pre></div>
 <p><code>getWeight</code>の返し値は2つのデータフレームを含むリストです。</p>
 <p>データフレーム
 <code>dfWeight_Cat</code>には、ある調査対象者のある割付カテゴリに対する回答に与えるウェイトが
 格納されています。</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Cat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nNumRetrial nCount_SubjectCat nCount_Subject gProb gWeight</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     3        <span style="text-decoration: underline;">1</span>000               614           <span style="text-decoration: underline;">1</span>004 0.612   1.06 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2        <span style="text-decoration: underline;">1</span>000               646           <span style="text-decoration: underline;">1</span>004 0.644   1.01 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2     3        <span style="text-decoration: underline;">1</span>000               591            997 0.593   1.10 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1        <span style="text-decoration: underline;">1</span>000               583            997 0.585   1.11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        3     2        <span style="text-decoration: underline;">1</span>000               679           <span style="text-decoration: underline;">1</span>024 0.663   0.979</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        3     1        <span style="text-decoration: underline;">1</span>000               583           <span style="text-decoration: underline;">1</span>024 0.570   1.14</span></span></code></pre></div>
+<span><span class="co">#&gt;   nSubject  nCat bAssign nNumRetrial gHatP gSE_HatP gWeight</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     1       0        <span style="text-decoration: underline;">1</span>317 0.580   0.012<span style="text-decoration: underline;">1</span>  <span style="color: #BB0000;">NA</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2       1        <span style="text-decoration: underline;">1</span>317 0.658   0.011<span style="text-decoration: underline;">7</span>   0.988</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1     3       1        <span style="text-decoration: underline;">1</span>317 0.620   0.011<span style="text-decoration: underline;">9</span>   1.05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1       1        <span style="text-decoration: underline;">1</span>238 0.575   0.012<span style="text-decoration: underline;">4</span>   1.13 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2     2       0        <span style="text-decoration: underline;">1</span>238 0.681   0.011<span style="text-decoration: underline;">7</span>  <span style="color: #BB0000;">NA</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        2     3       1        <span style="text-decoration: underline;">1</span>238 0.603   0.012<span style="text-decoration: underline;">2</span>   1.08</span></span></code></pre></div>
 <p>対象者1の割付カテゴリ3への回答には、ウェイト1.06が付与されています。
 なお、このウェイトは、すべての調査対象者のすべての割付カテゴリを通じて
 平均1に規準化されています。ヒストグラムを描いてみましょう。</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Cat</span><span class="op">$</span><span class="va">gWeight</span>, main <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><img src="vignette_weight_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <p>割付カテゴリに対するウェイトは、それほど極端な値にはなっていないようです。</p>
 <p>データフレーム
 <code>dfWeight_Slot</code>には、ある調査対象者のある割付スロットに対する回答に与えるウェイト
 が格納されています。</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Slot</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nSlot nNumRetrial nCount_SubjectSlot nCount_Subject gProb</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     3     7        <span style="text-decoration: underline;">1</span>000                225           <span style="text-decoration: underline;">1</span>004 0.225</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2     3     9        <span style="text-decoration: underline;">1</span>000                271            997 0.273</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2     3    10        <span style="text-decoration: underline;">1</span>000                271            997 0.273</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4     2     7        <span style="text-decoration: underline;">1</span>000                423           <span style="text-decoration: underline;">1</span>003 0.422</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4     2     5        <span style="text-decoration: underline;">1</span>000                134           <span style="text-decoration: underline;">1</span>003 0.134</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        5     1     7        <span style="text-decoration: underline;">1</span>000                533           <span style="text-decoration: underline;">1</span>011 0.528</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: gWeight &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>対象者1が割り付けられたカテゴリ3のスロット7への回答には、ウェイト0.57が
+<span><span class="co">#&gt;   nSubject nParentCat nSlot bAssign nNumRetrial  gHatP gSE_HatP gWeight</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1          3     7       1        <span style="text-decoration: underline;">1</span>317 0.227   0.010<span style="text-decoration: underline;">2</span>    0.558</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2          3     9       1        <span style="text-decoration: underline;">1</span>238 0.281   0.011<span style="text-decoration: underline;">2</span>    0.450</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        2          3    10       1        <span style="text-decoration: underline;">1</span>238 0.281   0.011<span style="text-decoration: underline;">2</span>    0.450</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        4          1     2       0        <span style="text-decoration: underline;">1</span>257 0.133   0.008<span style="text-decoration: underline;">42</span>  <span style="color: #BB0000;">NA</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        4          1     3       0        <span style="text-decoration: underline;">1</span>257 0.081<span style="text-decoration: underline;">2</span>  0.006<span style="text-decoration: underline;">65</span>  <span style="color: #BB0000;">NA</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        4          1     4       0        <span style="text-decoration: underline;">1</span>257 0.046<span style="text-decoration: underline;">5</span>  0.004<span style="text-decoration: underline;">90</span>  <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<p>対象者1が割り付けられたカテゴリ3のスロット7への回答には、ウェイト0.56が
 付与されています。
 なお、このウェイトは、すべての調査対象者のすべての割付スロットを通じて、
 平均1に規準化されています。ヒストグラムを描いてみましょう。</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Slot</span><span class="op">$</span><span class="va">gWeight</span>, main <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><img src="vignette_weight_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 <p>ごくわずかですが、極端に大きいウェイトが含まれているようです。</p>
@@ -663,7 +665,7 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <p>十分な試行数の結果に基づいて算出してもなお極端なウェイトが出現する場合は、バイアスが強すぎる割付方法を選択してしまったことが疑われます。バイアスの完全な除去を断念し、ウェイトを適切な範囲に切り詰めることを検討してください。</p>
 <p>ウェイトを切り詰めるための関数として<code>trimWeight</code>が用意されています。デフォルトでは、
 ウェイトを0.2から5の範囲に切り詰めます。</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="../reference/trimWeight.html">trimWeight</a></span><span class="op">(</span><span class="va">lWeight</span><span class="op">$</span><span class="va">dfWeight_Slot</span><span class="op">$</span><span class="va">gWeight</span><span class="op">)</span>, main <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><img src="vignette_weight_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
 </div>
@@ -697,13 +699,11 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
+  <p>Developed by <a href="https://elsur.jpn.org/" class="external-link">Shigeru ONO</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
     </footer>
