@@ -186,8 +186,8 @@ head(dfResult)
 このシミュレーションで、各スロットには何人の対象者が割り付けられたのでしょうか？ 調べてみましょう。
 ```{r}
 mnIn <- rbind(
-  as.matrix(dfResult[c("nCat", "nSlot1")]), 
-  as.matrix(dfResult[c("nCat", "nSlot2")])
+  as.matrix(dfResult[c("nParentCat", "nSlot1")]), 
+  as.matrix(dfResult[c("nParentCat", "nSlot2")])
 )
 table(mnIn[,1], mnIn[,2])
 ```
@@ -224,13 +224,13 @@ RStudioを使っているなら、Terminalウィンドウで`tail -F C:/work/sim
 set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
 ## 都合によりコメントアウトしています
 # dfResult <- simSize (
-#   lPOP      =  lPop,          
-#   lSETTING  = lSetting, 
-#   nNUMTRIAL = 500,
-#   bPARALLEL = TRUE,
-#   sLOGFILE  = "c:/work/simSize.log",
-#   sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", 
-#   bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする
+#  lPOP      =  lPop,          
+#  lSETTING  = lSetting, 
+#  nNUMTRIAL = 500,
+#  bPARALLEL = TRUE,
+#  sLOGFILE  = "c:/work/simSize.log",
+#  sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", 
+#  bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする
 # )
 ```
 
@@ -319,7 +319,7 @@ dfResult_s <- getSize (
   sTYPE   = "slot",
   sDBPATH = "../tools/rSurveyAssign_vignette_size_1.sqlite"
 )
-print(tapply(dfResult_s$nNum, list(dfResult_s$nCat, dfResult_s$nSlot), mean))
+print(tapply(dfResult_s$nNum, list(dfResult_s$nParentCat, dfResult_s$nSlot), mean))
 ```
 たとえば、カテゴリ1のスロット1の割付人数は、平均して約11.5人となりました。
 

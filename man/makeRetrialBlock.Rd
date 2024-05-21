@@ -7,8 +7,7 @@
 makeRetrialBlock(
   lSURVEY,
   nBLOCKSIZE,
-  bREDRAW,
-  nMAXSIZE,
+  sSAMPLING = c("with_replace", "without_replace", "fixed"),
   bPARALLEL,
   sLOGFILE,
   sVERBOSE = c("simple", "detail", "none")
@@ -21,11 +20,16 @@ survey data. See the document of `makeSurvey` for details.}
 \item{nBLOCKSIZE}{整数。
 試行ブロック内の試行数}
 
-\item{bREDRAW}{an boolean.
-復元抽出するか。FALSEにすると、lSURVEY上での対象者順を固定する。}
-
-\item{nMAXSIZE}{an integer.
-復元抽出する対象者の最大数。bREDRAW=FALSEの場合は無視される}
+\item{sSAMPLING}{a string.
+抽出方法。以下のいずれか。
+\itemize{
+\item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から復元無作為抽出する
+\item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+\item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+それらの調査対象者を同じ調査参加順序で再割付する
+}}
 
 \item{bPARALLEL}{a logical
 並列処理するか}
@@ -36,7 +40,7 @@ survey data. See the document of `makeSurvey` for details.}
 \item{sVERBOSE}{文字列。画面表示レベル。}
 }
 \value{
-a data frame.
+a data frame. 行は再割付試行x調査参加順。
    列は以下のとおり(順不同):
    \itemize{
    \item \code{nRetrial}:         再割付試行番号

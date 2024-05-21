@@ -15,11 +15,12 @@ makeStat_Slot(
 対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
 以下の列を持つと期待される
  \itemize{
+ \item \code{nRetrial}:         再割付試行番号
  \item \code{nSubject}:         対象者番号
  \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
  \item ...
  \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号、ないし\code{NA}
- \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
+ \item \code{nParentCat}:       割付スロットが属するカテゴリ番号、ないし\code{NA}
  \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
  \item ...
  \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号、ないし\code{NA}
@@ -37,12 +38,13 @@ a data frame
    限定されることに注意(つまり、代替対象者のスロットは含まれない)
    列は以下の通り
    \itemize{
-   \item \code{nSubject}           対象者番号
-   \item \code{nCat}               親カテゴリ番号
-   \item \code{nSlot}              スロット番号
-   \item \code{bAssign}            lSURVEY上でそのスロットが割り付けられていたか
-   \item \code{nCount_SubjectSlot} その人にそのスロットが割り付けられた回数
-   \item \code{nCount_Subject}     その人の出現回数
+   \item \code{nSubject}               対象者番号
+   \item \code{nParentCat}             親カテゴリ番号
+   \item \code{nSlot}                  スロット番号
+   \item \code{bAssign}                lSURVEY上で割付が起きていたか
+   \item \code{nNumRetrial}            人xスロットが出現した試行数
+   \item \code{gSumProp}               人xスロットが出現した試行における割付率の合計
+   \item \code{gSumSqProp}             人xスロットが出現した試行における割付率の二乗の合計
    }
 }
 \description{

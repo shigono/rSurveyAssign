@@ -57,7 +57,7 @@ simSize <- function(
   #'    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
-  #'    \item \code{nCat}:             割付スロットが属するカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
+  #'    \item \code{nParentCat}:       割付スロットが属するカテゴリ番号(\code{lPOP$mbCAT}の列番号)、ないし\code{NA}
   #'    \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号(\code{lPOP$mbSLOT[[nCat]]}の列番号)、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号(\code{lPOP$mbSLOT[[nCat]]}の列番号)、ないし\code{NA}
@@ -82,23 +82,30 @@ simSize <- function(
   ## 引数チェック - - - - - - -
   ## lPOP, lSETTING, nNUMTRIAL, bPARALLEL, sLOGFILEはexecTrialsでチェックする
 
-  ## sDBPATH, sDBTABLE
-  ## ファイルが存在していない場合、ファイルは作成できるべき
-  if (!is.null(sDBPATH) && !file.exists(sDBPATH)){
-    file.create(sDBPATH)
-    file.remove(sDBPATH)
-  }
-  ## ファイルが存在しておりかつ追加しろといわれている場合、
-  ## データベースとの整合性をチェック
-  if (!is.null(sDBPATH) && file.exists(sDBPATH) && bAPPEND == TRUE){
-    if (!checkDB(sDBPATH, sDBTABLE, sCurrentDigest)){
-      stop("The DB ", sDBPATH, " seems invalid. Remove it and retry.")
-    }
-  }
-
   ## bAPPEND
   ## 期待通り
   stopifnot(bAPPEND %in% c(TRUE, FALSE))
+
+  ## sDBPATH, sDBTABLE
+  if (!is.null(sDBPATH)){
+    ## 指定されたら
+    if (!file.exists(sDBPATH)){
+      # 存在しなかったら
+      # ファイルは作成できるべき
+      file.create(sDBPATH)
+      file.remove(sDBPATH)
+    } else {
+      # 存在したら
+      if (bAPPEND){
+        # 追加の場合
+        # データベースとの整合性をチェック
+        if (!checkDB(sDBPATH, sDBTABLE, sCurrentDigest)){
+          stop("The DB ", sDBPATH, " seems invalid. Remove it and retry.")
+        }
+      }
+
+    }
+  }
 
   ## ここからメイン - - - - - - -
 
@@ -296,7 +303,7 @@ getSize <- function(
       group_by(.data$nTrial) %>%
       summarize(
         nNum_scr = n(),
-        nNum_main = sum(!is.na(.data$nCat), na.rm = TRUE)
+        nNum_main = sum(!is.na(.data$nParentCat), na.rm = TRUE)
       ) %>%
       ungroup() %>%
       collect()
@@ -319,8 +326,8 @@ getSize <- function(
 
   if (sTYPE == "slot"){
     out <- tbl(con, sDBTABLE) %>%
-      filter(!is.na(.data$nCat)) %>%
-      dplyr::select(.data$nTrial, .data$nCat, starts_with("nSlot")) %>%
+      filter(!is.na(.data$nParentCat)) %>%
+      dplyr::select(.data$nTrial, .data$nParentCat, starts_with("nSlot")) %>%
       collect() %>%
       pivot_longer(
         cols = starts_with("nSlot"),
@@ -328,9 +335,11 @@ getSize <- function(
         values_to = "nSlot"
       ) %>%
       filter(!is.na(.data$nSlot)) %>%
-      group_by(.data$nTrial, .data$nCat, .data$nSlot) %>%
+      group_by(.data$nTrial, .data$nParentCat, .data$nSlot) %>%
       summarize(nNum = n()) %>%
       ungroup()
+    # print(out)
+    # stop()
   }
 
   return(out)

@@ -664,18 +664,20 @@ execAssign <- function(
   #'    画面表示レベル。
   #'
   #' @return an integer matrix.
-  #'    行は全スロットがクローズするまでの対象者。0行かもしれないことに注意。
+  #'    行は対象者。0行かもしれないことに注意。
   #'    行名はmbPERSON_CAT_USEの該当行の行名。
   #'    列は、左から順に以下の通り。ただし、
   #'    カテゴリ番号とは\code{mbPERSON_CAT_USE}における列番号を指し、
   #'    スロット番号とは\code{lPERSON_SLOT_HIT}の当該カテゴリにおける列番号を指す。
   #'    \itemize{
   #'    \item \code{SEQ}: 1             調査参加順(連番)
-  #'    \item \code{nPerson}:           対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
+  #'    \item \code{nPerson}:           対象者番号
+  #'                                    (\code{mbPERSON_CAT_USE}上の行番号。それが呼び出し元にとって
+  #'                                    なにを意味しているのかは関知しない)
   #'    \item \code{nCat_1}:            割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nCat_}(nCAT_MAX):   割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
-  #'    \item \code{nCat}:              割付スロットが属するカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nParentCat}:        割付スロットが属するカテゴリ番号、ないし\code{NA}
   #'    \item \code{nSlot_1}:           割付スロット\code{1}のスロット番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{nSLOT_MAX}のスロット番号、ないし\code{NA}
@@ -687,10 +689,13 @@ execAssign <- function(
   #   - 外のサブルーチンを呼ばないこと (呼んでもいいけど、並列処理の際にロードが必要になる)
   #   - DEBUGモードを発動できる
   #   - sVERBOSEに関わらず、個人レベルのメッセージは出さない。DEBUGモードでのみ出す
+  #   - nPersonは原則として母集団メンバー番号を指す変数名だが、
+  #     ここではそうでない
 
   # - - - -
   # DEBUGモードの発動有無
   bDEBUG = FALSE
+  # bDEBUG = TRUE
   # - - - -
 
   ## あいさつのためsVERBOSEのみ先に確定する
@@ -782,7 +787,7 @@ execAssign <- function(
     "SEQ",
     "nPerson",
     paste0("nCat", seq_len(lSETTING$nCAT_MAX)),
-    "nCat",
+    "nParentCat",
     paste0("nSlot", seq_len(lSETTING$nSLOT_MAX))
   )
 
@@ -807,6 +812,7 @@ execAssign <- function(
       if (bDEBUG){
         cat("[execAssign]", i, ": nPerson=", nPerson, " - - - - \n")
       }
+      # stop()
 
       # その人のカテゴリ割付可能性をとってくる
       abCatNo_Use <- mbPERSON_CAT_USE[nPerson, ]
@@ -815,6 +821,7 @@ execAssign <- function(
         stopifnot(!is.na(abCatNo_Use))
         cat("[execAssign] assignability to categories:", abCatNo_Use, "\n")
       }
+      # stop()
 
       # 割付カテゴリを決定
       anAssignedCat <- sub_getcat(
@@ -832,6 +839,7 @@ execAssign <- function(
       if (bDEBUG){
         cat("[execAssign] assigned categories:", anAssignedCat, "\n")
       }
+      # stop()
 
       # NAをとる
       anAssignedCat_Compress <- anAssignedCat[!is.na(anAssignedCat)]
@@ -846,6 +854,7 @@ execAssign <- function(
           cat("[execAssign] searching slots of assigned category", nAssignedCat, "... \n")
           cat("[execAssign] alternate person:", mnSEQ_CAT_PERSON[i, nAssignedCat], "\n")
         }
+        ## stop()
 
         # スロットの割付可能性をとってくる
         abSlotNo_Hit <- lPERSON_SLOT_HIT[[nAssignedCat]][mnSEQ_CAT_PERSON[i, nAssignedCat], ]
@@ -856,8 +865,9 @@ execAssign <- function(
 
         # さすがに長すぎる...
         # if (bDEBUG){
-        #   cat("[execAssign] abSlotNo_Hit:", abSlotNo_Hit, "\n")
+        #  cat("[execAssign] abSlotNo_Hit:", abSlotNo_Hit, "\n")
         # }
+        # stop()
 
         # 割付スロットを決定
         anAssignedSlot <- sub_getslot(
@@ -932,18 +942,18 @@ execAssign <- function(
       }
 
       # 上限に達した時の脱出処理
+      bBreak <- FALSE
+      if (lSETTING$bSTOP_WHEN_FULFILLED & all(abCatNo_Open == 0)){
+        bBreak <- TRUE
+      }
       if (
         (lSETTING$nSUBJECT_MAX > 0 & nNumSubject >= lSETTING$nSUBJECT_MAX)
         | (lSETTING$nCATSUBJECT_MAX > 0 & nNumCatSubject >= lSETTING$nCATSUBJECT_MAX)
         | (lSETTING$nSLOTSUBJECT_MAX > 0 & nNumSlotSubject >= lSETTING$nSLOTSUBJECT_MAX)
       ){
-         # すべてのカテゴリをスロットを強制的にクローズする
-         abCatNo_Open <- rep(0, length(abCatNo_Open))
-         anLoc_Count  <- anLoc_Request
+        bBreak <- TRUE
       }
-
-      # すべてのカテゴリがクローズしたら脱出
-      if (all(abCatNo_Open == 0)) break
+      if (bBreak) break
     }
     # 割付履歴のうち、実際には値を格納しなかった行を削除
     out <- mnOut[seq_len(i), ]
@@ -951,9 +961,9 @@ execAssign <- function(
     rownames(out) <- rownames(mbPERSON_CAT_USE)[anSEQ_PERSON[seq_len(i)]]
   }
 
-  # すべてのスロットがクローズしていなかったらエラー
-  if (any(anLoc_Count < anLoc_Request))
-    stop("[execAssign] Error: A survey was terminated with insufficient sample size.")
+  # # すべてのスロットがクローズしていなかったらエラー
+  # if (any(anLoc_Count < anLoc_Request))
+  #   stop("[execAssign] Error: A survey was terminated with insufficient sample size.")
 
   if (sVERBOSE == "detail"){
     cat("[execAssign] end.\n")
@@ -981,7 +991,7 @@ checkSurvey <- function(
   #'
   #'    以下の列を持つ。
   #'    \itemize{
-  #'    \item \code{nPerson}:                   対象者番号。1からの連番
+  #'    \item \code{nSubject}:                  対象者番号。1からの連番
   #'    \item \code{bCat_(j)}:                  カテゴリjへの割付可能性
   #'    \item \code{bCatSlot_(j)_(k)}:          カテゴリjのスロットkへの割付可能性
   #'    \item \code{nCount_Cat_(j)}:            この対象者の割付終了時点でのカテゴリjへの割付人数
@@ -989,7 +999,7 @@ checkSurvey <- function(
   #'    \item \code{nAssignCat_(c)}:            この対象者のc番目の割付カテゴリ(順序に意味はない)
   #'    \item \code{nParentCat}:                この対象者の割付スロットが属するカテゴリ
   #'    \item \code{nAssignSlot_(s)}:           この対象者のs番目の割付スロット(順序に意味はない)
-  #'    \item \code{bValid}:                    チェックを通過したか: {1:通過した, 0:通過しなかった}
+  #'    \item \code{bValid}:                    チェックを通過したか: 1:通過した, 0:通過しなかった
   #'    \item \code{sCheckMsg}:                 チェックを通過しなかった理由。通過したときは""。
   #'    }
   #'
@@ -1336,7 +1346,7 @@ checkSurvey <- function(
   colnames(mnPersonLoc_Short) <- sub("Count", "Short", colnames(mnPersonLoc_Short))
 
   out <- data.frame(
-    nPerson = seq_len(nrow(mbCat)),
+    nSubject = seq_len(nrow(mbCat)),
     mbCat,
     mbSlot,
     mnPersonCatNo_Count,

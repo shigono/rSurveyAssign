@@ -19,7 +19,7 @@ a data frame.
 
    以下の列を持つ。
    \itemize{
-   \item \code{nPerson}:                   対象者番号。1からの連番
+   \item \code{nSubject}:                  対象者番号。1からの連番
    \item \code{bCat_(j)}:                  カテゴリjへの割付可能性
    \item \code{bCatSlot_(j)_(k)}:          カテゴリjのスロットkへの割付可能性
    \item \code{nCount_Cat_(j)}:            この対象者の割付終了時点でのカテゴリjへの割付人数
@@ -27,7 +27,7 @@ a data frame.
    \item \code{nAssignCat_(c)}:            この対象者のc番目の割付カテゴリ(順序に意味はない)
    \item \code{nParentCat}:                この対象者の割付スロットが属するカテゴリ
    \item \code{nAssignSlot_(s)}:           この対象者のs番目の割付スロット(順序に意味はない)
-   \item \code{bValid}:                    チェックを通過したか: {1:通過した, 0:通過しなかった}
+   \item \code{bValid}:                    チェックを通過したか: 1:通過した, 0:通過しなかった
    \item \code{sCheckMsg}:                 チェックを通過しなかった理由。通過したときは""。
    }
 }

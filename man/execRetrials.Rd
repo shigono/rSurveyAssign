@@ -6,7 +6,7 @@
 \usage{
 execRetrials(
   lSURVEY,
-  bREDRAW,
+  sSAMPLING = c("with_replace", "without_replace", "fixed"),
   nBLOCKSIZE,
   nNUMBLOCK,
   bPARALLEL,
@@ -18,8 +18,16 @@ execRetrials(
 \item{lSURVEY}{a `surveydata`-class object.
 調査データ。\code{\link{makeSurvey}}で生成する。}
 
-\item{bREDRAW}{an boolean.
-復元抽出するか。FALSEにすると、lSURVEY上での対象者順を固定する。}
+\item{sSAMPLING}{a string.
+抽出方法。以下のいずれか。
+\itemize{
+\item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から復元無作為抽出する
+\item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+\item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+それらの調査対象者を同じ調査参加順序で再割付する
+}}
 
 \item{nBLOCKSIZE}{an integer.
 ブロック内の再割付試行数。}
@@ -51,8 +59,9 @@ execRetrials(
    \item \code{nSubject}:          調査対象者番号
    \item \code{nCat}:              カテゴリ番号
    \item \code{bAssign}            割付試行で割付が起きていたか
-   \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+   \item \code{nNumRetrial}        その人が1回以上出現した再割付試行数
+   \item \code{gSumProp}           その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+   \item \code{gSumSqProp}         その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
    }
 
    スロット割付頻度: 行は調査対象者x割付可能スロットを表す。
@@ -63,11 +72,12 @@ execRetrials(
    \item \code{nBlock}:             ブロック番号
    \item \code{nBlockSize}:         ブロックサイズ(ブロック内の再割付試行数)
    \item \code{nSubject}:           調査対象者番号
-   \item \code{nCat}:               スロットが属するカテゴリ番号
+   \item \code{nParentCat}:         スロットが属するカテゴリ番号
    \item \code{nSlot}:              スロット番号
    \item \code{bAssign}             割付試行で割付が起きていたか
-   \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+   \item \code{nNumRetrial}         人xスロットが出現した試行数
+   \item \code{gSumProp}            人xスロットが出現した試行における割付率の合計
+   \item \code{gSumSqProp}          人xスロットが出現した試行における割付率の二乗の合計
    }
 }
 \description{

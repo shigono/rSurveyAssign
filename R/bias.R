@@ -29,9 +29,7 @@ sub_makeSurvey_from_trial <- function(
   #'
   # 引数チェックは親任せ
 
-  if (sVERBOSE == "detail"){
-    cat("[sub_makeSurvey_from_trial] start.\n")
-  }
+  if (sVERBOSE == "detail") cat("[sub_makeSurvey_from_trial] start.\n")
 
   # mbSubjectCat_Assignable: 対象者とカテゴリからカテゴリ割付可能性を引く表
   #                          (行を選ばれた対象者順にしたmbCAT)
@@ -39,9 +37,9 @@ sub_makeSurvey_from_trial <- function(
   mbSubjectCat_Assignable <- lPOP$mbCAT[dfSubject$nPerson, , drop = FALSE]
 
   # mbSubjectCat_Assign: 対象者とカテゴリからカテゴリ割付有無を引く表
+  if (sVERBOSE == "detail") cat("[sub_makeSurvey_from_trial] make dfSubjectCat_Assign ...\n")
   dfSubjectCat_Assign <- dfSubject %>%
     dplyr::select(.data$nSubject, starts_with("nCat")) %>%
-    dplyr::select(-.data$nCat) %>%
     # 割付カテゴリを縦に
     pivot_longer(
       cols = starts_with("nCat"),
@@ -74,6 +72,7 @@ sub_makeSurvey_from_trial <- function(
   #                             (行を選ばれた対象者にしたlSLOT)
   #                             仮想調査データを作る際のlSLOTになる
   # カテゴリ別に処理
+  if (sVERBOSE == "detail") cat("[sub_makeSurvey_from_trial] make lCatSubjectSlot_Assignable ...\n")
   lCatSubjectSlot_Assignable <- lapply(
     seq_along(lPOP$lSLOT),
     function(nCat){
@@ -89,11 +88,12 @@ sub_makeSurvey_from_trial <- function(
     }
   )
   mnAssignCat <- as.matrix(dfSubject[, paste0("nCat", seq_len(lSETTING$nCAT_MAX))])
-  anParentCat <- as.vector(dfSubject$nCat)
+  anParentCat <- as.vector(dfSubject$nParentCat)
   mnAssignSlot <- as.matrix(dfSubject[, paste0("nSlot", seq_len(lSETTING$nSLOT_MAX))])
 
   # 調査データに変換
   # sVERBOSEはsimpleだったらnoneにする
+  if (sVERBOSE == "detail") cat("[sub_makeSurvey_from_trial] make surveydata ...\n")
   oSurvey <- makeSurvey(
     mbCAT         = mbSubjectCat_Assignable,
     lSLOT         = lCatSubjectSlot_Assignable,
@@ -113,6 +113,7 @@ sub_makeSurvey_from_trial <- function(
 simBias <- function(
   lPOP,
   lSETTING,
+  sSAMPLING        = c("with_replace", "without_replace", "fixed"),
   nNUMTRIAL        = 1,
   nNUMRETRIAL      = 1000,
   bUSE_INFO_UNASSIGNED_CAT = TRUE,
@@ -135,6 +136,16 @@ simBias <- function(
   #'    母集団データ。\code{\link{makePop}}で生成する。
   #' @param lSETTING `assignsetting'クラスのオブジェクト。
   #'    割付のセッティング。\code{\link{makeSetting}}で生成する。
+  #' @param sSAMPLING a string.
+  #'    抽出方法。以下のいずれか。
+  #'    \itemize{
+  #'    \item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から復元無作為抽出する
+  #'    \item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+  #'    \item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    それらの調査対象者を同じ調査参加順序で再割付する
+  #'    }
   #' @param nNUMTRIAL 整数。
   #'    割付試行数。
   #' @param nNUMRETRIAL 整数。
@@ -199,11 +210,12 @@ simBias <- function(
   #'    \item \code{nBlockSize}:        ブロックサイズ(ブロック内の再割付試行数)
   #'    \item \code{nSubject}:          調査対象者番号
   #'    \item \code{nCat}:              カテゴリ番号
-  #'    \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
-  #'    \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
+  #'    \item \code{sRowname}:          \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
+  #'    \item \code{nPerson}:           母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
   #'    \item \code{bAssign}            割付試行で割付が起きていたか
-  #'    \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+  #'    \item \code{nNumRetrial}        その人が1回以上出現した再割付試行数
+  #'    \item \code{gSumProp}           その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+  #'    \item \code{gSumSqProp}         その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
   #'    \item \code{gAssignablity_Cat}: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)
   #'    }
   #'
@@ -219,11 +231,12 @@ simBias <- function(
   #'    \item \code{nSubject}:           調査対象者番号
   #'    \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
   #'    \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
-  #'    \item \code{nCat}:               スロットが属するカテゴリ番号
+  #'    \item \code{nParentCat}:         スロットが属するカテゴリ番号
   #'    \item \code{nSlot}:              スロット番号
   #'    \item \code{bAssign}             割付試行で割付が起きていたか
-  #'    \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+  #'    \item \code{nNumRetrial}         人xスロットが出現した試行数
+  #'    \item \code{gSumProp}            人xスロットが出現した試行における割付率の合計
+  #'    \item \code{gSumSqProp}          人xスロットが出現した試行における割付率の二乗の合計
   #'    \item \code{gAssignablity_Slot}: スロット割付可能度(全スロットに占める割付可能スロットの割合)
   #'    }
   #'
@@ -244,7 +257,7 @@ simBias <- function(
 
   ## 引数チェック - - - - -
   ## lPOP, lSETTING はexecTrialでチェックする
-  ## nNUMRETRIAL, bPARALLEL, sLOGFILEはexecRetrialでチェックする
+  ## sSAMPLING, nNUMRETRIAL, bPARALLEL, sLOGFILEはexecRetrialでチェックする
 
   ## nNUMTRIAL
   ## 指定されている
@@ -321,7 +334,10 @@ simBias <- function(
         seq_along(oSurvey$lSLOT),
         function(nCat){
           out <- tibble( gAssignability_Slot = rowMeans(oSurvey$lSLOT[[nCat]]) ) %>%
-            mutate(nSubject = row_number(), nCat = nCat)
+            mutate(
+              nSubject = row_number(),
+              nParentCat = nCat
+            )
           return(out)
         }
       )
@@ -331,7 +347,7 @@ simBias <- function(
       # sVERBOSEはsimpleだったらnoneにする
       lResult <- execRetrials(
         lSURVEY    = oSurvey,
-        bREDRAW    = TRUE,
+        sSAMPLING  = sSAMPLING,
         nNUMBLOCK  = 1,
         nBLOCKSIZE = nNUMRETRIAL,
         bPARALLEL  = bPARALLEL,
@@ -357,7 +373,7 @@ simBias <- function(
           dfSubject %>% dplyr::select(.data$nSubject, .data$sRowname, .data$nPerson),
           by = "nSubject"
         ) %>%
-        left_join(dfAssignability_Slot, by = c("nSubject", "nCat"))
+        left_join(dfAssignability_Slot, by = c("nSubject", "nParentCat"))
 
       lOut <- list(
         dfSubject = dfSubject,
@@ -479,7 +495,7 @@ getBias <- function(
   #'    列は以下のとおり:
   #'    \itemize{
   #'    \item \code{nTrial}: 試行番号
-  #'    \item \code{nCat}: カテゴリ番号
+  #'    \item \code{nParentCat}: カテゴリ番号
   #'    \item \code{nSlot}: スロット番号
   #'    \item \code{nNumAssignable}: 割付可能な対象者数
   #'    \item \code{nNumAssign}:     割付された対象者数
@@ -519,18 +535,23 @@ getBias <- function(
       collect() %>%
       group_by(.data$nTrial, .data$nSubject, .data$nCat, .data$bAssign, .data$gAssignability_Cat) %>%
       summarize(
-        nCount_Subject = sum(.data$nCount_Subject),
-        nCount_SubjectCat = sum(.data$nCount_SubjectCat)
+        nNumRetrial = sum(.data$nNumRetrial),
+        gSumProp    = sum(.data$gSumProp),
+        gSumSqProp  = sum(.data$gSumSqProp)
       ) %>%
       ungroup() %>%
       mutate(
-        # 割付確率
-        gHatP = (.data$nCount_SubjectCat)/(.data$nCount_Subject),
-        # 分散
-        gHatV = .data$gHatP * (1-.data$gHatP) / (.data$nCount_Subject),
-        # ウェイト
-        gHatW = 1 / .data$gHatP
+        # gMeanProp: 割付率のブートストラップ平均
+        gMeanProp = .data$gSumProp / .data$nNumRetrial,
+        # gVarProp: 割付率のブートストラップ分散
+        gVarProp = .data$gSumSqProp / .data$nNumRetrial - .data$gMeanProp^2,
+        # gHatP: 割付確率の推定量
+        gHatP = .data$gMeanProp,
+        # gHatV: 割付確率の推定量の分散の推定量
+        gHatV = .data$gVarProp / .data$nNumRetrial
       )
+    # print(dfIn)
+    # stop()
 
     # 割付可能対象者ベースの指標
     out.1 <- dfIn %>%
@@ -538,22 +559,28 @@ getBias <- function(
       group_by(.data$nTrial, .data$nCat) %>%
       summarize(
         nNumAssignable = n(),
+        # CV(\hat{p})
         gBarHatP = mean(.data$gHatP),
         gVarHatP = var(.data$gHatP) * (.data$nNumAssignable - 1) / .data$nNumAssignable,
         gCVHatP  = sqrt(.data$gVarHatP) / .data$gBarHatP,
+        # \hat{CV}(p)
         gBarHatV = mean(.data$gHatV),
         gTemp = .data$gCVHatP^2 - .data$gBarHatV / (.data$gBarHatP^2),
         gTemp = if_else(.data$gTemp < 0, 0, .data$gTemp),
         gHatCVP  = sqrt(.data$gTemp),
+        # Cov(\hat{q},r)
         gBarR_P  = mean(.data$gAssignability_Cat),
         gCovHatQR = cov( .data$gHatP / .data$gBarHatP, .data$gAssignability_Cat) * (.data$nNumAssignable - 1) / .data$nNumAssignable
       ) %>%
       ungroup() %>%
       dplyr::select(.data$nTrial, .data$nCat, .data$nNumAssignable, .data$gCVHatP, .data$gHatCVP, .data$gBarR_P, .data$gCovHatQR)
+    # print(out.1)
+    # stop()
 
     # 割付対象者ベースの指標
     out.2 <- dfIn %>%
       dplyr::filter(.data$bAssign == 1) %>%
+      mutate(gHatW = 1/.data$gHatP) %>%
       # 試行xカテゴリごとの処理
       group_by(.data$nTrial, .data$nCat) %>%
       summarize(
@@ -568,6 +595,8 @@ getBias <- function(
         gHatESS = .data$nNumAssign / .data$gHatDeff
       ) %>%
       dplyr::select(.data$nTrial, .data$nCat, .data$nNumAssign, .data$gHatDeff, .data$gHatESS, .data$gBarR_S)
+    # print(out.2)
+    # stop()
 
     out <- full_join(out.1, out.2, by = c("nTrial", "nCat")) %>%
       dplyr::select(
@@ -580,25 +609,28 @@ getBias <- function(
     # 調査対象者x割付可能カテゴリを行にした再割当試行統計
     dfIn <- tbl(con, sDBTABLE_SLOT) %>%
       collect() %>%
-      group_by(.data$nTrial, .data$nSubject, .data$nCat, .data$nSlot, .data$bAssign, .data$gAssignability_Slot) %>%
+      group_by(.data$nTrial, .data$nSubject, .data$nParentCat, .data$nSlot, .data$bAssign, .data$gAssignability_Slot) %>%
       summarize(
-        nCount_Subject = sum(.data$nCount_Subject),
-        nCount_SubjectSlot = sum(.data$nCount_SubjectSlot)
+        nNumRetrial = sum(.data$nNumRetrial),
+        gSumProp    = sum(.data$gSumProp),
+        gSumSqProp  = sum(.data$gSumSqProp)
       ) %>%
       ungroup() %>%
       mutate(
-        # 割付確率
-        gHatP = (.data$nCount_SubjectSlot)/(.data$nCount_Subject),
-        # 分散
-        gHatV = .data$gHatP * (1-.data$gHatP) / (.data$nCount_Subject),
-        # ウェイト
-        gHatW = 1 / .data$gHatP
+        # gMeanProp: 割付率のブートストラップ平均
+        gMeanProp = .data$gSumProp / .data$nNumRetrial,
+        # gVarProp: 割付率のブートストラップ分散
+        gVarProp = .data$gSumSqProp / .data$nNumRetrial - .data$gMeanProp^2,
+        # gHatP: 割付確率の推定量
+        gHatP = .data$gMeanProp,
+        # gHatV: 割付確率の推定量の分散の推定量
+        gHatV = .data$gVarProp / .data$nNumRetrial
       )
 
     # 割付可能対象者ベースの指標
     out.1 <- dfIn %>%
       # 試行xカテゴリごとの処理
-      group_by(.data$nTrial, .data$nCat, .data$nSlot) %>%
+      group_by(.data$nTrial, .data$nParentCat, .data$nSlot) %>%
       summarize(
         nNumAssignable = n(),
         gBarHatP = mean(.data$gHatP),
@@ -613,15 +645,16 @@ getBias <- function(
       ) %>%
       ungroup() %>%
       dplyr::select(
-        .data$nTrial, .data$nCat, .data$nSlot, .data$nNumAssignable, .data$gCVHatP,
+        .data$nTrial, .data$nParentCat, .data$nSlot, .data$nNumAssignable, .data$gCVHatP,
         .data$gCovHatQR, .data$gHatCVP, .data$gBarR_P
       )
 
     # 割付対象者ベースの指標
     out.2 <- dfIn %>%
       dplyr::filter(.data$bAssign == 1) %>%
+      mutate(gHatW = 1/.data$gHatP) %>%
       # 試行xカテゴリごとの処理
-      group_by(.data$nTrial, .data$nCat, .data$nSlot) %>%
+      group_by(.data$nTrial, .data$nParentCat, .data$nSlot) %>%
       summarize(
         nNumAssign = n(),
         gBarHatW = mean(.data$gHatW),
@@ -633,11 +666,11 @@ getBias <- function(
         gHatDeff = 1 + .data$gVarHatW / .data$gBarHatW^2,
         gHatESS = .data$nNumAssign / .data$gHatDeff
       ) %>%
-      dplyr::select(.data$nTrial, .data$nCat, .data$nSlot, .data$nNumAssign, .data$gHatDeff, .data$gHatESS, .data$gBarR_S)
+      dplyr::select(.data$nTrial, .data$nParentCat, .data$nSlot, .data$nNumAssign, .data$gHatDeff, .data$gHatESS, .data$gBarR_S)
 
-    out <- full_join(out.1, out.2, by = c("nTrial", "nCat", "nSlot")) %>%
+    out <- full_join(out.1, out.2, by = c("nTrial", "nParentCat", "nSlot")) %>%
       dplyr::select(
-        .data$nTrial, .data$nCat, .data$nSlot, .data$nNumAssignable, .data$nNumAssign,
+        .data$nTrial, .data$nParentCat, .data$nSlot, .data$nNumAssignable, .data$nNumAssign,
         .data$gCVHatP, .data$gHatCVP, .data$gHatDeff, .data$gHatESS,
         .data$gCovHatQR, .data$gBarR_P, .data$gBarR_S
       )

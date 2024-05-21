@@ -19,6 +19,7 @@ makeSetting(
   nSUBJECT_MAX = 0,
   nCATSUBJECT_MAX = 0,
   nSLOTSUBJECT_MAX = 0,
+  bSTOP_WHEN_FULFILLED = TRUE,
   sVERBOSE = c("simple", "none", "detail")
 )
 }
@@ -63,17 +64,25 @@ makeSetting(
 \item{nSUBJECT_MAX}{an integer.
 抽出する対象者数の上限。0以上の整数。
 0より大きい値が指定された場合、対象者抽出は、
-対象者数がその値に達したときに中断される。}
+対象者数がその値に達したときに中止される。}
 
 \item{nCATSUBJECT_MAX}{an integer.
 カテゴリ割付対象者数の上限。0以上の整数。
 0より大きい値が指定された場合、対象者抽出は、
-カテゴリ割付が生じた対象者数がその値に達したときに中断される。}
+カテゴリ割付が生じた対象者数がその値に達したときに中止される。}
 
 \item{nSLOTSUBJECT_MAX}{an integer.
 スロット割付対象者数の上限。0以上の整数。
 0より大きい値が指定された場合、対象者抽出は、
-スロット割付が生じた対象者数がその値に達したときに中断される。}
+スロット割付が生じた対象者数がその値に達したときに中止される。}
+
+\item{bSTOP_WHEN_FULFILLED}{as boolean.
+調査停止ルール。TRUEのとき、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAX
+のいずれにも到達していなくても、すべてのスロットにおいて割り付けられた対象者数が
+目標に到達した時に調査停止となる。
+FALSEの場合は、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかに
+到達した時に調査停止となる。この場合、これらのいずれか1つ以上に0以上の値を
+指定すること。}
 
 \item{sVERBOSE}{a string.
 画面表示レベル。}
@@ -86,10 +95,6 @@ an object of `assignsetting` class.
 }
 \description{
 割付のセッティングを作成する。
-}
-\details{
-対象者数が母集団サイズの10倍を超えても対象者抽出が終わらなかった場合は
-   エラーとなる。
 }
 \examples{
 lSetting <- makeSetting(

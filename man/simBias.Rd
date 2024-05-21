@@ -7,6 +7,7 @@
 simBias(
   lPOP,
   lSETTING,
+  sSAMPLING = c("with_replace", "without_replace", "fixed"),
   nNUMTRIAL = 1,
   nNUMRETRIAL = 1000,
   bUSE_INFO_UNASSIGNED_CAT = TRUE,
@@ -26,6 +27,17 @@ simBias(
 
 \item{lSETTING}{`assignsetting'クラスのオブジェクト。
 割付のセッティング。\code{\link{makeSetting}}で生成する。}
+
+\item{sSAMPLING}{a string.
+抽出方法。以下のいずれか。
+\itemize{
+\item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から復元無作為抽出する
+\item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+\item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+それらの調査対象者を同じ調査参加順序で再割付する
+}}
 
 \item{nNUMTRIAL}{整数。
 割付試行数。}
@@ -101,11 +113,12 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。}
    \item \code{nBlockSize}:        ブロックサイズ(ブロック内の再割付試行数)
    \item \code{nSubject}:          調査対象者番号
    \item \code{nCat}:              カテゴリ番号
-   \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
-   \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
+   \item \code{sRowname}:          \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
+   \item \code{nPerson}:           母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
    \item \code{bAssign}            割付試行で割付が起きていたか
-   \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+   \item \code{nNumRetrial}        その人が1回以上出現した再割付試行数
+   \item \code{gSumProp}           その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+   \item \code{gSumSqProp}         その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
    \item \code{gAssignablity_Cat}: カテゴリ割付可能度(全カテゴリに占める割付可能カテゴリの割合)
    }
 
@@ -121,11 +134,12 @@ TRUE: 結果をテーブルに追加する。FALSE: 上書きする。}
    \item \code{nSubject}:           調査対象者番号
    \item \code{sRowname}:           \code{lPOP$mbCAT}の行名。\code{lPOP$mbCAT}に行名がない場合はas.character(SEQ)となる
    \item \code{nPerson}:            母集団メンバー番号 (\code{lPOP$mbCAT}の行番号)
-   \item \code{nCat}:               スロットが属するカテゴリ番号
+   \item \code{nParentCat}:         スロットが属するカテゴリ番号
    \item \code{nSlot}:              スロット番号
    \item \code{bAssign}             割付試行で割付が起きていたか
-   \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+   \item \code{nNumRetrial}         人xスロットが出現した試行数
+   \item \code{gSumProp}            人xスロットが出現した試行における割付率の合計
+   \item \code{gSumSqProp}          人xスロットが出現した試行における割付率の二乗の合計
    \item \code{gAssignablity_Slot}: スロット割付可能度(全スロットに占める割付可能スロットの割合)
    }
 }

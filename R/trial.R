@@ -243,9 +243,9 @@ execTrials <- function(
   # 縦に積む
   dfTrial <- bind_rows(lTrial) %>%
     # execAssign()はこれが割付試行なのか再割付試行なのか知らないので、
-    # 調査参加順SEQと対象者番号nPersonを返している。
-    # これは割付試行なので、調査参加順SEQは調査対象者番号であり、
-    # 対象者番号nPersonは母集団メンバー番号である。
+    # execAssign()からみた調査参加順SEQと対象者番号nPersonを返している。
+    # これは割付試行なので、SEQは調査対象者番号であり、
+    # nPersonは母集団メンバー番号である。
     # 以後の混乱を避けるため、SEQをnSubjectに変更する
     mutate(
       nSubject = .data$SEQ,
@@ -259,8 +259,7 @@ execTrials <- function(
 }
 makeRetrial <- function(
     lSURVEY,
-    bREDRAW,
-    nMAXSIZE,
+    sSAMPLING  = c("with_replace", "without_replace", "fixed"),
     sVERBOSE = c("simple", "detail", "none")
 ){
   #' Internal: run execAssign() once
@@ -272,18 +271,24 @@ makeRetrial <- function(
   #'
   #' @param lSURVEY a `surveydata`-class object.
   #'    survey data. See the document of `makeSurvey` for details.
-  #' @param bREDRAW an boolean.
-  #'    復元抽出するか。FALSEにすると、lSURVEY上での対象者順を固定する。
-  #' @param nMAXSIZE an integer.
-  #'    復元抽出する対象者の最大数。bREDRAW=FALSEの場合は無視される
-  #' @param sVERBOSE 文字列。画面表示レベル。
+  #' @param sSAMPLING a string.
+  #'    抽出方法。以下のいずれか。
+  #'    \itemize{
+  #'    \item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から復元無作為抽出する
+  #'    \item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+  #'    \item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    それらの調査対象者を同じ調査参加順序で再割付する
+  #'    }
+  #' @param sVERBOSE a string.
+  #'    画面表示レベル。
   #'
   #' @return a data frame.
   #'    列は以下のとおり(順不同):
   #'    \itemize{
-  #'    \item \code{SEQ}:              調査参加順(連番)
-  #'    \item \code{nPerson}:          対象者番号 (\code{lSURVEY$mbCAT}上の行番号)
-  #'                                   母集団メンバーの番号ではないことに注意
+  #'    \item \code{SEQ}:              再割付における調査参加順(連番)
+  #'    \item \code{nSubject}:         対象者番号 (\code{lSURVEY$mbCAT}上の行番号)
   #'    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{lSURVEY$nMAXCAT}のカテゴリ番号、ないし\code{NA}
@@ -300,13 +305,16 @@ makeRetrial <- function(
   }
 
   # anSEQ_Subject: 配信順から対象者番号を引くベクトル
-  if (bREDRAW){
-    if (sVERBOSE == "detail")
-      cat("[makeRetrial] redrawing subjects ...\n")
-    anSEQ_Subject <- sample(seq_len(nrow(lSURVEY$mbCAT)), nMAXSIZE, replace = T)
-  } else{
-    if (sVERBOSE == "detail")
-      cat("[makeRetrial] subjects are fixed.\n")
+  if (sSAMPLING == "with_replace"){
+    if (sVERBOSE == "detail") cat("[makeRetrial] sampling with replacement ...\n")
+    anSEQ_Subject <- sample(seq_len(nrow(lSURVEY$mbCAT)), nrow(lSURVEY$mbCAT) * 10, replace = TRUE)
+  }
+  if (sSAMPLING == "without_replace"){
+    if (sVERBOSE == "detail") cat("[makeRetrial] sampling without replacement ...\n")
+    anSEQ_Subject <- sample(seq_len(nrow(lSURVEY$mbCAT)), nrow(lSURVEY$mbCAT), replace = FALSE)
+  }
+  if (sSAMPLING == "fixed"){
+    if (sVERBOSE == "detail") cat("[makeRetrial] subjects are fixed ...\n")
     anSEQ_Subject <- seq_len(nrow(lSURVEY$mbCAT))
   }
 
@@ -351,6 +359,14 @@ makeRetrial <- function(
   )
 
   out <- data.frame(mnAssign)
+    # execAssign()はこれが割付試行なのか再割付試行なのか知らないので、
+    # 調査参加順SEQと与えられたデータの行番号nPersonを返している。
+    # これは再割付試行なので、SEQは再割付試行における調査参加順に過ぎず、
+    # nPersonは実は調査対象者番号である。
+    # 以後の混乱を避けるため、nPersonをnSubjectに変更する
+  out$nSubject <- out$nPerson
+  out$nPerson <- NULL
+
   if (sVERBOSE == "detail"){
     cat("[makeRetrial] done. \n")
   }
@@ -360,8 +376,7 @@ makeRetrial <- function(
 makeRetrialBlock <- function(
     lSURVEY,
     nBLOCKSIZE,
-    bREDRAW,
-    nMAXSIZE,
+    sSAMPLING  = c("with_replace", "without_replace", "fixed"),
     bPARALLEL,
     sLOGFILE,
     sVERBOSE = c("simple", "detail", "none")
@@ -376,17 +391,23 @@ makeRetrialBlock <- function(
   #'    survey data. See the document of `makeSurvey` for details.
   #' @param nBLOCKSIZE 整数。
   #'    試行ブロック内の試行数
-  #' @param bREDRAW an boolean.
-  #'    復元抽出するか。FALSEにすると、lSURVEY上での対象者順を固定する。
-  #' @param nMAXSIZE an integer.
-  #'    復元抽出する対象者の最大数。bREDRAW=FALSEの場合は無視される
+  #' @param sSAMPLING a string.
+  #'    抽出方法。以下のいずれか。
+  #'    \itemize{
+  #'    \item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から復元無作為抽出する
+  #'    \item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+  #'    \item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    それらの調査対象者を同じ調査参加順序で再割付する
+  #'    }
   #' @param bPARALLEL a logical
   #'    並列処理するか
   #' @param sLOGFILE a string.
   #'    並列処理する場合のログファイルの名前. NULLだとログを出さない
   #' @param sVERBOSE 文字列。画面表示レベル。
   #'
-  #' @return a data frame.
+  #' @return a data frame. 行は再割付試行x調査参加順。
   #'    列は以下のとおり(順不同):
   #'    \itemize{
   #'    \item \code{nRetrial}:         再割付試行番号
@@ -461,8 +482,7 @@ makeRetrialBlock <- function(
       # 生成
       out <- makeRetrial (
         lSURVEY               = lSURVEY,
-        bREDRAW               = bREDRAW,
-        nMAXSIZE              = nMAXSIZE,
+        sSAMPLING             = sSAMPLING,
         sVERBOSE              = sVERBOSE
       )
       out$nRetrial <- nRetrial
@@ -498,8 +518,7 @@ makeRetrialBlock <- function(
       # 生成
       out <- makeRetrial (
         lSURVEY               = lSURVEY,
-        bREDRAW               = bREDRAW,
-        nMAXSIZE              = nMAXSIZE,
+        sSAMPLING             = sSAMPLING,
         sVERBOSE              = sVERBOSE
       )
       out$nRetrial <- nRetrial
@@ -525,13 +544,6 @@ makeRetrialBlock <- function(
   if (sVERBOSE == "detail")
     cat("[makeRetrialBlock] bind ...\n")
   out <- bind_rows(lAssign)
-  # execAssign()はこれが割付試行なのか再割付試行なのか知らないので、
-  # 調査参加順SEQと与えられたデータの行番号nPersonを返している。
-  # これは再割付試行なので、調査参加順は再割付試行の調査参加順に過ぎず、
-  # 行番号は割付試行の調査対象者番号である。
-  # 以後の混乱を避けるため、nPersonをnSubjectに変更する
-  out$nSubject <- out$nPerson
-  out$nPerson <- NULL
 
   if (sVERBOSE == "detail")
     cat("[makeRetrialBlock] end\n")
@@ -552,11 +564,12 @@ makeStat_Cat <- function(
   #'   対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
   #'   以下の列を持つと期待される
   #'    \itemize{
-  #'    \item \code{nSubject}:         対象者番号
+  #'    \item \code{nRetrial}:         再割付試行番号
+  #'    \item \code{nSubject}:         対象者番号 (\code{lSURVEY$mbCAT}上の行番号)
   #'    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号、ないし\code{NA}
-  #'    \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nParentCat}:       割付スロットが属するカテゴリ番号、ないし\code{NA}
   #'    \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号、ないし\code{NA}
@@ -569,11 +582,12 @@ makeStat_Cat <- function(
   #' @return a data frame
   #'    行は対象者x割付可能カテゴリ
   #'    \itemize{
-  #'    \item \code{nSubject}          対象者番号
-  #'    \item \code{nCat}              カテゴリ番号
-  #'    \item \code{bAssign}           lSURVEY上で割付が起きていたか
-  #'    \item \code{nCount_SubjectCat} 再試行においてその人にそのカテゴリが割り付けられた回数
-  #'    \item \code{nCount_Subject}    再試行におけるその人の出現回数
+  #'    \item \code{nSubject}               対象者番号
+  #'    \item \code{nCat}                   カテゴリ番号
+  #'    \item \code{bAssign}                lSURVEY上で割付が起きていたか
+  #'    \item \code{nNumRetrial}            その人が1回以上出現した再割付試行数
+  #'    \item \code{gSumProp}               その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+  #'    \item \code{gSumSqProp}             その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
   #'    }
   #'
   #' @importFrom magrittr "%>%"
@@ -590,37 +604,32 @@ makeStat_Cat <- function(
   #'
   # 引数チェックは親任せ
 
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Cat] start.\n")
-  }
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] start.\n")
 
-  # dfStat1: ある対象者が出てきた回数
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Cat] make dfStat1 ...\n")
-  }
-  dfStat1 <- dfReplicateBlock %>%
-    group_by(.data$nSubject) %>%
-    summarize(nCount_Subject = n()) %>%
-    ungroup()
-
-  # dfStat2: ある対象者のあるカテゴリに割付が起きた回数
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Cat] make dfStat2 ...\n")
-  }
-  dfStat2 <- dfReplicateBlock %>%
-    dplyr::select(-.data$nCat) %>%
-    pivot_longer(
-      cols = starts_with("nCat"),
-      names_to = "sVar",
-      values_to = "nCat"
+  # dfAssignable: lSURVEYにおいて割り付け可能だったか
+  # 行は nSubject x nCat (完備)
+  # {nSubject, nCat, bAssignable}
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] make dfAssignable ...\n")
+  mbCat <- lSURVEY$mbCAT
+  # mbCatの列名を付け替える。このあとで縦にするときに楽だから
+  colnames(mbCat) <- paste0("nCat_", seq_len(ncol(mbCat)))
+  dfAssignable <- as_tibble(mbCat) %>%
+    mutate(
+      nSubject = row_number()
     ) %>%
-    filter(!is.na(.data$nCat)) %>%
-    group_by(.data$nSubject, .data$nCat) %>%
-    summarize(nCount_SubjectCat = n()) %>%
-    ungroup()
-  # print(dfStat2 %>% dplyr::filter(nSubject == 1))
+    pivot_longer(
+      cols = starts_with("nCat_"),
+      names_to = c("sDummy", "nCat"),
+      names_sep = "_",
+      values_to = "bAssignable"
+    ) %>%
+    mutate(nCat = as.integer(.data$nCat)) %>%
+    dplyr::select(-.data$sDummy)
 
   # dfAssign: lSURVEY上で割付が起きていたか
+  # 行は nSubject x nCat (割付が生じていたもののみ)
+  # {nSubject, nCat, bAssign(=1)}
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] make dfAssign ...\n")
   mnAssignCat <- lSURVEY$mnASSIGNCAT
   colnames(mnAssignCat) <- paste0("nCat_", seq_len(ncol(mnAssignCat)))
   dfAssign <- as_tibble(mnAssignCat) %>%
@@ -637,51 +646,80 @@ makeStat_Cat <- function(
     filter(!is.na(.data$nCat)) %>%
     # 割付が起きていました
     mutate(bAssign = 1)
-  # print(dfAssign %>% dplyr::filter(nSubject == 1))
 
-  # dfAssignable: lSURVEYにおいて割り付け可能だったか
-  mbCat <- lSURVEY$mbCAT
-  # mbCatの名前を付け替える。ここで気にすべきことではない
-  colnames(mbCat) <- paste0("nCat_", seq_len(ncol(mbCat)))
-  dfAssignable <- as_tibble(mbCat) %>%
-    mutate(
-      nSubject = row_number()
-    ) %>%
-    pivot_longer(
-      cols = starts_with("nCat_"),
-      names_to = c("sDummy", "nCat"),
-      names_sep = "_",
-      values_to = "bAssignable"
-    ) %>%
-    mutate(nCat = as.integer(.data$nCat)) %>%
-    dplyr::select(-.data$sDummy)
-  # print(dfAssignable %>% dplyr::filter(nSubject == 1))
+  # dfBase: 再割付試行 x 人 ごとの出現回数
+  # 行は nRetrial x nSubject (出現したもののみ)
+  # {nRetrial, nSubject, nBase (出現回数。非復元抽出なので複数回出現しうる)}
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] make dfBase ...\n")
+  dfBase <- dfReplicateBlock %>%
+    group_by(.data$nRetrial, .data$nSubject) %>%
+    summarize(nBase = n()) %>%
+    ungroup()
+  # print(dfBase)
   # stop()
 
-  # 出力
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Cat] output ...\n")
-  }
+  # dfCount: 各再割付試行における対象者xカテゴリの割り付け回数
+  # 行は nRetrial x nSubject x nCat (出現したもののみ)
+  # {nRetrial, nSubject, nCat, nCount (割付回数)}
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] make dfCount ...\n")
+  dfCount <- dfReplicateBlock %>%
+    # 割付カテゴリを縦にする
+    pivot_longer(
+      cols = starts_with("nCat"),
+      names_to = "sVar",
+      values_to = "nCat"
+    ) %>%
+    filter(!is.na(.data$nCat)) %>%
+    group_by(.data$nRetrial, .data$nSubject, .data$nCat) %>%
+    summarize(nCount = n()) %>%
+    ungroup()
 
-  out <- dfAssignable %>%
-    # dfAssignをくっつける
-    left_join(dfAssign, by = c("nSubject", "nCat")) %>%
-    replace_na(list(bAssign = 0)) %>%
-    # dfStat2をくっつける.
-    left_join(dfStat2, by = c("nSubject", "nCat")) %>%
-    replace_na(list(nCount_SubjectCat = 0)) %>%
-    # dfStat1をくっつける
-    left_join(dfStat1, by = c("nSubject")) %>%
-    replace_na(list(nCount_Subject = 0)) %>%
-    # trap: まさか割り付け不能なカテゴリに割付は起きていないよね
-    verify(! (.data$bAssignable == 0 & .data$nCount_SubjectCat > 0)) %>%
-    # 割付可能カテゴリに絞る
+  ###
+  ### 話を簡単にするために、再割付試行 x 調査対象者 x カテゴリ を完備させた表をつくる
+  ###
+
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] make dfRetrialSubjectCat ...\n")
+  dfRetrialSubjectCat <- expand.grid(
+    nRetrial = unique(dfReplicateBlock$nRetrial),
+    nSubject = seq_len(nrow(lSURVEY$mbCAT))
+  ) %>%
+    left_join(dfAssignable, by = c("nSubject")) %>%
+    # nBaseをつける
+    left_join(dfBase, by = c("nRetrial", "nSubject")) %>%
+    replace_na(list(nBase = 0)) %>%
+    # nCountをつける
+    left_join(dfCount, by = c("nRetrial", "nSubject", "nCat")) %>%
+    replace_na(list(nCount = 0)) %>%
+    # trap: 割付可能なスロットに対してのみ割付は起きる
+    verify(!(.data$bAssignable == 0 & .data$nCount >  0)) %>%
+    # 割付可能なスロットに絞る
     dplyr::filter(.data$bAssignable == 1) %>%
-    dplyr::select(-.data$bAssignable)
+    dplyr::select(-.data$bAssignable) %>%
+    # 再割付試行 x 調査対象者 x スロットごとの割付率(通常は0か1)
+    mutate(gProp = .data$nCount / .data$nBase)
+  # print(dfRetrialSubjectCat)
+  # stop()
 
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Cat] done.\n")
-  }
+  ### 人xスロット別に集計する
+  ### 全く試行に出現しなかった人がいるかもだから、nBase>0でフィルタリングしてはいけない
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] output ...\n")
+  out <- dfRetrialSubjectCat %>%
+    group_by(.data$nSubject, .data$nCat) %>%
+    summarize(
+      nNumRetrial = sum(.data$nBase > 0),
+      gSumProp    = sum(.data$gProp[.data$nBase > 0]),
+      gSumSqProp  = sum(.data$gProp[.data$nBase > 0]^2),
+    ) %>%
+    ungroup() %>%
+    # bAssignをつける
+    left_join(dfAssign, by = c("nSubject", "nCat")) %>%
+    replace_na(list(bAssign = 0))
+  # trap: 行数は割付可能カテゴリの延べ数
+  stopifnot(nrow(out) == sum(dfAssignable$bAssignable))
+  # print(out)
+  # stop()
+
+  if (sVERBOSE == "detail") cat("[makeStat_Cat] done.\n")
   return(out)
 }
 makeStat_Slot <- function(
@@ -699,11 +737,12 @@ makeStat_Slot <- function(
   #'   対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
   #'   以下の列を持つと期待される
   #'    \itemize{
+  #'    \item \code{nRetrial}:         再割付試行番号
   #'    \item \code{nSubject}:         対象者番号
   #'    \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号、ないし\code{NA}
-  #'    \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
+  #'    \item \code{nParentCat}:       割付スロットが属するカテゴリ番号、ないし\code{NA}
   #'    \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
   #'    \item ...
   #'    \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号、ないし\code{NA}
@@ -718,12 +757,13 @@ makeStat_Slot <- function(
   #'    限定されることに注意(つまり、代替対象者のスロットは含まれない)
   #'    列は以下の通り
   #'    \itemize{
-  #'    \item \code{nSubject}           対象者番号
-  #'    \item \code{nCat}               親カテゴリ番号
-  #'    \item \code{nSlot}              スロット番号
-  #'    \item \code{bAssign}            lSURVEY上でそのスロットが割り付けられていたか
-  #'    \item \code{nCount_SubjectSlot} その人にそのスロットが割り付けられた回数
-  #'    \item \code{nCount_Subject}     その人の出現回数
+  #'    \item \code{nSubject}               対象者番号
+  #'    \item \code{nParentCat}             親カテゴリ番号
+  #'    \item \code{nSlot}                  スロット番号
+  #'    \item \code{bAssign}                lSURVEY上で割付が起きていたか
+  #'    \item \code{nNumRetrial}            人xスロットが出現した試行数
+  #'    \item \code{gSumProp}               人xスロットが出現した試行における割付率の合計
+  #'    \item \code{gSumSqProp}             人xスロットが出現した試行における割付率の二乗の合計
   #'    }
   #'
   #' @importFrom magrittr "%>%"
@@ -740,57 +780,12 @@ makeStat_Slot <- function(
   #'
   # 引数チェックは親任せ
 
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Slot] start.\n")
-  }
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] start.\n")
 
-  # dfStat1: ある対象者が出てきた回数
-  # {nSubject, nCount_Subject}
-  dfStat1 <- dfReplicateBlock %>%
-    group_by(.data$nSubject) %>%
-    summarize(nCount_Subject = n()) %>%
-    ungroup()
-  # print(dfStat1)
-  # stop()
-
-  # dfStat2: ある対象者のあるスロットに割付が起きた回数
-  # {nSubject, nCat, nSlot, nCount_SubjectSlot}
-  dfStat2 <- dfReplicateBlock %>%
-    pivot_longer(
-      cols = starts_with("nSlot"),
-      names_to = "sVar",
-      values_to = "nSlot"
-    ) %>%
-    filter(!is.na(.data$nSlot)) %>%
-    group_by(.data$nSubject, .data$nCat, .data$nSlot) %>%
-    summarize(nCount_SubjectSlot = n()) %>%
-    ungroup()
-  # print(dfStat2)
-  # stop()
-
-  # dfAssign: lSURVEYでの割付有無
-  # {nSubject, nCat, nSlot, bAssign}
-  mnAssignSlot <- lSURVEY$mnASSIGNSLOT
-  colnames(mnAssignSlot) <- paste0("nSlot_", seq_len(ncol(mnAssignSlot)))
-  dfAssign <- as_tibble(mnAssignSlot) %>%
-    mutate(
-      nSubject = row_number(),
-      nCat = lSURVEY$anPARENTCAT
-    ) %>%
-    pivot_longer(
-      cols = starts_with("nSlot_"),
-      names_to = "sDummy",
-      values_to = "nSlot"
-    ) %>%
-    dplyr::select(-.data$sDummy) %>%
-    # NAを除外
-    filter(!is.na(.data$nSlot)) %>%
-    # 割付が起きていました
-    mutate(bAssign = 1)
-  # print(dfAssign)
-  # stop()
-
-  # dfAssignable: lSURVEYにおいて割り付け可能だったか
+  # dfAssignable: lSURVEYにおいて割付可能だったか？
+  # 行は対象者 x スロット (完備)
+  # {nSubject, nParentCat, nSlot, bAssignable(欠損あり)}
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] make dfAssignable ...\n")
   lOut <- lapply(
     seq_along(lSURVEY$lSLOT),
     function(nCat){
@@ -798,10 +793,10 @@ makeStat_Slot <- function(
       # 名前を付け替える。元の名前はここで気にすべきことではない
       colnames(mbIn) <- paste0("Slot_", seq_len(ncol(mbIn)))
       out <- as_tibble(mbIn) %>%
-        # nSubject, nCatをつけて
+        # nSubject, nParentCatをつけて
         mutate(
           nSubject = row_number(),
-          nCat = nCat
+          nParentCat = nCat
         ) %>%
         # スロットを縦にする
         pivot_longer(
@@ -816,26 +811,108 @@ makeStat_Slot <- function(
     }
   )
   dfAssignable <- bind_rows(lOut)
+  # print(dfAssignable)
+  # stop()
 
-  # 出力
-  out <- dfAssignable %>%
-    dplyr::filter(.data$bAssignable == 1) %>%
+  # dfAssign: lSURVEYでの割付有無
+  # 行は対象者 x スロット(割付ありのみ)
+  # {nSubject, nParentCat, nSlot, bAssign(=1)}
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] make dfAssign ...\n")
+  mnAssignSlot <- lSURVEY$mnASSIGNSLOT
+  colnames(mnAssignSlot) <- paste0("nSlot_", seq_len(ncol(mnAssignSlot)))
+  dfAssign <- as_tibble(mnAssignSlot) %>%
+    mutate(
+      nSubject = row_number(),
+      nParentCat = lSURVEY$anPARENTCAT
+    ) %>%
+    pivot_longer(
+      cols = starts_with("nSlot_"),
+      names_to = "sDummy",
+      values_to = "nSlot"
+    ) %>%
+    dplyr::select(-.data$sDummy) %>%
+    # NAを除外
+    filter(!is.na(.data$nSlot)) %>%
+    # 割付が起きていました
+    mutate(bAssign = 1)
+  # print(dfAssign)
+  # stop()
+
+  # dfBase: その試行におけるその人の出現回数 (非復元抽出なので複数回出現しうる)
+  # 行は試行 x 対象者 (出現したもののみ)
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] make dfBase  ...\n")
+  dfBase <- dfReplicateBlock %>%
+    group_by(.data$nRetrial, .data$nSubject) %>%
+    summarize(nBase = n()) %>%
+    ungroup()
+
+  # dfCount: その試行におけるその人のそのスロットの割付回数
+  # 行は試行 x 対象者 x スロット (割り付けられたもののみ)
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] make dfCount ...\n")
+  dfCount <- dfReplicateBlock %>%
+    pivot_longer(
+      cols = starts_with("nSlot"),
+      names_to = "sVar",
+      values_to = "nSlot"
+    ) %>%
+    filter(!is.na(.data$nSlot)) %>%
+    group_by(.data$nRetrial, .data$nSubject, .data$nParentCat, .data$nSlot) %>%
+    summarize(nCount = n()) %>%
+    ungroup()
+
+  ###
+  ### 話を簡単にするために、再割付試行 x 調査対象者 x スロット を完備させた表をつくる
+  ###
+
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] make dfRetrialSubjectSlot ...\n")
+  dfRetrialSubjectSlot <- expand.grid(
+    nRetrial = unique(dfReplicateBlock$nRetrial),
+    nSubject = seq_len(nrow(lSURVEY$mbCAT))
+  ) %>%
+    # bAssignableをつける。欠損があることに注意
+    # (割り付けされなかったカテゴリ。スロット割付可能性が不明)
+    left_join(dfAssignable, by = c("nSubject")) %>%
+    # nBaseをつける
+    left_join(dfBase, by = c("nRetrial", "nSubject")) %>%
+    replace_na(list(nBase = 0)) %>%
+    # nCountをつける
+    left_join(dfCount, by = c("nRetrial", "nSubject", "nParentCat", "nSlot")) %>%
+    replace_na(list(nCount = 0)) %>%
+    # trap: 割付不能であることがわかっているスロットに割付は起きない
+    verify(!(!is.na(.data$bAssignable) & .data$bAssignable == 0 & .data$nCount >  0)) %>%
+    # 割付可能なスロットに絞る
+    dplyr::filter(!is.na(.data$bAssignable), .data$bAssignable == 1) %>%
     dplyr::select(-.data$bAssignable) %>%
-    left_join(dfAssign, by = c("nSubject", "nCat", "nSlot")) %>%
-    replace_na(list(bAssign = 0)) %>%
-    left_join(dfStat2, by = c("nSubject", "nCat", "nSlot")) %>%
-    replace_na(list(nCount_SubjectSlot  = 0)) %>%
-    left_join(dfStat1, by = c("nSubject")) %>%
-    replace_na(list(nCount_Subject = 0))
+    # 再割付試行 x 調査対象者 x スロットごとの割付率(通常は0か1)
+    mutate(gProp = .data$nCount / .data$nBase)
 
-  if (sVERBOSE == "detail"){
-    cat("[makeStat_Slot] end.\n")
-  }
+  ### 人xスロット別に集計する
+  ### 全く試行に出現しなかった人がいるかもだから、nBase>0でフィルタリングしてはいけない
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] output ...\n")
+  out <- dfRetrialSubjectSlot %>%
+    group_by(.data$nSubject, .data$nParentCat, .data$nSlot) %>%
+    summarize(
+      nNumRetrial = sum(.data$nBase > 0),
+      gSumProp    = sum(.data$gProp[.data$nBase > 0]),
+      gSumSqProp  = sum(.data$gProp[.data$nBase > 0]^2),
+    ) %>%
+    ungroup() %>%
+    # bAssignをつける
+    left_join(dfAssign, by = c("nSubject", "nParentCat", "nSlot")) %>%
+    replace_na(list(bAssign = 0))
+  # trap: 行数は割付可能スロットの延べ数
+  # print(nrow(out))
+  # print(sum(dfAssignable$bAssignable[!is.na(dfAssignable$bAssignable)]))
+  stopifnot(nrow(out) == sum(dfAssignable$bAssignable[!is.na(dfAssignable$bAssignable)]))
+  # print(out)
+  # stop()
+
+  if (sVERBOSE == "detail") cat("[makeStat_Slot] end.\n")
   return(out)
 }
 execRetrials <- function(
     lSURVEY,
-    bREDRAW,
+    sSAMPLING  = c("with_replace", "without_replace", "fixed"),
     nBLOCKSIZE,
     nNUMBLOCK,
     bPARALLEL,
@@ -851,8 +928,16 @@ execRetrials <- function(
   #'
   #' @param lSURVEY a `surveydata`-class object.
   #'    調査データ。\code{\link{makeSurvey}}で生成する。
-  #' @param bREDRAW an boolean.
-  #'    復元抽出するか。FALSEにすると、lSURVEY上での対象者順を固定する。
+  #' @param sSAMPLING a string.
+  #'    抽出方法。以下のいずれか。
+  #'    \itemize{
+  #'    \item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から復元無作為抽出する
+  #'    \item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+  #'    \item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    それらの調査対象者を同じ調査参加順序で再割付する
+  #'    }
   #' @param nNUMBLOCK an integer.
   #'    実行する再割付試行のブロック数。
   #' @param nBLOCKSIZE an integer.
@@ -879,8 +964,9 @@ execRetrials <- function(
   #'    \item \code{nSubject}:          調査対象者番号
   #'    \item \code{nCat}:              カテゴリ番号
   #'    \item \code{bAssign}            割付試行で割付が起きていたか
-  #'    \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+  #'    \item \code{nNumRetrial}        その人が1回以上出現した再割付試行数
+  #'    \item \code{gSumProp}           その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+  #'    \item \code{gSumSqProp}         その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
   #'    }
   #'
   #'    スロット割付頻度: 行は調査対象者x割付可能スロットを表す。
@@ -891,11 +977,12 @@ execRetrials <- function(
   #'    \item \code{nBlock}:             ブロック番号
   #'    \item \code{nBlockSize}:         ブロックサイズ(ブロック内の再割付試行数)
   #'    \item \code{nSubject}:           調査対象者番号
-  #'    \item \code{nCat}:               スロットが属するカテゴリ番号
+  #'    \item \code{nParentCat}:         スロットが属するカテゴリ番号
   #'    \item \code{nSlot}:              スロット番号
   #'    \item \code{bAssign}             割付試行で割付が起きていたか
-  #'    \item \code{nCount_Subject}:     ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+  #'    \item \code{nNumRetrial}         人xスロットが出現した試行数
+  #'    \item \code{gSumProp}            人xスロットが出現した試行における割付率の合計
+  #'    \item \code{gSumSqProp}          人xスロットが出現した試行における割付率の二乗の合計
   #'    }
 
   ## あいさつのためsVERBOSEのみ先に確定する
@@ -908,6 +995,9 @@ execRetrials <- function(
   ## lSURVEY
   ## クラスは期待通り
   stopifnot("surveydata" %in% class(lSURVEY))
+
+  ## sSAMPLING
+  sSAMPLING <- match.arg(sSAMPLING)
 
   ## nNUMBLOCK
   ## 未チェック
@@ -927,13 +1017,6 @@ execRetrials <- function(
   }
 
   # ここからメイン - - - - -
-  # nFrameSize: 実際に設定する対象者数上限。
-  # nMAXSIZEが指定されていない場合は、対象者数の10倍とする
-  if (is.null(lSURVEY$nMAXSIZE)){
-    nFrameSize <- nrow(lSURVEY$mbCAT) * 10
-  } else {
-    nFrameSize <- lSURVEY$nMAXSIZE
-  }
 
   # ブロックを反復する
   lOut <- lapply(
@@ -945,9 +1028,8 @@ execRetrials <- function(
       # makeRetrialBlockをコール
       dfReplicateBlock <- makeRetrialBlock(
         lSURVEY     = lSURVEY,
-        bREDRAW     = bREDRAW,
+        sSAMPLING   = sSAMPLING,
         nBLOCKSIZE  = nBLOCKSIZE,
-        nMAXSIZE    = nFrameSize,
         bPARALLEL   = bPARALLEL,
         sLOGFILE    = sLOGFILE,
         sVERBOSE    = sVERBOSE
@@ -958,20 +1040,18 @@ execRetrials <- function(
       dfStat_Cat <- makeStat_Cat(
         dfReplicateBlock,
         lSURVEY,
-        sVERBOSE == sVERBOSE
+        sVERBOSE = sVERBOSE
       ) %>%
         mutate(
           nBlock = nBlock,
           # ブロック内の反復数をつける
           nBlockSize = nBLOCKSIZE
         )
-      ## print(dfStat_Cat %>% dplyr::filter(nSubject == 1))
-      ## stop()
 
       dfStat_Slot <- makeStat_Slot(
         dfReplicateBlock,
         lSURVEY,
-        sVERBOSE == sVERBOSE
+        sVERBOSE = sVERBOSE
       ) %>%
         mutate(
           nBlock = nBlock,

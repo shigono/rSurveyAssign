@@ -3,7 +3,7 @@
 ###
 simWeight <- function(
   lSURVEY,
-  bREDRAW       = TRUE,
+  sSAMPLING     = c("with_replace", "without_replace", "fixed"),
   nBLOCKSIZE    = 100,
   nNUMBLOCK     = 1,
   bPARALLEL     = FALSE,
@@ -22,8 +22,16 @@ simWeight <- function(
   #'
   #' @param lSURVEY `surveydata`クラスのオブジェクト。
   #'    調査データ。\code{\link{makeSurvey}}で生成する。
-  #' @param bREDRAW 論理値。
-  #'    FALSEにすると、再割付試行においてlSURVEYの対象者順を固定する。
+  #' @param sSAMPLING a string.
+  #'    抽出方法。以下のいずれか。
+  #'    \itemize{
+  #'    \item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から復元無作為抽出する
+  #'    \item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+  #'    \item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+  #'    それらの調査対象者を同じ調査参加順序で再割付する
+  #'    }
   #' @param nNUMBLOCK 整数。
   #'    実行する再割付試行のブロック数。
   #' @param nBLOCKSIZE 整数。
@@ -40,7 +48,7 @@ simWeight <- function(
   #' @param sDBTABLE_SLOT 文字列。
   #'    再割付シミュレーションの結果得られたスロット割付頻度を保存するSQLite DBのテーブル名。
   #' @param bAPPEND 論理値。
-  #'    結果をテーブルに{TRUE: 追加する, FALSE: 上書きする}。
+  #'    結果をテーブルに TRUE: 追加する, FALSE: 上書きする。
   #' @param sVERBOSE 文字列。
   #'    画面表示レベル。
   #'
@@ -65,8 +73,9 @@ simWeight <- function(
   #'    \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
   #'    \item \code{nSubject}:         調査対象者番号
   #'    \item \code{nCat}:             カテゴリ番号
-  #'    \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+  #'    \item \code{nNumRetrial}:      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行の数
+  #'    \item \code{gSumProp}: 　      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の合計
+  #'    \item \code{gSumSqProp}:       ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の二乗の合計
   #'    }
   #'
   #'    \code{dfStat_Slot}: スロット割付頻度。行は調査対象者x割付スロットを表す。
@@ -75,10 +84,11 @@ simWeight <- function(
   #'    \item \code{nBlock}:           ブロック番号
   #'    \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
   #'    \item \code{nSubject}:         調査対象者番号
-  #'    \item \code{nCat}:             スロットが属するカテゴリ番号
+  #'    \item \code{nParentCat}:       スロットが属するカテゴリ番号
   #'    \item \code{nSlot}:            スロット番号
-  #'    \item \code{nCount_Subject}:   ブロック内の再割付試行で調査対象者が出現した回数
-  #'    \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+  #'    \item \code{nNumRetrial}:      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行の数
+  #'    \item \code{gSumProp}: 　      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の合計
+  #'    \item \code{gSumSqProp}:       ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の二乗の合計
   #'    }
   #'
   #' @importFrom magrittr "%>%"
@@ -92,26 +102,33 @@ simWeight <- function(
   sCurrentDigest <- digest(lSURVEY)
 
   ## 引数チェック - - - - -
-  ## lSURVEY, bREDRAW, nNUMBLOCK, nBLOCKSIZE, bPARALLEL, sLOGFILEは
+  ## lSURVEY, sSAMPLING, bREDRAW, nNUMBLOCK, nBLOCKSIZE, bPARALLEL, sLOGFILEは
   ## execRetrials()でチェックする
-
-  ## sDBPATH, sDBTABLE_CAT, sDBTABLE_SLOT
-  ## ファイルが存在していない場合、ファイルは作成できるべき
-  if (!is.null(sDBPATH) && !file.exists(sDBPATH)){
-    file.create(sDBPATH)
-    file.remove(sDBPATH)
-  }
-  ## ファイルが存在しておりかつ追加しろといわれている場合、
-  ## データベースとの整合性をチェック
-  if (!is.null(sDBPATH) && file.exists(sDBPATH) && bAPPEND == TRUE){
-    if (!checkDB(sDBPATH, c(sDBTABLE_CAT, sDBTABLE_SLOT), sCurrentDigest)){
-      stop("The DB ", sDBPATH, " seems invalid. Remove it and retry.")
-    }
-  }
 
   ## bAPPEND
   ## 値は期待通り
   stopifnot(bAPPEND %in% c(TRUE, FALSE))
+
+  ## sDBPATH, sDBTABLE
+  if (!is.null(sDBPATH)){
+    ## 指定されたら
+    if (!file.exists(sDBPATH)){
+      # 存在しなかったら
+      # ファイルは作成できるべき
+      file.create(sDBPATH)
+      file.remove(sDBPATH)
+    } else {
+      # 存在したら
+      if (bAPPEND){
+        # 追加の場合
+        # データベースとの整合性をチェック
+        if (!checkDB(sDBPATH, c(sDBTABLE_CAT, sDBTABLE_SLOT), sCurrentDigest)){
+          stop("The DB ", sDBPATH, " seems invalid. Remove it and retry.")
+        }
+      }
+
+    }
+  }
 
   ## sVERBOSE
   ## 推測する
@@ -125,7 +142,7 @@ simWeight <- function(
 
   lResult <- execRetrials(
     lSURVEY     = lSURVEY,
-    bREDRAW     = bREDRAW,
+    sSAMPLING   = sSAMPLING,
     nBLOCKSIZE  = nBLOCKSIZE,
     nNUMBLOCK   = nNUMBLOCK,
     bPARALLEL   = bPARALLEL,
@@ -239,82 +256,70 @@ getWeight <- function(
   # この関数を終えるとき、DBとの接続を切るように依頼
   on.exit(dbDisconnect(con))
 
-  # カテゴリ割付頻度
-  dfStat_Cat <- tbl(con, sDBTABLE_CAT) %>%
-    dplyr::filter(.data$bAssign == 1) %>%
-    group_by(.data$nSubject, .data$nCat) %>%
+  dfWeight_Cat <- tbl(con, sDBTABLE_CAT) %>%
+    group_by(.data$nSubject, .data$nCat, .data$bAssign) %>%
     summarize(
-      nNumRetrial       = sum(.data$nBlockSize, na.rm=TRUE),
-      nCount_SubjectCat = sum(.data$nCount_SubjectCat, na.rm=TRUE),
-      nCount_Subject    = sum(.data$nCount_Subject, na.rm=TRUE)
+      nNumRetrial = sum(.data$nNumRetrial, na.rm=TRUE),
+      gSumProp    = sum(.data$gSumProp, na.rm=TRUE),
+      gSumSqProp  = sum(.data$gSumSqProp, na.rm=TRUE),
     ) %>%
     ungroup() %>%
-    collect()
+    collect() %>%
+    mutate(
+      gHatP    = .data$gSumProp / .data$nNumRetrial,
+      gSE_HatP = sqrt(.data$gSumSqProp / .data$nNumRetrial - .data$gHatP^2) / sqrt(.data$nNumRetrial)
+    ) %>%
+    dplyr::select(-c(.data$gSumProp, .data$gSumSqProp))
+
+  if (all(dfWeight_Cat$gHatP > 0)){
+    dfTemp <- dfWeight_Cat %>%
+      dplyr::filter(.data$bAssign == 1) %>%
+      mutate(
+        gWeight = 1/.data$gHatP,
+        gWeight = .data$gWeight / mean(.data$gWeight)
+      ) %>%
+      dplyr::select(.data$nSubject, .data$nCat, .data$gWeight)
+    dfWeight_Cat <- dfWeight_Cat %>%
+      left_join(dfTemp, by = c("nSubject", "nCat"))
+  } else {
+    warning ("[getWeight] Some hat(pi) for categories cannot be calculated. Check the setting or accumulate more retrials.")
+    dfWeight_Cat$gWeight <- NA
+  }
+  # print(dfWeight_Cat)
+  # stop()
 
   # スロット割付頻度
-  dfStat_Slot <- tbl(con, sDBTABLE_SLOT) %>%
-    dplyr::filter(.data$bAssign == 1) %>%
-    group_by(.data$nSubject, .data$nCat, .data$nSlot) %>%
+  dfWeight_Slot <- tbl(con, sDBTABLE_SLOT) %>%
+    group_by(.data$nSubject, .data$nParentCat, .data$nSlot, .data$bAssign) %>%
     summarize(
-      nNumRetrial        = sum(.data$nBlockSize, na.rm=TRUE),
-      nCount_SubjectSlot = sum(.data$nCount_SubjectSlot, na.rm=TRUE),
-      nCount_Subject     = sum(.data$nCount_Subject, na.rm=TRUE)
+      nNumRetrial = sum(.data$nNumRetrial, na.rm=TRUE),
+      gSumProp    = sum(.data$gSumProp, na.rm=TRUE),
+      gSumSqProp  = sum(.data$gSumSqProp, na.rm=TRUE),
     ) %>%
     ungroup() %>%
-    collect()
+    collect() %>%
+    mutate(
+      gHatP    = .data$gSumProp / .data$nNumRetrial,
+      gSE_HatP = sqrt(.data$gSumSqProp / .data$nNumRetrial - .data$gHatP^2) / sqrt(.data$nNumRetrial)
+    ) %>%
+    dplyr::select(-c(.data$gSumProp, .data$gSumSqProp))
+  # print(summary(dfWeight_Slot))
+  # stop()
 
-  # カテゴリのウェイト
-  mnAssignCat <- lSURVEY$mnASSIGNCAT
-  colnames(mnAssignCat) <- paste0("nCat_", seq_len(ncol(mnAssignCat)))
-  dfWeight_Cat <- as_tibble(mnAssignCat) %>%
-    mutate(
-      nSubject = row_number()
-    ) %>%
-    pivot_longer(
-      cols = starts_with("nCat_"),
-      names_to = "sVar",
-      values_to = "nCat"
-    ) %>%
-    dplyr::select(-.data$sVar) %>%
-    # NAを除外
-    filter(!is.na(.data$nCat)) %>%
-    # dfStat_Catをくっつける.
-    left_join(dfStat_Cat, by = c("nSubject", "nCat")) %>%
-    replace_na(list(nCount_SubjectCat = 0, nCount_Subject = 0)) %>%
-    # ウェイト計算
-    mutate(
-      gProb = (.data$nCount_SubjectCat+1)/(.data$nCount_Subject+1),
-      gWeight = 1/.data$gProb
-    ) %>%
-    # 規準化
-    mutate(gWeight = .data$gWeight / mean(.data$gWeight))
-
-  # スロットのウェイト
-  mnAssignSlot <- lSURVEY$mnASSIGNSLOT
-  colnames(mnAssignSlot) <- paste0("nSlot_", seq_len(ncol(mnAssignSlot)))
-  dfWeight_Slot <- as_tibble(mnAssignSlot) %>%
-    mutate(
-      nSubject = row_number(),
-      nCat = lSURVEY$anPARENTCAT
-    ) %>%
-    pivot_longer(
-      cols = starts_with("nSlot_"),
-      names_to = "sVar",
-      values_to = "nSlot"
-    ) %>%
-    dplyr::select(-.data$sVar) %>%
-    # NAを除外
-    filter(!is.na(.data$nSlot)) %>%
-    # dfStat_slotをくっつける.
-    left_join(dfStat_Slot, by = c("nSubject", "nCat", "nSlot")) %>%
-    replace_na(list(nCount_SubjectSlot = 0, nCount_Subject = 0)) %>%
-    # ウェイト計算
-    mutate(
-      gProb = (.data$nCount_SubjectSlot+1)/(.data$nCount_Subject+1),
-      gWeight = 1/.data$gProb
-    ) %>%
-    # 規準化
-    mutate(gWeight = .data$gWeight / mean(.data$gWeight))
+  if (all(dfWeight_Slot$gHatP > 0)){
+    dfTemp <- dfWeight_Slot %>%
+      dplyr::filter(.data$bAssign == 1) %>%
+      mutate(
+        gWeight = 1/.data$gHatP,
+        gWeight = .data$gWeight / mean(.data$gWeight)
+      ) %>%
+      dplyr::select(.data$nSubject, .data$nParentCat, .data$nSlot, .data$gWeight)
+    dfWeight_Slot <- dfWeight_Slot %>%
+      left_join(dfTemp, by = c("nSubject", "nParentCat", "nSlot"))
+  } else {
+    warning ("[getWeight] Some hat(pi) for slots cannot be calculated. Check the setting or accumulate more retrials.")
+    dfWeight_Slot$gWeight <- NA
+  }
 
   lOut <- list(
     dfWeight_Cat  = dfWeight_Cat,

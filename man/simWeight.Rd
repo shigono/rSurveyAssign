@@ -6,7 +6,7 @@
 \usage{
 simWeight(
   lSURVEY,
-  bREDRAW = TRUE,
+  sSAMPLING = c("with_replace", "without_replace", "fixed"),
   nBLOCKSIZE = 100,
   nNUMBLOCK = 1,
   bPARALLEL = FALSE,
@@ -22,8 +22,16 @@ simWeight(
 \item{lSURVEY}{`surveydata`クラスのオブジェクト。
 調査データ。\code{\link{makeSurvey}}で生成する。}
 
-\item{bREDRAW}{論理値。
-FALSEにすると、再割付試行においてlSURVEYの対象者順を固定する。}
+\item{sSAMPLING}{a string.
+抽出方法。以下のいずれか。
+\itemize{
+\item \code{with_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から復元無作為抽出する
+\item \code{without_replace}: 割付試行によって調査対象者を生成し、再割付試行では
+調査対象者から非復元無作為抽出する(調査参加順序を入れ替える)
+\item \code{fixed}: 割付試行によって調査対象者を生成し、再割付試行では
+それらの調査対象者を同じ調査参加順序で再割付する
+}}
 
 \item{nBLOCKSIZE}{整数。
 ブロック内の再割付試行数。}
@@ -48,7 +56,7 @@ FALSEにすると、再割付試行においてlSURVEYの対象者順を固定�
 再割付シミュレーションの結果得られたスロット割付頻度を保存するSQLite DBのテーブル名。}
 
 \item{bAPPEND}{論理値。
-結果をテーブルに{TRUE: 追加する, FALSE: 上書きする}。}
+結果をテーブルに TRUE: 追加する, FALSE: 上書きする。}
 
 \item{sVERBOSE}{文字列。
 画面表示レベル。}
@@ -71,8 +79,9 @@ FALSEにすると、再割付試行においてlSURVEYの対象者順を固定�
    \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
    \item \code{nSubject}:         調査対象者番号
    \item \code{nCat}:             カテゴリ番号
-   \item \code{nCount_Subject}:    ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectCat}: ブロック内の再割付試行で調査対象者が出現しカテゴリに割り付けられた回数
+   \item \code{nNumRetrial}:      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行の数
+   \item \code{gSumProp}: 　      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の合計
+   \item \code{gSumSqProp}:       ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の二乗の合計
    }
 
    \code{dfStat_Slot}: スロット割付頻度。行は調査対象者x割付スロットを表す。
@@ -81,10 +90,11 @@ FALSEにすると、再割付試行においてlSURVEYの対象者順を固定�
    \item \code{nBlock}:           ブロック番号
    \item \code{nBlockSize}:       ブロックサイズ(ブロック内の再割付試行数)
    \item \code{nSubject}:         調査対象者番号
-   \item \code{nCat}:             スロットが属するカテゴリ番号
+   \item \code{nParentCat}:       スロットが属するカテゴリ番号
    \item \code{nSlot}:            スロット番号
-   \item \code{nCount_Subject}:   ブロック内の再割付試行で調査対象者が出現した回数
-   \item \code{nCount_SubjectSlot}: ブロック内の再割付試行で調査対象者が出現しスロットに割り付けられた回数
+   \item \code{nNumRetrial}:      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行の数
+   \item \code{gSumProp}: 　      ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の合計
+   \item \code{gSumSqProp}:       ブロック内の再割付試行のうち、調査対象者が1回以上出現した試行を通じた、割付率の二乗の合計
    }
 }
 \description{

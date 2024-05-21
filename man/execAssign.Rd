@@ -52,18 +52,20 @@ execAssign(
 }
 \value{
 an integer matrix.
-   行は全スロットがクローズするまでの対象者。0行かもしれないことに注意。
+   行は対象者。0行かもしれないことに注意。
    行名はmbPERSON_CAT_USEの該当行の行名。
    列は、左から順に以下の通り。ただし、
    カテゴリ番号とは\code{mbPERSON_CAT_USE}における列番号を指し、
    スロット番号とは\code{lPERSON_SLOT_HIT}の当該カテゴリにおける列番号を指す。
    \itemize{
    \item \code{SEQ}: 1             調査参加順(連番)
-   \item \code{nPerson}:           対象者番号 (\code{mbPERSON_CAT_USE}上の行番号)
+   \item \code{nPerson}:           対象者番号
+                                   (\code{mbPERSON_CAT_USE}上の行番号。それが呼び出し元にとって
+                                   なにを意味しているのかは関知しない)
    \item \code{nCat_1}:            割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
    \item ...
    \item \code{nCat_}(nCAT_MAX):   割付カテゴリ\code{nCAT_MAX}のカテゴリ番号、ないし\code{NA}
-   \item \code{nCat}:              割付スロットが属するカテゴリ番号、ないし\code{NA}
+   \item \code{nParentCat}:        割付スロットが属するカテゴリ番号、ないし\code{NA}
    \item \code{nSlot_1}:           割付スロット\code{1}のスロット番号、ないし\code{NA}
    \item ...
    \item \code{nSlot_}(nSLOT_MAX): 割付スロット\code{nSLOT_MAX}のスロット番号、ないし\code{NA}

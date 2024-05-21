@@ -17,7 +17,7 @@ getCandidate(anCANDIDATE, agSORTKEY, nSIZE, bDEBUG = FALSE)
 \item{nSIZE}{an integer.
 取り出す要素数。0以上の整数。欠損不可}
 
-\item{DEBUG}{as logical.
+\item{bDEBUG}{an logical.
 デバッグモード}
 }
 \value{

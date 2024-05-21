@@ -22,7 +22,7 @@ getCandidate <- function(
   #'    ソートキー。anCANDIDATEと同じ長さ。タイが許される。欠損不可。
   #' @param nSIZE an integer.
   #'    取り出す要素数。0以上の整数。欠損不可
-  #' @param DEBUG as logical.
+  #' @param bDEBUG an logical.
   #'    デバッグモード
   #'
   #' @return a list.

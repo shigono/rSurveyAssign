@@ -208,6 +208,7 @@ makeSetting <- function(
   nSUBJECT_MAX      = 0,
   nCATSUBJECT_MAX   = 0,
   nSLOTSUBJECT_MAX  = 0,
+  bSTOP_WHEN_FULFILLED = TRUE,
   sVERBOSE = c("simple", "none", "detail")
 ){
   #' make setting
@@ -245,15 +246,22 @@ makeSetting <- function(
   #' @param nSUBJECT_MAX an integer.
   #'    抽出する対象者数の上限。0以上の整数。
   #'    0より大きい値が指定された場合、対象者抽出は、
-  #'    対象者数がその値に達したときに中断される。
+  #'    対象者数がその値に達したときに中止される。
   #' @param nCATSUBJECT_MAX an integer.
   #'    カテゴリ割付対象者数の上限。0以上の整数。
   #'    0より大きい値が指定された場合、対象者抽出は、
-  #'    カテゴリ割付が生じた対象者数がその値に達したときに中断される。
+  #'    カテゴリ割付が生じた対象者数がその値に達したときに中止される。
   #' @param nSLOTSUBJECT_MAX an integer.
   #'    スロット割付対象者数の上限。0以上の整数。
   #'    0より大きい値が指定された場合、対象者抽出は、
-  #'    スロット割付が生じた対象者数がその値に達したときに中断される。
+  #'    スロット割付が生じた対象者数がその値に達したときに中止される。
+  #' @param bSTOP_WHEN_FULFILLED as boolean.
+  #'    調査停止ルール。TRUEのとき、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAX
+  #'    のいずれにも到達していなくても、すべてのスロットにおいて割り付けられた対象者数が
+  #'    目標に到達した時に調査停止となる。
+  #'    FALSEの場合は、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかに
+  #'    到達した時に調査停止となる。この場合、これらのいずれか1つ以上に0以上の値を
+  #'    指定すること。
   #'
   #' @param sVERBOSE a string.
   #'    画面表示レベル。
@@ -262,10 +270,6 @@ makeSetting <- function(
   #'         その実体は、この関数の引数を要素として持つリスト。
   #'         ただし、引数lSLOT_REQUESTの要素に名前がついていない場合は、
   #'         名前"Slot_(j)_(k)"が付与される。
-  #'
-  #' @details
-  #'    対象者数が母集団サイズの10倍を超えても対象者抽出が終わらなかった場合は
-  #'    エラーとなる。
   #'
   #' @examples
   #' lSetting <- makeSetting(
@@ -385,6 +389,15 @@ makeSetting <- function(
   ## 0以上であること
   stopifnot(nSLOTSUBJECT_MAX >= 0)
 
+  ## bSTOP_WHEN_FULFILLED
+  # 指定していること
+  stopifnot(bSTOP_WHEN_FULFILLED %in% c(TRUE, FALSE))
+  # もしFALSEだったら, nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかが0より大
+  if (!bSTOP_WHEN_FULFILLED){
+    stopifnot(nSUBJECT_MAX > 0 | nCATSUBJECT_MAX > 0 | nSLOTSUBJECT_MAX > 0)
+  }
+
+
   # メイン - - - - -
   # lSLOT_REQUESTへの名前付与
   if (is.null(asName_Slot)){
@@ -412,9 +425,10 @@ makeSetting <- function(
     sSLOT_FILTER  = sSLOT_FILTER,
     sSLOT_ORDER   = sSLOT_ORDER,
     sSLOT_EXCLUDE = sSLOT_EXCLUDE,
-    nSUBJECT_MAX  = nSUBJECT_MAX,
-    nCATSUBJECT_MAX   = nCATSUBJECT_MAX,
-    nSLOTSUBJECT_MAX  = nSLOTSUBJECT_MAX
+    nSUBJECT_MAX         = nSUBJECT_MAX,
+    nCATSUBJECT_MAX      = nCATSUBJECT_MAX,
+    nSLOTSUBJECT_MAX     = nSLOTSUBJECT_MAX,
+    bSTOP_WHEN_FULFILLED = bSTOP_WHEN_FULFILLED
   )
   class(lOut) <- "assignsetting"
 

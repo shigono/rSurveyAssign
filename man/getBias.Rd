@@ -51,7 +51,7 @@ getBias(
    列は以下のとおり:
    \itemize{
    \item \code{nTrial}: 試行番号
-   \item \code{nCat}: カテゴリ番号
+   \item \code{nParentCat}: カテゴリ番号
    \item \code{nSlot}: スロット番号
    \item \code{nNumAssignable}: 割付可能な対象者数
    \item \code{nNumAssign}:     割付された対象者数

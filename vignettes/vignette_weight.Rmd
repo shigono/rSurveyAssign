@@ -274,7 +274,9 @@ lResult <- simWeight(
 ```{r}
 head(lResult$dfStat_Cat)
 ```
-最初の行は、10回のシミュレーション試行中に、対象者1が(正確には、対象者1と全く同一の割付可能性を持つ誰かが)、延べ9回にわたり調査に参加し、そのうち5回においてカテゴリ1に割り付けられた、ということを示しています。シミュレーションを繰り返せば、対象者1がカテゴリ1に割り付けられる確率を推定することができます。
+最初の行は次のことを示しています。対象者1(nSubject)はカテゴリ1(nCat)に割付可能ですが割付試行では割り付けられませんでした(bAssign)。第1ブロック(nBlock)のシミュレーション試行中に、対象者1は、10回(nBlockSize)の再割付試行のうち4試行(nNumRetrial)で調査に参加しました。ある試行において対象者1は複数回出現しているかもしれませんので、各試行において対象者1がカテゴリ1に割り付けられた割合を求め(たとえば2回出現し1回だけ割り付けられたら0.5です)、これを割付率と呼ぶことにすると、4試行を通じた割付率の合計は2.50(gSumProp), 割付率の二乗の合計は1.80(gSumSqProp)です。
+
+シミュレーションを繰り返せば、対象者1がカテゴリ1に割り付けられる確率の推定値とその標準誤差を得ることができます。
 
 要素`dfStat_Slot`は、試行を通じ、ある対象者があるスロットに何回割り付けられたかを示しています。
 ```{r}
@@ -315,7 +317,7 @@ SQLiteデータベースファイルとして、`../tools/rSurveyAssign_vignette
 上の例では10試行からなる1ブロックを実行してきましたが、
 デフォルトでは、100試行を1ブロックと呼んでいます。
 ここでは、引数`nBLOCKSIZE`を指定せず、
-引数`nNUMBLOCK`にブロック数10を指定します。
+引数`nNUMBLOCK`にブロック数20を指定します。
 
 実行時間を短くするため、並列処理を行うことにします。引数`bPARALLEL`にTRUEを指定します。
 
@@ -331,13 +333,13 @@ RStudioを使っているなら、Terminalウィンドウで`tail -F C:/work/sim
 ```{r}
 ### 都合によりコメントアウトしています
 # set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
-#   lResult <- simWeight(
-#   lSURVEY    = lSurvey,
-#   nNUMBLOCK  = 10,
-#   sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",
-#   bPARALLEL  = TRUE,
-#   sLOGFILE   = "c:/work/simWeight.log",
-#   bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
+# lResult <- simWeight(
+#  lSURVEY    = lSurvey,
+#  nNUMBLOCK  = 20,
+#  sDBPATH    = "../tools/rSurveyAssign_vignette_weight_2.sqlite",
+#  bPARALLEL  = TRUE,
+#  sLOGFILE   = "c:/work/simWeight.log",
+#  bAPPEND    = FALSE  # すでにデータベースが存在する場合は上書きする
 # )
 ```
 データベースに1000試行の結果が格納されました。
@@ -400,7 +402,7 @@ hist(lWeight$dfWeight_Cat$gWeight, main = NULL)
 ```{r}
 head(lWeight$dfWeight_Slot)
 ```
-対象者1が割り付けられたカテゴリ3のスロット7への回答には、ウェイト0.57が
+対象者1が割り付けられたカテゴリ3のスロット7への回答には、ウェイト0.56が
 付与されています。
 なお、このウェイトは、すべての調査対象者のすべての割付スロットを通じて、
 平均1に規準化されています。ヒストグラムを描いてみましょう。

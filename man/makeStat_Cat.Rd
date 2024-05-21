@@ -15,11 +15,12 @@ makeStat_Cat(
 対象者のカテゴリ・ウェイトへの割付を反復実行した結果。
 以下の列を持つと期待される
  \itemize{
- \item \code{nSubject}:         対象者番号
+ \item \code{nRetrial}:         再割付試行番号
+ \item \code{nSubject}:         対象者番号 (\code{lSURVEY$mbCAT}上の行番号)
  \item \code{nCat_1}:           割付カテゴリ\code{1}のカテゴリ番号、ないし\code{NA}
  \item ...
  \item \code{nCat_}(nMAXCAT):   割付カテゴリ\code{nMAXCAT}のカテゴリ番号、ないし\code{NA}
- \item \code{nCat}:             割付スロットが属するカテゴリ番号、ないし\code{NA}
+ \item \code{nParentCat}:       割付スロットが属するカテゴリ番号、ないし\code{NA}
  \item \code{nSlot_1}:          割付スロット\code{1}のスロット番号、ないし\code{NA}
  \item ...
  \item \code{nSlot_}(nMAXSLOT): 割付スロット\code{nMAXSLOT}のスロット番号、ないし\code{NA}
@@ -35,11 +36,12 @@ survey data. See the document of `makeSurvey` for details.}
 a data frame
    行は対象者x割付可能カテゴリ
    \itemize{
-   \item \code{nSubject}          対象者番号
-   \item \code{nCat}              カテゴリ番号
-   \item \code{bAssign}           lSURVEY上で割付が起きていたか
-   \item \code{nCount_SubjectCat} 再試行においてその人にそのカテゴリが割り付けられた回数
-   \item \code{nCount_Subject}    再試行におけるその人の出現回数
+   \item \code{nSubject}               対象者番号
+   \item \code{nCat}                   カテゴリ番号
+   \item \code{bAssign}                lSURVEY上で割付が起きていたか
+   \item \code{nNumRetrial}            その人が1回以上出現した再割付試行数
+   \item \code{gSumProp}               その人が1回以上出現した再割付試行におけるカテゴリ割付率の合計
+   \item \code{gSumSqProp}             その人が1回以上出現した再割付試行におけるカテゴリ割付率の二乗の合計
    }
 }
 \description{

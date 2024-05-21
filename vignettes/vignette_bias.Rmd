@@ -541,17 +541,16 @@ lSetting2 <- makeSetting(
 )
 set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
 ## 都合によりコメントアウトしています
-# simBias (
-#   lPOP       = lPop, 
-#   lSETTING   = lSetting2, 
-#   sDBPATH    = "../tools/rSurveyAssign_vignette_bias_2.sqlite",
-#   nNUMTRIAL  = 10,
-#   nNUMRETRIAL = 500,
-#   bAPPEND    = FALSE, 
-#   bPARALLEL  = TRUE,
-#   sLOGFILE   = "c:/work/simWeight.log"
-# )
-
+#  simBias (
+#    lPOP       = lPop, 
+#    lSETTING   = lSetting2, 
+#    sDBPATH    = "../tools/rSurveyAssign_vignette_bias_2.sqlite",
+#    nNUMTRIAL  = 10,
+#    nNUMRETRIAL = 500,
+#    bAPPEND    = FALSE, 
+#    bPARALLEL  = TRUE,
+#    sLOGFILE   = "c:/work/simWeight.log"
+#  )
 ```
 スロットについての割付バイアスを調べてみましょう。
 
@@ -569,19 +568,19 @@ dfPlot <- dplyr::bind_rows(
   dfResult1_s |> dplyr::mutate(nMethod = 1),
   dfResult2_s |> dplyr::mutate(nMethod = 2)
 ) |>
-  dplyr::group_by(nMethod, nCat, nSlot) |>
+  dplyr::group_by(nMethod, nParentCat, nSlot) |>
   dplyr::summarize(gMeanCovHatQR = mean(gCovHatQR)) |>
   dplyr::ungroup()
 
 dfX <- dfPlot |>
-  dplyr::distinct(nCat, nSlot) |>
-  dplyr::arrange(nCat, nSlot) |>
+  dplyr::distinct(nParentCat, nSlot) |>
+  dplyr::arrange(nParentCat, nSlot) |>
   dplyr::mutate(nX = dplyr::row_number()) |>
   dplyr::arrange(-nX) |>
-  dplyr::mutate(fX = factor(nX, levels = nX, labels = paste0("Cat", nCat, "_Slot", nSlot)))
+  dplyr::mutate(fX = factor(nX, levels = nX, labels = paste0("Cat", nParentCat, "_Slot", nSlot)))
 
 dfPlot <- dfPlot |>
-  dplyr::left_join(dfX, by = c("nCat", "nSlot")) |>
+  dplyr::left_join(dfX, by = c("nParentCat", "nSlot")) |>
   dplyr::mutate(fMethod = factor(nMethod, levels = 1:2, labels = c("方法1", "方法2")))
 
 g <- ggplot2::ggplot(
