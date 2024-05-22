@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-05-21</h4>
+            <h4 data-toc-skip class="date">2024-05-22</h4>
       
       
       <div class="d-none name"><code>vignette_bias.Rmd</code></div>
@@ -89,15 +89,6 @@ in web surveys”</a>を参照して下さい。</p>
 <p>調査手続きを設計している際には、これから行う調査における割付バイアスの大きさについて、ある程度の
 目安をつけたくなります。しかし、割付バイアスの強さをかんたんに知ることはできません。
 そこで<code>rSurveyAssign</code>パッケージは、割付バイアスの強さを評価する機能を提供しています。</p>
-<p>この解説では、</p>
-<ul>
-<li>まず割付バイアスの性質について、1節で説明します。</li>
-<li>割付バイアスの強さを評価するには、個々の対象者がカテゴリ・スロットに割り付けられる
-確率(割付確率)を推定する必要があります。その方法について2節で述べます。</li>
-<li>個々の対象者の割付確率に基づき、割付バイアスの大きさを示す指標を求めます。3節で説明します。</li>
-<li>4-7節で、割付バイアス評価の具体的な手順を紹介します。</li>
-</ul>
-<p>このパッケージの使い方に関心がある方は、1-3節をスキップし4節からご覧いただいてもかまいません。</p>
 <div class="section level2">
 <h2 id="割付バイアスの定義と性質">1. 割付バイアスの定義と性質<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E5%AE%9A%E7%BE%A9%E3%81%A8%E6%80%A7%E8%B3%AA"></a>
 </h2>
@@ -116,7 +107,7 @@ N)\)</span>の回答から得られる関心ある値を<span class="math inline
 <p>Aに割り付けられた<span class="math inline">\(n\)</span>人の対象者から得られる<span class="math inline">\(x_i\)</span>の平均は、以下のように表現できます。添字<span class="math inline">\(S\)</span>は割り付けられた調査対象者を表しています。
 <span class="math display">\[ \bar{x}_S = \frac{1}{n} \sum_{i=1}^N I_i
 x_i \]</span></p>
-<p>以下では<strong>割付バイアス</strong>を、<strong>割り付けられた対象者における関心ある変数の平均の期待値と、割付可能なすべての対象者における関心ある変数の平均とのずれ</strong>
+<p>以下では<strong>割付バイアス</strong>を、割り付けられた対象者における関心ある変数の平均の期待値と、割付可能なすべての対象者における関心ある変数の平均とのずれ
 <span class="math inline">\(E[\bar{x}_S] - \bar{x}_P\)</span>
 であると定義します。</p>
 </div>
@@ -124,187 +115,16 @@ x_i \]</span></p>
 <h3 id="割付バイアスの性質">1.2 割付バイアスの性質<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E6%80%A7%E8%B3%AA"></a>
 </h3>
 <p>割付バイアスはどのような性質を持つでしょうか。</p>
-<p>以下では、対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。このパッケージが想定している調査手続きでは、割り付けられた調査対象者数<span class="math inline">\(n\)</span>は定数です(実際にはAについての回答者が<span class="math inline">\(n\)</span>人に到達する前に調査を打ち切ってしまう場合もありえますが、ここでは無視します)。また、割付可能な調査対象者数<span class="math inline">\(N\)</span>は実際には確率的に決まるのですが、A以外のたくさんのカテゴリ・スロットの割付可能性によって規定されますので、ここでは所与の定数であるとみなします。</p>
-<p>割付バイアスの式を変形してみましょう。 <span class="math display">\[E[\bar{x}_S] - \bar{x}_P = E \left[ \frac{1}{n}
-\sum_{i=1}^N I_i x_i \right]  - \frac{1}{N} \sum_{i=1}^N x_i\]</span>
-<span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \frac{N}{n}
-E[I_i]x_i  - \frac{1}{N} \sum_{i=1}^N x_i\]</span> <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
-E[I_i] -1 \right) x_i \]</span> <span class="math display">\[ =
-\frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1 \right) (x_i -
-\bar{x}) + \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1
-\right)\bar{x}\]</span> <span class="math display">\[ = \frac{1}{N}
-\sum_{i=1}^N \left( \frac{N}{n} E[I_i] -1 \right) (x_i - \bar{x}) +
-\frac{\bar{x}}{N} \left( \frac{N}{n} \sum_{i=1}^N  E[I_i] - N
-\right)\]</span> ここで<span class="math inline">\(E[I_i]\)</span>とは対象者<span class="math inline">\(i\)</span>がAに割り付けられる確率のことです。以下では<span class="math inline">\(p_i\)</span>と書きましょう。その全対象者における合計は<span class="math inline">\(\sum_{i=1}^N p_i = E \left[ \sum_{i=1}^N I_i
-\right] = n\)</span> ですから、第2項は0です。 <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N \left( \frac{N}{n}
-p_i -1 \right) (x_i - \bar{x}) \]</span> <span class="math inline">\(q_i
-= \frac{N}{n} p_i\)</span>
-としましょう。割付可能対象者を通じたその平均は<span class="math inline">\(\bar{q}_P = \frac{1}{N} \sum_{i=1}^N q_i =
-\frac{1}{N} \frac{N}{n} \sum_{i=1}^N p_i = 1\)</span>です。従って <span class="math display">\[ = \frac{1}{N} \sum_{i=1}^N (q_i - \bar{q}_P)(x_i
-- \bar{x}_P)\]</span>
-ここから次のことがわかります。<strong>割付バイアスとは、「割付確率を割付可能対象者を通じて平均が1になるようにスケーリングした値」と、関心ある変数との、割付可能対象者を通じた共分散</strong>です。</p>
-<p>いいかえれば、割付バイアスは、関心ある変数<span class="math inline">\(x_i\)</span>と割付確率<span class="math inline">\(p_i\)</span>の間に関連があるときに生じるバイアスです。</p>
-<ul>
-<li>たとえば、あるスロットについて関心ある変数の値を得るとき、その値<span class="math inline">\(x_i\)</span>が高い人ほど
-そのスロットへの割付確率<span class="math inline">\(p_i\)</span>が高いとしましょう。このとき、そのスロットに割り付けられた対象者における平均<span class="math inline">\(\bar{x}_S\)</span>は、割付可能なすべての対象者における平均<span class="math inline">\(\bar{x}_P\)</span>と比べて高めになってしまいます。つまり、割付バイアスが生じます。</li>
-<li>いっぽう、たとえ割付確率<span class="math inline">\(p_i\)</span>に個人差があったとしても、関心ある変数<span class="math inline">\(x_i\)</span>との間に全く関連がなかったら、この変数に限っては割付バイアスは生じません。</li>
-</ul>
+<p>以下では、対象者の回答<span class="math inline">\(x_i\)</span>は定数であり、Aへの割付の有無<span class="math inline">\(I_i\)</span>は確率変数であると考えます。また、便宜的に、割り付けられた調査対象者数<span class="math inline">\(n\)</span>、割付可能な調査対象者数<span class="math inline">\(N\)</span>はともに定数であるとみなします。</p>
+<p>対象者<span class="math inline">\(i\)</span>がAに割り付けられる確率を<span class="math inline">\(p_i = E[I_i]\)</span>とし、<span class="math inline">\(q_i = \frac{N}{n} p_i\)</span>とすると、
+割付バイアスは以下のように表現できます。</p>
+<p><span class="math display">\[E[\bar{x}_S] - \bar{x}_P = \frac{1}{N}
+\sum_{i=1}^N (q_i - \bar{q}_P)(x_i - \bar{x}_P)\]</span>
+つまり、割付バイアスとは、「割付確率を割付可能対象者を通じて平均が1になるようにスケーリングした値」と、関心ある変数との、割付可能対象者を通じた共分散です。いいかえれば、割付バイアスは、関心ある変数<span class="math inline">\(x_i\)</span>と割付確率<span class="math inline">\(p_i\)</span>の間に関連があるときに生じるバイアスです。</p>
 </div>
 <div class="section level3">
-<h3 id="割付バイアスはいつ生じるか">1.3 割付バイアスはいつ生じるか<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AF%E3%81%84%E3%81%A4%E7%94%9F%E3%81%98%E3%82%8B%E3%81%8B"></a>
+<h3 id="割付確率の推定">1.3 割付確率の推定<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A"></a>
 </h3>
-<p>では、このパッケージが想定している調査手続きにおいて、カテゴリないしスロットAについての関心ある変数<span class="math inline">\(x_i\)</span>と、 Aへの割付確率<span class="math inline">\(p_i\)</span>との間に関連が生じるのはどんな場合でしょうか。</p>
-<p>このパッケージが想定している調査手続きにおいて、 対象者<span class="math inline">\(i\)</span>のAへの割付確率<span class="math inline">\(p_i\)</span>を決めているのは次の3つの要因です。</p>
-<ul>
-<li>対象者<span class="math inline">\(i\)</span>がA以外のどのカテゴリ・スロットに対して割付可能であったか。たとえば、たくさんのカテゴリ・スロットについて割付可能である人ほど、Aに割り付けられる確率は低くなりやすいでしょう。</li>
-<li>対象者<span class="math inline">\(i\)</span>以外の対象者たちが、どのカテゴリ・スロットに対して割付可能であったか。たとえば、Aに対して割付可能な対象者が他に大勢いるほど、<span class="math inline">\(i\)</span>がAに割り付けられる確率は低くなりやすいでしょう。</li>
-<li>対象者を参加順に並べたときの対象者<span class="math inline">\(i\)</span>の位置。たとえば、<span class="math inline">\(i\)</span>の参加順が遅いほど、AがすでにクローズドとなっておりAへと割り付けられない可能性が高まるでしょう。</li>
-</ul>
-<p>従って、Aにおいて関心ある変数<span class="math inline">\(x_i\)</span>と割付確率<span class="math inline">\(p_i\)</span>とのあいだに関連が生じる理由として、次の3つが考えられます。</p>
-<ul>
-<li>
-<span class="math inline">\(x_i\)</span>が他のカテゴリ・スロットへの割付可能性と関連しているとき
-<ul>
-<li>この関連は大いにありえます。たとえば製品ブランドについて調査しているとき、
-その人の製品カテゴリについての知識や関与によって、各ブランドに対する態度や意見が異なるでしょうし、
-その対象者がどのブランドを知っているかも異なるでしょう。
-従って、Aについての回答と、他のカテゴリ・スロットへの割付可能性との間には
-関連があると考えるのが自然です。</li>
-</ul>
-</li>
-<li>
-<span class="math inline">\(x_i\)</span>が他の対象者の割付可能性と関連しているとき
-<ul>
-<li>ふつう、このような関連性はないでしょう。もちろん、カテゴリ・スロット間で比較したときに<span class="math inline">\(x_i\)</span>の平均と人々の割付可能性が関連することは大いにあり得ます。たとえば、<span class="math inline">\(x_i\)</span>がブランドへの購入意向で、割付可能性がブランドの使用経験であるなら、購入意向の平均が高いブランドのほうが使用経験率も高いでしょう)。しかしここで問題にしているのは、あるカテゴリないしスロットを所与としたときの、ある人の<span class="math inline">\(x_i\)</span>と他の人の割付可能性との関連です。ある対象者のブランドへのある人の購入意向が、他の対象者のブランドの使用経験によって川という状況は考えにくいと思います。</li>
-</ul>
-</li>
-<li>
-<span class="math inline">\(x_i\)</span>が調査参加順と関連しているとき
-<ul>
-<li>ふつう、この関連性についても無視できるでしょう。たとえば調査開始が早朝であったため、早起きの人ほど調査に参加しやすく、
-かつ早起きな人とそうでない人のあいだでAについての回答に差がある…
-といったケースを想像することはできますが、
-現実の調査においては生じにくいと思われます。</li>
-</ul>
-</li>
-</ul>
-<p><a href="vignette.html">“rSurveyAssign: tools for simulation of
-assignment in web surveys”</a>で
-述べたように、このパッケージでは、対象者の回答と割付可能性は対象者間で独立であり、ある対象者の回答と調査参加順序の間には関連がないと仮定します。つまり、上記の3つの理由のうち後ろのふたつは無視します。</p>
-<p>従って、つぎのようにいえます。このパッケージが想定している調査手続きにおいて、あるカテゴリ・スロットAにおいて割付バイアスが生じるのは、</p>
-<ol style="list-style-type: decimal">
-<li>各対象者の関心ある変数<span class="math inline">\(x_i\)</span>の値と、その対象者の他のカテゴリ・スロットへの割付可能性との間に関連があり、</li>
-<li>各対象者の他のカテゴリ・スロットへの割付可能性と、その対象者のAへの割付確率<span class="math inline">\(p_i\)</span>との間に関連があるときです。</li>
-</ol>
-<p>1.は常に成り立つと考えるべきでしょう。いっぽう、2.はカテゴリ・スロットの割付方法によって決まります。
-仮に、他のカテゴリ・スロットへの割付可能性とAに対する割付確率<span class="math inline">\(p_i\)</span>とのあいだに関連がない割付方法を用いていれば、いかなる変数においても割付バイアスは生じません。</p>
-</div>
-<div class="section level3">
-<h3 id="割付バイアスと割付方法">1.4 割付バイアスと割付方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%A8%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
-</h3>
-<p>では、他のカテゴリ・スロットへの割付可能性とAに対する割付確率とのあいだの関連性は、どのような割付方法において
-生じるでしょうか。</p>
-<p>結論からいえば、
-このパッケージが想定している割付方法においては、ほとんどの場合、
-他のカテゴリ・スロットへの割付可能性とAに対する割付確率が関連します。いいかえると、
-<strong>ほとんどの場合、なんらかの割付バイアスが生じます</strong>。</p>
-<p>以下ではできるだけ詳しく考えてみます。</p>
-<div class="section level4">
-<h4 id="カテゴリ割付方法と割付バイアス">カテゴリ割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
-</h4>
-<p>Aがカテゴリである場合は、A以外のカテゴリへの割付可能性とAへの割付確率とのあいだに関連があるときに
-割付バイアスが生じます。</p>
-<p>従って、割付バイアスが生じうるのは以下の条件がすべて満たされているときです。</p>
-<ul>
-<li>カテゴリ数<span class="math inline">\(J\)</span>が2以上であること
-<ul>
-<li>もしカテゴリ数が1ならば、そのカテゴリに割付可能な対象者のすべてが
-そのカテゴリに割り付けられますから、割付バイアスは起きません。</li>
-</ul>
-</li>
-<li>あるカテゴリに割付可能な対象者に注目したとき、他の割付可能カテゴリが
-対象者によって異なること
-<ul>
-<li>たとえば、もしすべての対象者の割付可能カテゴリ数が0か1ならば、
-あるカテゴリの割付可能対象者はほかに割付可能カテゴリを
-持っていませんので、割付バイアスは生じません。</li>
-<li>また、もしすべての対象者の割付可能カテゴリ数が0か<span class="math inline">\(J\)</span>ならば、
-あるカテゴリの割付可能対象者はほかのすべてのカテゴリにも割付可能ですので、
-割付バイアスは生じません。</li>
-<li>対象者が2群に分かれており、一方の群の人々はカテゴリ1,2,3に割付可能であり、
-他方の群の人々はカテゴリ4,5,6に割付可能であるとします。このとき、
-割付バイアスは起きません。</li>
-</ul>
-</li>
-</ul>
-<p>では、これらの条件が満たされているとして、どのような割付方法の下で
-割付バイアスが生じるでしょうか。
-それは、割付方法が以下のいずれかにあてはまるときです。</p>
-<ul>
-<li>割付タイプとして<code>adaptive</code>を選び、順序付けによるカテゴリ選択が生じうる
-<ul>
-<li>このとき、ある割付可能カテゴリは割付可能カテゴリ数が大きい人において選ばれにくくなります。よって割付バイアスが生じます。</li>
-<li>ただし、割付カテゴリ最大数<span class="math inline">\(J\)</span>が十分に大きな値に設定されていて、順序付けによるカテゴリ選択が生じえない場合には、割付バイアスは生じません。</li>
-</ul>
-</li>
-<li>除外条件として<code>allclosed</code>を選び、除外が生じうる
-<ul>
-<li>このとき、すべての割付カテゴリがクローズドであった人の割付が中止されます。早くクローズドになるカテゴリしか割付可能でない人には割付が生じにくくなり、割付バイアスが生じます。</li>
-<li>ただし、除外条件が<code>allclosed</code>であっても絞込条件が<code>open</code>である場合には除外は生じません。</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="スロット割付方法と割付バイアス">スロット割付方法と割付バイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%A8%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
-</h4>
-<p>Aがスロットである場合、話はさらに複雑です。割付バイアスが生じる原因として次の3つが挙げられるからです。</p>
-<ul>
-<li>カテゴリにおいて割付バイアスが生じているとき。割付スロットは割付カテゴリから選ばれるからです。</li>
-<li>割付カテゴリの最大数が2以上であるとき。あるカテゴリにおけるスロット割付が試みられるかどうかが、他のカテゴリでスロット割付が成立するかどうかに依存するからです。</li>
-<li>Aが属するカテゴリのA以外のスロットへの割付可能性と、Aへの割付確率とのあいだに関連があるとき。</li>
-</ul>
-<p>3番目の割付バイアスが生じるのは、カテゴリにおける割付バイアスと同様に、以下の条件がすべて満たされているときです。</p>
-<ul>
-<li>スロット数<span class="math inline">\(K_j\)</span>が2以上であること</li>
-<li>あるスロットに割付可能な対象者に注目したとき、他の割付可能スロットが対象者によって異なること</li>
-<li>スロット割付方法が以下のいずれかにあてはまること。
-<ul>
-<li>割付タイプとして<code>adaptive</code>を選び、順序付けによるスロット選択が生じている</li>
-<li>除外条件として<code>allclosed</code>を選び、除外が生じている</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="割付バイアスを生まない割付方法">割付バイアスを生まない割付方法<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E7%94%9F%E3%81%BE%E3%81%AA%E3%81%84%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95"></a>
-</h4>
-<p>上記の議論は過度に煩雑なので、逆に、「カテゴリ数・スロット数や対象者の割付可能性がどうであれ、カテゴリにおいてもスロットにおいても常に割付バイアスが生じない割付方法」について考えてみましょう。</p>
-<p>それは以下の条件を満たす割付方法です。</p>
-<ul>
-<li>割付カテゴリ最大数を1としている。</li>
-<li>カテゴリとスロットの割付方法を(<code>nonadaptive</code>,
-<code>all</code>, (任意), <code>none</code>), (<code>nonadaptive</code>,
-<code>open</code>, (任意),(任意))のなかから選んでいる。</li>
-</ul>
-<p>ここで次の点に注意してください。必要な調査対象者数を減らすために割付方法を工夫すると、多くの場合割付バイアスが生じてしまうのですが、必ず生じるとはいえません。
-たとえば、</p>
-<ul>
-<li>割付方法(<code>nonadaptive</code>, <code>all</code>,
-<code>random</code>,
-<code>none</code>)は、「すべてのもの(カテゴリないしスロット)から<span class="math inline">\(L\)</span>個を等確率に抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
-<li>割付方法(<code>nonadaptive</code>, <code>open</code>,
-<code>shortnum</code>,
-<code>none</code>)は、「現時点で割付人数が目標に到達していないものから、割付人数が不足している順に<span class="math inline">\(L\)</span>個までを抜き出し、そのなかからその人に割付可能なものをすべて選んで割り付ける」方法です。</li>
-</ul>
-<p>調査に必要な対象者数という観点からみると後者のほうがはるかに効率的でしょう。しかし、どちらの方法でも割付バイアスは生じません。</p>
-<p>このように、「必要な対象者数が少ない割付方法ほど強い割付バイアスが生じる」とは必ずしもいえないわけです。</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="割付確率の推定">2. 割付確率の推定<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A"></a>
-</h2>
 <p>あるカテゴリ・スロットへの回答における割付バイアスの大きさについて推測するためには、
 そのカテゴリ・スロットに割付可能であった対象者について割付確率<span class="math inline">\(p_i\)</span>を推測する必要があります。</p>
 <p>このパッケージでは、仮想的な母集団を用いたシミュレーションを通じて割付確率を推定します。
@@ -312,184 +132,30 @@ assignment in web surveys”</a>で
 <ul>
 <li>母集団データから対象者を抽出し、カテゴリ・スロットへの割付を行う(<strong>割付試行</strong>)。</li>
 <li>ある割付試行で得た調査データから無作為復元抽出によって仮想的な調査データを再生成し、カテゴリ・スロットへの割付をやりなおす(<strong>再割付試行</strong>)。</li>
-<li>再割付試行を繰り返し、各カテゴリ・スロットについて、それに割付可能である個々の対象者の割付確率の推定値、ならびに推定量の分散の推定値を得る。</li>
+<li>再割付試行を繰り返し、各カテゴリ・スロットについて、それに割付可能である個々の対象者<span class="math inline">\(i\)</span>の割付確率の推定値<span class="math inline">\(\hat{p}_i\)</span>、ならびに推定量の分散の推定値<span class="math inline">\(\hat{V}_i\)</span>を得る。 <a href="vignette_weight.html">“How to compute survey
+weights”</a>を参照して下さい。</li>
 <li>以上の割付試行を複数回繰り返す。</li>
 </ul>
-<p>ある割付試行においてあるカテゴリ・スロットに割付可能であった対象者<span class="math inline">\(i\)</span>について、そのカテゴリ・スロットへの割付確率を<span class="math inline">\(p_i\)</span>とし、<span class="math inline">\(p_i\)</span>の推定量の分散を<span class="math inline">\(V_i\)</span>とします。この2つの推定値<span class="math inline">\(\hat{p},\hat{V}_i\)</span>を次のように求めます。再割付試行の繰り返しを通じてある対象者が延べ<span class="math inline">\(s\)</span>回抽出され、そのうち<span class="math inline">\(t\)</span>回において当該のカテゴリ・スロットへの割付が生じたとします。
-<span class="math display">\[ \hat{p}_i = t/s \]</span> <span class="math display">\[ \hat{V}_i =
-\frac{\hat{p}_i(1-\hat{p}_i)}{s}\]</span></p>
 </div>
-<div class="section level2">
-<h2 id="割付バイアスを評価するための指標">3. 割付バイアスを評価するための指標<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E8%A9%95%E4%BE%A1%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E6%8C%87%E6%A8%99"></a>
-</h2>
+<div class="section level3">
+<h3 id="割付バイアスを評価するための指標">1.4 割付バイアスを評価するための指標<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%82%92%E8%A9%95%E4%BE%A1%E3%81%99%E3%82%8B%E3%81%9F%E3%82%81%E3%81%AE%E6%8C%87%E6%A8%99"></a>
+</h3>
 <p><code>rSurveyAssign</code>パッケージは、 推定された<span class="math inline">\(p_i\)</span>, <span class="math inline">\(V_i\)</span>に基づいて、これから行う調査が持つであろう割付バイアスを評価します。
 本項では、評価の際に用いる指標について説明します。</p>
-<p>このパッケージは、割付バイアスを評価するための指標として次の5つを提供しています。</p>
-<ul>
-<li>割付確率の変動に注目する指標
-<ul>
-<li>
-<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>:
-割付確率の推定値の変動係数</li>
-<li>
-<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>:
-割付確率の変動係数の推定値</li>
-</ul>
-</li>
-<li>ウェイトの変動に注目する指標
-<ul>
-<li>
-<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>:
-デザイン効果の推定値</li>
-<li>
-<span class="math inline">\(\hat{\mathrm{ESS}}\)</span>:
-実質標本サイズの推定値</li>
-</ul>
-</li>
-<li>割付確率と他のカテゴリ・スロットの割付可能性との間の関連に注目する指標
-<ul>
-<li>
-<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>:
-スケーリングした割付確率の推定値と割付可能レシオとの共分散</li>
-</ul>
-</li>
-</ul>
-<div class="section level3">
-<h3 id="mathrmcvhatp-割付確率の推定値の変動係数">3.1 <span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>:
-割付確率の推定値の変動係数<a class="anchor" aria-label="anchor" href="#mathrmcvhatp-%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4%E3%81%AE%E5%A4%89%E5%8B%95%E4%BF%82%E6%95%B0"></a>
-</h3>
 <p>あるカテゴリないしスロットにおいて生じる割付バイアスとは、割付可能対象者を通じた「平均が1になるようにスケーリングした割付確率」<span class="math inline">\(q_i = p_i /
 \bar{p}_P\)</span>と、関心ある変数<span class="math inline">\(x_i\)</span>との共分散です。関心ある変数を特定しないと、割付バイアスの大きさもわからないわけです。</p>
 <p>しかし、<span class="math inline">\(q_i\)</span>のばらつきが小さければ、いかなる変数においても割付バイアスは小さいといえます。関心ある変数を特定できない状況では、<span class="math inline">\(q_i\)</span>の標準偏差を割付バイアスの大きさの目安として捉えることができます。</p>
-<p>そこでこのパッケージでは、<strong>割付確率の推定値の変動係数</strong><span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>を、割付バイアスの大きさの指標のひとつとして提供します。</p>
+<p>そこでこのパッケージでは、<strong>割付確率の変動係数の推定値</strong><span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>を、割付バイアスの大きさの指標のひとつとして提供します。</p>
 <p><code>rSurveyAssign</code>パッケージはこの値を以下のように求めています。割付可能対象者<span class="math inline">\(i(=1,...,N)\)</span>の割付確率の推定値を<span class="math inline">\(\hat{p}_i\)</span>とします。 <span class="math display">\[ \bar{\hat{p}}_P = \frac{1}{N} \sum_{i=1}^N
 \hat{p}_i \]</span> <span class="math display">\[ \mathrm{CV}(\hat{p}) =
 \frac{1}{\bar{\hat{p}}_P} \times \sqrt{ \frac{1}{N} \sum_{i=1}^N
-(\hat{p}_i - \bar{\hat{p}}_P)^2 } \]</span> ところで、<span class="math inline">\(\hat{q}_i = \hat{p}_i / \bar{\hat{p}}_P\)</span>
-とすれば、 <span class="math display">\[ \mathrm{CV}(\hat{p}) = \sqrt{
-\frac{1}{N} \sum_{i=1}^N \left( \frac{\hat{p}_i -
-\bar{\hat{p}}_P}{\bar{\hat{p}}_P} \right)^2 } = \sqrt{\frac{1}{N}
-\sum_{i=1}^N \left( \hat{q}_i - \bar{\hat{q}}_P \right)^2}\]</span>
-ですから、この指標は、割付可能対象者における「平均が1になるようにスケーリングした割付確率の推定値」<span class="math inline">\(\hat{q}_i\)</span>の標準偏差であるともいえます。</p>
-</div>
-<div class="section level3">
-<h3 id="hatmathrmcvp-割付確率の変動係数の推定値">3.2 <span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>:
-割付確率の変動係数の推定値<a class="anchor" aria-label="anchor" href="#hatmathrmcvp-%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E5%A4%89%E5%8B%95%E4%BF%82%E6%95%B0%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
-</h3>
-<p>上記の指標には次のような問題点があります。</p>
-<p>私たちはシミュレーションを通じて<span class="math inline">\(p_i\)</span>を推定します。しかし、どれだけシミュレーションを繰り返しても、
-<span class="math inline">\(p_i\)</span>そのものを知ることはできず、その推定量<span class="math inline">\(\hat{p}_i\)</span>しか手に入りません。<span class="math inline">\(\hat{p}_i\)</span>が不偏推定量であったとしても(つまり、<span class="math inline">\(\hat{p}_i\)</span>の 期待値が<span class="math inline">\(p_i\)</span>と一致したとしても)、割付確率の推定値の変動係数<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>は、真の割付確率の変動係数
-<span class="math display">\[ \mathrm{CV}(p) = \frac{1}{\bar{p}_P}
-\times \sqrt{ \frac{1}{N} \sum_{i=1}^N (p_i - \bar{p}_P)^2 } \]</span>
-の不偏推定量ではなく、それより少し大きめの値となってしまいます。</p>
-<p>では、割付確率の推定値の変動係数<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>は、真の割付確率の変動係数<span class="math inline">\(\mathrm{CV}(p)\)</span>と比べてどの程度
-大きくなっているのでしょうか。</p>
-<p>割付確率の推定値の変動係数の二乗 <span class="math display">\[
-(\mathrm{CV}(\hat{p}))^2 = \frac{1}{\bar{\hat{p}}_P^2} \times
-\frac{1}{N} \sum_{i=1}^N (\hat{p}_i - \bar{\hat{p}}_P)^2 \]</span>
-について考えましょう。割付確率<span class="math inline">\(p_i\)</span>の推定量<span class="math inline">\(\hat{p}_i\)</span>が不偏推定量に近く、かつ <span class="math inline">\(n\)</span>がある程度大きければ、<span class="math inline">\(\bar{\hat{p}}_P\)</span>は<span class="math inline">\(\bar{p}_P\)</span>に近いと考えられますから <span class="math display">\[ \approx \frac{1}{\bar{p}_P^2} \times \frac{1}{N}
-\sum_{i=1}^N (\hat{p}_i - \bar{p}_P)^2 = \frac{1}{N \bar{p}_P^2}
-\sum_{i=1}^N ( (\hat{p}_i - p_i) + (p_i - \bar{p}_P) )^2 \]</span>
-と近似できます。<span class="math inline">\(\hat{p}_i\)</span>の推定誤差<span class="math inline">\(\hat{p}_i - p_i\)</span>が<span class="math inline">\(p_i\)</span>と独立だと仮定すれば <span class="math display">\[ = \frac{1}{N \bar{p}_P^2} \left( \sum_{i=1}^N
-(\hat{p}_i - p_i)^2 + \sum_{i=1}^N (p_i - \bar{p}_P)^2 \right) =
-\frac{1}{N \bar{p}_P^2} \sum_{i=1}^N (\hat{p}_i - p_i)^2 +
-(\mathrm{CV}(p))^2\]</span>
-つまり、おおまかにいえば、割付確率の推定値の変動係数の二乗<span class="math inline">\((\mathrm{CV}(\hat{p}))^2\)</span>は、真の割付確率の変動係数の二乗<span class="math inline">\((\mathrm{CV}(p))^2\)</span>と比べて、割付確率の推定値の誤差の分散
-<span class="math inline">\(\frac{1}{N} \sum_{i=1}^n (\hat{p}_i -
-p_i)^2\)</span> を 真の割付確率の平均の二乗<span class="math inline">\(\bar{p}_P^2\)</span>で割った量だけ大きくなっているはずです。</p>
-<p>そこで<code>rSurveyAssign</code>パッケージは、<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>を小さめに修正した、<strong>割付確率の変動係数の推定値</strong>
-<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>を提供します。</p>
-<p>この指標は下式に従って求めています。<span class="math inline">\(\hat{V}_i\)</span>は<span class="math inline">\(E[(\hat{p}_i -
-p_i)^2]\)</span>の推定値と捉えることができるので、 <span class="math display">\[ \hat{\mathrm{CV}}(p) = \sqrt{
+(\hat{p}_i - \bar{\hat{p}}_P)^2 } \]</span> <span class="math display">\[ \hat{\mathrm{CV}}(p) = \sqrt{
 (\mathrm{CV}(\hat{p}))^2 - \frac{\frac{1}{N} \sum_{i=1}^N
 \hat{V}_i}{\bar{\hat{p}}_P^2}} \]</span></p>
 </div>
-<div class="section level3">
-<h3 id="hatmathrmdeff-デザイン効果の推定値">3.3 <span class="math inline">\(\hat{\mathrm{Deff}}\)</span>:
-デザイン効果の推定値<a class="anchor" aria-label="anchor" href="#hatmathrmdeff-%E3%83%87%E3%82%B6%E3%82%A4%E3%83%B3%E5%8A%B9%E6%9E%9C%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
-</h3>
-<p>(2024/03/28:
-この節の説明はもっとちゃんとした内容に書き換える予定です。すいません)</p>
-<p>各対象者の各カテゴリ・スロットへの割付確率<span class="math inline">\(p_i\)</span>が既知ならば、その逆数<span class="math inline">\(1/p_i\)</span>をウェイトとして集計することで、集計値における割付バイアスを取り除くことができます。そこでこのパッケージでは、すでに行った調査についてウェイトを算出する機能を提供しています。詳細は<a href="vignette_weight.html">“4. How to compute survey
-weights”</a>をご覧ください。</p>
-<p>その反面、一般に、ウェイトを用いて集計すると集計値の分散は拡大します。その拡大の程度は、ウェイトの相対的な分散が大きいときに大きくなります。</p>
-<p><strong>デザイン効果</strong>とは、調査データ分析において用いられている概念で、ウェイトを用いた集計における集計値の分散の拡大を、ウェイトの相対的な分散という観点から表現したものです。</p>
-<p><code>rSurveyAssign</code>パッケージは、<strong>デザイン効果の推定値</strong>
-<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>
-を提供しています。</p>
-<p>この指標は次のように求めています。 <span class="math display">\[
-\hat{w}_i = 1 / \hat{p}_i\]</span> <span class="math display">\[
-\bar{\hat{w}}_S = \frac{1}{n} \sum_{i=1}^n \hat{w}_i\]</span> <span class="math display">\[ \hat{\mathrm{Deff}} = 1 + \left(
-\frac{1}{\bar{\hat{w}}_S^2} \times \frac{1}{n} \sum_{i=1}^n (\hat{w}_i -
-\bar{\hat{w}}_S)^2 \right) \]</span></p>
-<p>以下の点に注意してください。</p>
-<ul>
-<li>この指標は、<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>や<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>とは異なり、割付可能対象者ではなく割り付けられた対象者についての指標です。ウェイトを用いた集計において何が起きるかを表す指標だからです。</li>
-<li>
-<span class="math inline">\(\hat{p}_i\)</span>の推定誤差については考慮していません。推定誤差があろうとも、集計のウェイトとしては<span class="math inline">\(\hat{w}_i =
-1/\hat{p}_i\)</span>を用いざるを得ないからです。そのため、たとえ真の<span class="math inline">\(p_i\)</span>にばらつきがなくても、この指標は1より大きくなります。</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="hatmathrmess-実質標本サイズの推定値">3.4 <span class="math inline">\(\hat{\mathrm{ESS}}\)</span>:
-実質標本サイズの推定値<a class="anchor" aria-label="anchor" href="#hatmathrmess-%E5%AE%9F%E8%B3%AA%E6%A8%99%E6%9C%AC%E3%82%B5%E3%82%A4%E3%82%BA%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
-</h3>
-<p>一般に、標本サイズが少ないとき、集計値の分散は大きくなります。また、ウェイトを用いた集計では、ウェイトの相対的な分散が大きいとき、集計値の分散は大きくなります。つまり、ウェイトを用いた集計は、あたかも標本サイズを減らしたかのような集計になるわけです。</p>
-<p>標本サイズをデザイン効果で割った値は<strong>実質標本サイズ</strong>と呼ばれています。</p>
-<p>たとえば、実質標本サイズが50であるとしましょう。これは、「ウェイトを用いた集計値は、あたかもウェイトを用いない標本サイズ50の集計値のような分散を持っている」ということを表しています。私たちはふつう、ウェイトの相対的な分散やデザイン効果について直観的に解釈できませんが、標本サイズについてはなんらかの直観を持っていることが多いでしょう。いま、ウェイトが不要であるような調査を実現できるとして、その調査における標本サイズが100以下であったら「標本サイズが小さすぎる、集計値の精度は低すぎるかもしれない」と感じるとしましょう。この場合、実質標本サイズが100以下であったら「ウェイトを用いた集計値の精度は低すぎるかもしれない」と考えることができるわけです。</p>
-<p><code>rSurveyAssign</code>パッケージは、下式に従って求めた<strong>実質標本サイズの推定値</strong>を提供します。
-<span class="math display">\[ \hat{\mathrm{ESS}} =
-\frac{n}{\hat{\mathrm{Deff}}}\]</span></p>
-<p>デザイン効果の推定値<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>と同じく、この指標も、割付可能対象者ではなく割り付けられた対象者についての指標です。また、割付確率の推定値<span class="math inline">\(\hat{p}_i\)</span>が含む推定誤差については考慮していません。そのため、たとえ真の割付確率<span class="math inline">\(p_i\)</span>にばらつきがなくても、この指標は割り付けられた対象者数<span class="math inline">\(n\)</span>より小さくなります。</p>
-</div>
-<div class="section level3">
-<h3 id="mathrmcovhatqr-スケーリングした割付確率の推定値と割付可能レシオとの共分散の推定値">3.5 <span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>:
-スケーリングした割付確率の推定値と割付可能レシオとの共分散の推定値<a class="anchor" aria-label="anchor" href="#mathrmcovhatqr-%E3%82%B9%E3%82%B1%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%81%97%E3%81%9F%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4%E3%81%A8%E5%89%B2%E4%BB%98%E5%8F%AF%E8%83%BD%E3%83%AC%E3%82%B7%E3%82%AA%E3%81%A8%E3%81%AE%E5%85%B1%E5%88%86%E6%95%A3%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4"></a>
-</h3>
-<p>上記に述べた4つの指標は、割付確率ないしウェイトのばらつきに注目した指標でした。</p>
-<p>しかし、1.3で述べたように、たとえ割付確率に大きなばらつきがあるとしても
-それが「他のカテゴリ・スロットへの割付可能性」と関連を持っていないならば、
-割付バイアスは生じないはずです。</p>
-<p>そこで、割付確率と「他のカテゴリ・スロットへの割付可能性」との関連を定量化する方法について
-考えてみます。そのためにはまず、「他のカテゴリ・スロットへの割付可能性」を定量化する
-必要があります。</p>
-<p>そこで、各対象者について「割付可能レシオ」を定義します。割付可能レシオは、「他のカテゴリ・スロットへの割付可能性」の高さをおおまかに表す変数です。</p>
-<ul>
-<li>
-<span class="math inline">\(r^{(c)}_i\)</span>: 対象者<span class="math inline">\(i\)</span>のカテゴリへの割付可能レシオ
-<ul>
-<li>全カテゴリに占める割付可能カテゴリの割合。たとえば、カテゴリ数3の調査で、対象者<span class="math inline">\(i\)</span>が2個のカテゴリに対して割付可能であるとき、<span class="math inline">\(r^c_i = 2/3\)</span> とします。</li>
-</ul>
-</li>
-<li>
-<span class="math inline">\(r^{(s)}_{ij}\)</span>: 対象者<span class="math inline">\(i\)</span>のカテゴリ<span class="math inline">\(j\)</span>のスロットへの割付可能レシオ
-<ul>
-<li>カテゴリ<span class="math inline">\(j\)</span>の全スロットに占める割付可能スロットの割合。たとえば、カテゴリ<span class="math inline">\(j\)</span>のスロット数が<span class="math inline">\(10\)</span>であるとして、対象者<span class="math inline">\(i\)</span>がそのうち3個のスロットに対して割付可能であるとき、<span class="math inline">\(r^{(s)}_{ij} = 3/10\)</span> とします。</li>
-</ul>
-</li>
-</ul>
-<p>この変数と、スケーリングした割付確率の推定値 <span class="math inline">\(\hat{q}_i\)</span>との共分散<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>を求め、割付バイアスの評価指標とします。</p>
-<p>この指標は以下の式に従って求めます。カテゴリの場合の<span class="math inline">\(r^{(c)}_i\)</span>, スロットの場合の<span class="math inline">\(r^{(s)}_{ij}\)</span>を <span class="math inline">\(r_i\)</span>と略記します。 <span class="math display">\[ \bar{r}_P = \frac{1}{N} \sum_{i=1}^N
-r_i\]</span> <span class="math display">\[ \mathrm{Cov}(\hat{q},r) =
-\frac{1}{N} \sum_{i=1}^N (\hat{q}_i - \bar{\hat{q}}_P) (r_i - \bar{r}_P)
-\]</span>
-この指標は、「割付可能レシオ」という変数のおおまかさを脇におけば、割付バイアスを評価する5つの
-指標の中でもっとも適切な指標だといえます。割付確率ではなく、割付確率と「他のカテゴリ・スロットへの割付可能性」との関連に注目しているからです。</p>
-<p>また、次のようにとらえることもできます。</p>
-<p>いま、あるカテゴリないしスロットに割付可能である人々の割付可能レシオそのものに関心があるとしましょう。たとえば、「このブランドを知っている人々が、市場に存在するブランド群のうち何割を知っているか」に関心がある、というような場面を想像してください。</p>
-<p>私たちが推定したい対象は、当該カテゴリないしスロットに割付可能な人々を通じた<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
-\bar{r}_P = \frac{1}{N} \sum_{i=1}^N r_i\]</span>
-です。しかし、私たちが知ることができるのは、当該カテゴリないしスロットに割り付けられた人々の<span class="math inline">\(r_i\)</span>の平均 <span class="math display">\[
-\bar{r}_S = \frac{1}{n} \sum_{i=1}^N I_i r_i\]</span>
-です。多くの割付手法において、割付可能レシオが高い人ほど当該カテゴリないしスロットへの割付確率が低くなりますから、割付バイアスによって<span class="math inline">\(\bar{r}_S\)</span>は<span class="math inline">\(\bar{r}_P\)</span>より低めになります。</p>
-<p>すでに述べたように、割付バイアス<span class="math inline">\(E[\hat{x}_S] -\hat{x}_P\)</span>とは、
-割付可能対象者において平均1になるようにスケーリングした割付確率<span class="math inline">\(q_i\)</span>と、関心ある変数<span class="math inline">\(x_i\)</span>との共分散でした。いっぽう<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、<span class="math inline">\(q_i\)</span>の推定値<span class="math inline">\(\hat{q}_i\)</span>と割付可能レシオ<span class="math inline">\(r_i\)</span>との共分散です。つまり<span class="math inline">\(\mathrm{Cov}(\hat{q},r)\)</span>は、関心ある変数が割付可能レシオ<span class="math inline">\(r_i\)</span> であるときの割付バイアスそのもの
-<span class="math display">\[ E[\bar{r}_S] - \bar{r}_P = \mathrm{Cov}(q,
-r) \]</span> の推定値だと捉えることもできます。</p>
-</div>
 </div>
 <div class="section level2">
-<h2 id="データの準備">4. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
+<h2 id="データの準備">2. データの準備<a class="anchor" aria-label="anchor" href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E6%BA%96%E5%82%99"></a>
 </h2>
 <p>では、<code>rSurveyAssign</code>パッケージによるバイアス評価の手順について説明しましょう。</p>
 <p>母集団を表現するデータを用意し、popdataクラスのオブジェクトに変換します。
@@ -519,91 +185,18 @@ size”</a>を参照して下さい。</p>
 <span><span class="va">lSetting1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
 <span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lSlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>  nCAT_MAX      <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>, </span>
-<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">'open'</span>, </span>
-<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">'shortnum'</span>, </span>
-<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">'allclosed'</span>,</span>
+<span>  sCAT_ASSIGN   <span class="op">=</span> <span class="st">'assignable-shortnum-open-none'</span>,  <span class="co"># (ver 0.3までの指定方法ではadaptive,open,shortnum,allclosed)</span></span>
 <span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>, </span>
-<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">'adaptive'</span>, </span>
-<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'open'</span>, </span>
-<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'shortnum'</span>, </span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span></span>
+<span>  sSLOT_ASSIGN  <span class="op">=</span> <span class="st">'assignable-shortnum-open-none'</span>   <span class="co"># (ver 0.3までの指定方法ではadaptive,open,shortnum,allclosed)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="割付再割付シミュレーション">5. 割付・再割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E5%86%8D%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
+<h2 id="割付再割付シミュレーション">3. 割付・再割付シミュレーション<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E5%86%8D%E5%89%B2%E4%BB%98%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"></a>
 </h2>
 <p>割付確率を推定するためのシミュレーションを行います。</p>
-<div class="section level3">
-<h3 id="単一の試行">5.1 単一の試行<a class="anchor" aria-label="anchor" href="#%E5%8D%98%E4%B8%80%E3%81%AE%E8%A9%A6%E8%A1%8C"></a>
-</h3>
-<p>まず、割付試行を1回だけ行ってみましょう。時間を節約するため、再割付試行は10回とします。</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="va">lResult1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simBias.html">simBias</a></span> <span class="op">(</span></span>
-<span>  lPOP        <span class="op">=</span> <span class="va">lPop</span>, </span>
-<span>  lSETTING    <span class="op">=</span> <span class="va">lSetting1</span>, </span>
-<span>  nNUMRETRIAL <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  sVERBOSE    <span class="op">=</span> <span class="st">"simple"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [simBias] nTrial: 1 ; extract: 5843 ; 9.796 sec.</span></span></code></pre></div>
-<p>シミュレーションの結果をみてみましょう。</p>
-<p><code>simBias</code>の返し値は3つの要素からなるリストです。
-要素<code>dfSubject</code>は割付試行の結果を表しています(再割付試行ではありません)。</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult1</span><span class="op">$</span><span class="va">dfSubject</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
-<span><span class="co">#&gt;   sRowname nPerson nCat1 nParentCat nSlot1 nSlot2 nTrial nSubject</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1           <span style="text-decoration: underline;">6</span>779     1          1      9      6      1        1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2           <span style="text-decoration: underline;">5</span>953     2         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3           <span style="text-decoration: underline;">3</span>232     3         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4           <span style="text-decoration: underline;">1</span>226     2          2      7      5      1        4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5           <span style="text-decoration: underline;">5</span>372     1          1      7     10      1        5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 6           <span style="text-decoration: underline;">7</span>652     2          2      2      1      1        6</span></span></code></pre></div>
-<p>この割付試行では、対象者1として母集団メンバー6779が抽出され、カテゴリ1に割り付けられ、カテゴリ1のスロット9,6に割り付けられました。</p>
-<p>要素<code>dfStat_Cat</code>は、再割付試行の結果のうち、
-カテゴリへの再割付の結果を表しています。</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult1</span><span class="op">$</span><span class="va">dfStat_Cat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 12</span></span></span>
-<span><span class="co">#&gt;   nSubject  nCat nNumRetrial gSumProp gSumSqProp bAssign nBlock nBlockSize</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1     1           5     3.5        3.25       1      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1     2           5     1.5        1.25       0      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1     3           5     0          0          0      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2     1           8     4.87       3.98       0      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2     2           8     1.53       1.15       1      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        2     3           8     1.6        0.86       0      1         10</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: nTrial &lt;int&gt;, sRowname &lt;chr&gt;, nPerson &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   gAssignability_Cat &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>10回の再割付試行を通じて、対象者1(正確には、対象者1に相当する割付可能性を持っている人)は延べ6回抽出されました。そのうちカテゴリ1への割付が生じたのは4回でした。つまり、この割付試行における対象者1のカテゴリ1への割付確率はおよそ4/6=0.67であったと推定されます。</p>
-<p>要素<code>dfStat_Slot</code>は、再割付試行の結果のうち、スロットへの再割付の結果を表しています。</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lResult1</span><span class="op">$</span><span class="va">dfStat_Slot</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
-<span><span class="co">#&gt;   nSubject nParentCat nSlot nNumRetrial gSumProp gSumSqProp bAssign nBlock</span></span>
-<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1          1     6           5      0         0          1      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        1          1     9           5      0         0          1      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        1          3     7           5      0         0          0      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        2          3     9           8      1.6       0.86       0      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        2          3    10           8      1.6       0.86       0      1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        4          1     2           6      0         0          0      1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: nBlockSize &lt;dbl&gt;, nTrial &lt;int&gt;, sRowname &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   nPerson &lt;int&gt;, gAssignability_Slot &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>10回の再割付試行を通じて、対象者1(正確には、対象者1に相当する割付可能性を持っている人)は延べ6回抽出され、そのうちカテゴリ1のスロット6への割付が生じたのは0回でした。割付確率はおよそ0/6
-=
-0.00であったと推定されます。実際には割付確率は0ではないので(もしそうであれば割付試行において割付が起きなかったはずです)、0に近い値であるということを意味しています。</p>
-</div>
-<div class="section level3">
-<h3 id="多数の試行の実行と保存">5.2 多数の試行の実行と保存<a class="anchor" aria-label="anchor" href="#%E5%A4%9A%E6%95%B0%E3%81%AE%E8%A9%A6%E8%A1%8C%E3%81%AE%E5%AE%9F%E8%A1%8C%E3%81%A8%E4%BF%9D%E5%AD%98"></a>
-</h3>
-<p>上の例では、割付試行を1回、再割付試行を10回行い、
-シミュレーションの結果をデータフレームのリストとして取得しました。</p>
 <p>バイアスを評価するためには、十分な数の再割付試行を繰り返す必要があります。
-そこで今度は、割付試行を10試行、再割付試行を割付試行あたり1000試行繰り返してみましょう。</p>
+そこで、割付試行を10試行、再割付試行を割付試行あたり1000試行繰り返してみましょう。</p>
 <p>シミュレーションの結果はサイズが大きいので、SQLiteデータベース上に
 保存したほうがよいでしょう。
 以下の例では、SQLiteデータベースファイルとして<code>../tools/rSurveyAssign_vignette_bias_1.sqlite</code>を
@@ -617,7 +210,7 @@ size”</a>を参照して下さい。</p>
 <p>下の例では、ログファイルを<code>C:/work/simBias.log</code>としています。
 RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/work/simBias.log</code>を
 実行すると、ログファイルを監視できます。</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## 都合によりコメントアウトしています</span></span>
 <span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="co"># simBias (</span></span>
@@ -631,129 +224,110 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="co">#   sLOGFILE    = "c:/work/simBias.log"</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
 </div>
-</div>
 <div class="section level2">
-<h2 id="割付バイアスの評価">6. 割付バイアスの評価<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E8%A9%95%E4%BE%A1"></a>
+<h2 id="割付バイアスの評価">4. 割付バイアスの評価<a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E3%81%AE%E8%A9%95%E4%BE%A1"></a>
 </h2>
 <p>では、割付バイアスを評価してみましょう。関数<code>getBias</code>を使います。</p>
 <div class="section level3">
-<h3 id="カテゴリごとのバイアス">6.1 カテゴリごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
+<h3 id="カテゴリごとのバイアス">4.1 カテゴリごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h3>
 <p>関数<code>getSize</code>の引数<code>sTYPE</code>を<code>cat</code>とすると、
 各試行での各カテゴリごとの割付バイアスを評価することができます。
 <code>getBias</code>の返し値はデータフレームです。内容をみてみましょう。</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult1_c</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getBias.html">getBias</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"cat"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_bias_1.sqlite"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dfResult1_c</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 11</span></span></span>
 <span><span class="co">#&gt;   nTrial  nCat nNumAssignable nNumAssign gCVHatP gHatCVP gHatDeff gHatESS</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1     1           <span style="text-decoration: underline;">5</span>452       <span style="text-decoration: underline;">2</span>060   0.334   0.331     1.06   <span style="text-decoration: underline;">1</span>938.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1     2           <span style="text-decoration: underline;">5</span>389       <span style="text-decoration: underline;">1</span>956   0.150   0.144     1.02   <span style="text-decoration: underline;">1</span>926.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      1     3           <span style="text-decoration: underline;">4</span>652       <span style="text-decoration: underline;">1</span>542   0.126   0.116     1.01   <span style="text-decoration: underline;">1</span>528.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      2     1           <span style="text-decoration: underline;">5</span>469       <span style="text-decoration: underline;">2</span>042   0.354   0.351     1.07   <span style="text-decoration: underline;">1</span>913.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      2     2           <span style="text-decoration: underline;">5</span>409       <span style="text-decoration: underline;">2</span>109   0.163   0.157     1.02   <span style="text-decoration: underline;">2</span>073.</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      2     3           <span style="text-decoration: underline;">4</span>680       <span style="text-decoration: underline;">1</span>453   0.166   0.158     1.01   <span style="text-decoration: underline;">1</span>434.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1     1           <span style="text-decoration: underline;">5</span>578       <span style="text-decoration: underline;">2</span>210   0.339   0.336     1.06   <span style="text-decoration: underline;">2</span>084.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1     2           <span style="text-decoration: underline;">5</span>513       <span style="text-decoration: underline;">1</span>995   0.150   0.144     1.02   <span style="text-decoration: underline;">1</span>965.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      1     3           <span style="text-decoration: underline;">4</span>759       <span style="text-decoration: underline;">1</span>478   0.127   0.117     1.01   <span style="text-decoration: underline;">1</span>465.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      2     1           <span style="text-decoration: underline;">5</span>386       <span style="text-decoration: underline;">1</span>966   0.363   0.360     1.07   <span style="text-decoration: underline;">1</span>833.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      2     2           <span style="text-decoration: underline;">5</span>300       <span style="text-decoration: underline;">2</span>020   0.152   0.146     1.02   <span style="text-decoration: underline;">1</span>990.</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      2     3           <span style="text-decoration: underline;">4</span>608       <span style="text-decoration: underline;">1</span>527   0.157   0.149     1.01   <span style="text-decoration: underline;">1</span>508.</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: gCovHatQR &lt;dbl&gt;, gBarR_P &lt;dbl&gt;, gBarR_S &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>行は各割付試行における各カテゴリを表しています。</p>
+<p>行は各割付試行における各カテゴリを表しています。
+各列は以下を表しています。</p>
 <ul>
 <li>
 <code>nNumAssignable</code>:
-割付可能であった対象者数。試行1ではカテゴリ1に割付可能な対象者が5452人いました。</li>
+割付可能であった対象者数。試行1ではカテゴリ1に割付可能な対象者が5578人いました。</li>
 <li>
 <code>nNumAssign</code>:
-割り付けられた対象者数。試行1ではカテゴリ1に2060人が割り付けられました。</li>
-<li>
-<code>gCVHatP</code>: 割付確率の推定値の変動係数<span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>。この値が大きいほど、割付バイアスが大きくなる見込みが高いと考えられます。</li>
+割り付けられた対象者数。試行1ではカテゴリ1に2210人が割り付けられました。</li>
 <li>
 <code>gHatCVP</code>: 割付確率の変動係数の推定値<span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span>。この値が大きいほど、割付バイアスが大きくなる見込みが高いと考えられます。</li>
-<li>
-<code>gHatDeff</code>: デザイン効果の推定値<span class="math inline">\(\hat{\mathrm{Deff}}\)</span>。下限は1であり、割付バイアスが大きいと思われるときに大きくなります。</li>
-<li>
-<code>gHatESS</code>: 実質標本サイズの推定値<span class="math inline">\(\hat{\mathrm{ESS}}\)</span>。上限は割り付けられた対象者数であり、割付バイアスが大きいと思われる時に小さくなります。</li>
-<li>
-<code>gCovHatQR</code>:
-スケーリングした割付確率の推定値と割付可能レシオとの共分散の推定値<span class="math inline">\(\mathrm{Cov}(\hat{q},
-r)\)</span>。通常は負の値となり、割付バイアスが大きいほど0から離れます。</li>
-<li>
-<code>gBarR_P</code>, <code>gBarR_S</code>:
-当該カテゴリに割付可能であった人における割付可能レシオの平均と、当該カテゴリに割り付けられた人における割付可能レシオの平均。通常は後者のほうが小さくなります。<code>gCovHatQR</code>はこの2つの値の差の期待値だと考えることもできます。</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="スロットごとのバイアス">6.2 スロットごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
+<h3 id="スロットごとのバイアス">4.2 スロットごとのバイアス<a class="anchor" aria-label="anchor" href="#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88%E3%81%94%E3%81%A8%E3%81%AE%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9"></a>
 </h3>
 <p>関数<code>getSize</code>の引数<code>sTYPE</code>を<code>slot</code>とすると、
 各試行での各スロットごとの割付バイアスを評価することができます。
 <code>getBias</code>の返し値はデータフレームです。内容をみてみましょう。</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult1_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getBias.html">getBias</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"slot"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_bias_1.sqlite"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dfResult1_s</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 12</span></span></span>
 <span><span class="co">#&gt;   nTrial nParentCat nSlot nNumAssignable nNumAssign gCVHatP gHatCVP gHatDeff</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1          1     1           <span style="text-decoration: underline;">1</span>723        100   1.37    1.36      6.81</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1          1     2            831        100   0.573   0.565     1.59</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      1          1     3           <span style="text-decoration: underline;">1</span>183        100   0.822   0.814     1.48</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1          1     4           <span style="text-decoration: underline;">1</span>273        100   0.876   0.869     6.80</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      1          1     5            271        100   0.161   0.154     1.02</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1          1     6           <span style="text-decoration: underline;">1</span>212        100   0.809   0.801     1.96</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1          1     1           <span style="text-decoration: underline;">1</span>775        100   1.37    1.36    <span style="color: #BB0000;">NaN</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1          1     2            855        100   0.566   0.558     1.62</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      1          1     3           <span style="text-decoration: underline;">1</span>217        100   0.811   0.803     1.41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1          1     4           <span style="text-decoration: underline;">1</span>316        100   0.874   0.866    26.0 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      1          1     5            283        100   0.165   0.158     1.02</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1          1     6           <span style="text-decoration: underline;">1</span>248        100   0.814   0.805     2.16</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: gHatESS &lt;dbl&gt;, gCovHatQR &lt;dbl&gt;, gBarR_P &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   gBarR_S &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>行は各割付試行における各カテゴリの各スロットを表しています。各変数の意味はカテゴリの場合と同様です。</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="分析例-割付方法の間の比較">7. 分析例: 割付方法の間の比較<a class="anchor" aria-label="anchor" href="#%E5%88%86%E6%9E%90%E4%BE%8B-%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%AE%E9%96%93%E3%81%AE%E6%AF%94%E8%BC%83"></a>
+<h2 id="分析例-割付方法の間の比較">5. 分析例: 割付方法の間の比較<a class="anchor" aria-label="anchor" href="#%E5%88%86%E6%9E%90%E4%BE%8B-%E5%89%B2%E4%BB%98%E6%96%B9%E6%B3%95%E3%81%AE%E9%96%93%E3%81%AE%E6%AF%94%E8%BC%83"></a>
 </h2>
 <p>こんどは、別の割付方法を試してみます。</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 割付のセッティング</span></span>
 <span><span class="va">lSetting2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
 <span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lSlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>  nCAT_MAX      <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'nonadaptive'</span>, </span>
-<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">'open'</span>, </span>
-<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">'shortnum'</span>, </span>
-<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">'none'</span>,</span>
+<span>  sCAT_ASSIGN   <span class="op">=</span> <span class="st">'all-shortnum-open-none'</span>,  <span class="co"># (ver 0.3までの指定方法ではnonadaptive,open,shortnum,none)</span></span>
 <span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>, </span>
-<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">'nonadaptive'</span>, </span>
-<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'open'</span>, </span>
-<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'shortnum'</span>, </span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'none'</span></span>
+<span>  sSLOT_ASSIGN  <span class="op">=</span> <span class="st">'all-shortnum-open-none'</span>   <span class="co"># (ver 0.3までの指定方法ではnonadaptive,open,shortnum,none)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="co">## 都合によりコメントアウトしています</span></span>
-<span><span class="co">#  simBias (</span></span>
-<span><span class="co">#    lPOP       = lPop, </span></span>
-<span><span class="co">#    lSETTING   = lSetting2, </span></span>
-<span><span class="co">#    sDBPATH    = "../tools/rSurveyAssign_vignette_bias_2.sqlite",</span></span>
-<span><span class="co">#    nNUMTRIAL  = 10,</span></span>
-<span><span class="co">#    nNUMRETRIAL = 500,</span></span>
-<span><span class="co">#    bAPPEND    = FALSE, </span></span>
-<span><span class="co">#    bPARALLEL  = TRUE,</span></span>
-<span><span class="co">#    sLOGFILE   = "c:/work/simWeight.log"</span></span>
-<span><span class="co">#  )</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## 都合によりコメントアウトしています</span></span>
+<span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
+<span><span class="co"># simBias (</span></span>
+<span><span class="co">#   lPOP       = lPop, </span></span>
+<span><span class="co">#   lSETTING   = lSetting2, </span></span>
+<span><span class="co">#   sDBPATH    = "../tools/rSurveyAssign_vignette_bias_2.sqlite",</span></span>
+<span><span class="co">#   nNUMTRIAL  = 10,</span></span>
+<span><span class="co">#   nNUMRETRIAL = 500,</span></span>
+<span><span class="co">#   bAPPEND    = FALSE, </span></span>
+<span><span class="co">#   bPARALLEL  = TRUE,</span></span>
+<span><span class="co">#   sLOGFILE   = "c:/work/simWeight.log"</span></span>
+<span><span class="co"># )</span></span></code></pre></div>
 <p>スロットについての割付バイアスを調べてみましょう。</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult2_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getBias.html">getBias</a></span><span class="op">(</span>sTYPE <span class="op">=</span> <span class="st">"slot"</span>, sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_bias_2.sqlite"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dfResult2_s</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 12</span></span></span>
 <span><span class="co">#&gt;   nTrial nParentCat nSlot nNumAssignable nNumAssign gCVHatP gHatCVP gHatDeff</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1          1     1           <span style="text-decoration: underline;">3</span>496        100   0.288  0.029<span style="text-decoration: underline;">9</span>     1.13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1          1     2           <span style="text-decoration: underline;">1</span>654        100   0.197  0.038<span style="text-decoration: underline;">5</span>     1.05</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      1          1     1           <span style="text-decoration: underline;">3</span>496        100   0.288  0.026<span style="text-decoration: underline;">8</span>     1.13</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      1          1     2           <span style="text-decoration: underline;">1</span>654        100   0.198  0.038<span style="text-decoration: underline;">9</span>     1.05</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      1          1     3           <span style="text-decoration: underline;">2</span>363        100   0.231  0          1.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1          1     4           <span style="text-decoration: underline;">2</span>516        100   0.243  0.024<span style="text-decoration: underline;">4</span>     1.08</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>      1          1     4           <span style="text-decoration: underline;">2</span>516        100   0.243  0.026<span style="text-decoration: underline;">4</span>     1.08</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>      1          1     5            565        100   0.104  0          1.01</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1          1     6           <span style="text-decoration: underline;">2</span>352        100   0.239  0.053<span style="text-decoration: underline;">2</span>     1.08</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>      1          1     6           <span style="text-decoration: underline;">2</span>352        100   0.239  0.052<span style="text-decoration: underline;">4</span>     1.08</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: gHatESS &lt;dbl&gt;, gCovHatQR &lt;dbl&gt;, gBarR_P &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   gBarR_S &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>どうやら、この割付方法では割付バイアスがきわめて小さいようです。先ほどの割付方法と
-比べてみましょう。指標として<span class="math inline">\(\mathrm{Cov}(\hat{q}, r)\)</span>を使います。</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+比べてみましょう。</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">dfPlot</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>  <span class="va">dfResult1_s</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>nMethod <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -764,7 +338,7 @@ r)\)</span>。通常は負の値となり、割付バイアスが大きいほど
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `summarise()` has grouped output by 'nMethod', 'nParentCat'. You can override</span></span>
 <span><span class="co">#&gt; using the `.groups` argument.</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">dfX</span> <span class="op">&lt;-</span> <span class="va">dfPlot</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">nParentCat</span>, <span class="va">nSlot</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -787,16 +361,16 @@ r)\)</span>。通常は負の値となり、割付バイアスが大きいほど
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="va">g</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vignette_bias_files/figure-html/unnamed-chunk-13-1.png" width="480"></p>
+<p><img src="vignette_bias_files/figure-html/unnamed-chunk-9-1.png" width="480"></p>
 <p>さきほどの割付方法と異なり、指標の値がほぼ0になっています。</p>
 <p>なお、この割付方法をよく見ると、割付カテゴリの最大数が1であり、カテゴリ割付とスロット割付の両方で(<code>nonadaptive</code>,
 <code>open</code>, <code>shortnum</code>,
-<code>none</code>)を用いています。1.4の最後に述べたように、この割付方法は、
+<code>none</code>)を用いています。この割付方法は、
 割付バイアスを生まない数少ない割付方法のうちのひとつです。
 上の結果はそのことをシミュレーションによって裏付けています。</p>
 </div>
 <div class="section level2">
-<h2 id="まとめ-割付バイアス評価に関連する関数">8. まとめ: 割付バイアス評価に関連する関数<a class="anchor" aria-label="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81-%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E8%A9%95%E4%BE%A1%E3%81%AB%E9%96%A2%E9%80%A3%E3%81%99%E3%82%8B%E9%96%A2%E6%95%B0"></a>
+<h2 id="まとめ-割付バイアス評価に関連する関数">6. まとめ: 割付バイアス評価に関連する関数<a class="anchor" aria-label="anchor" href="#%E3%81%BE%E3%81%A8%E3%82%81-%E5%89%B2%E4%BB%98%E3%83%90%E3%82%A4%E3%82%A2%E3%82%B9%E8%A9%95%E4%BE%A1%E3%81%AB%E9%96%A2%E9%80%A3%E3%81%99%E3%82%8B%E9%96%A2%E6%95%B0"></a>
 </h2>
 <p><code>rSurveyAssign</code>パッケージが提供する関数のうち、割付バイアスの評価に関連する関数は以下の通りです。</p>
 <ul>

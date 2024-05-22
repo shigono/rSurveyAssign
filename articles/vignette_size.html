@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">rSurveyAssign</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
                         <h4 data-toc-skip class="author">Shigeru
 ONO</h4>
             
-            <h4 data-toc-skip class="date">2024-05-21</h4>
+            <h4 data-toc-skip class="date">2024-05-22</h4>
       
       
       <div class="d-none name"><code>vignette_size.Rmd</code></div>
@@ -215,70 +215,27 @@ K_1,...,K_J\)</span>)に制限はありません。母集団のメンバー数 <
 <div class="section level2">
 <h2 id="セッティング">2. セッティング<a class="anchor" aria-label="anchor" href="#%E3%82%BB%E3%83%83%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0"></a>
 </h2>
-<p>次に、割付のセッティングを指定します。ここでいうセッティングとは、以下を指します。</p>
-<ul>
-<li>各スロットの目標対象者数</li>
-<li>対象者に割り付けるカテゴリ数の上限</li>
-<li>カテゴリ割付の方法</li>
-<li>対象者に割り付けるスロット数の上限</li>
-<li>スロット割付の方法</li>
-</ul>
-<p><code>rSurveyAssign</code>パッケージは、セッティングを表すクラス<code>assignsetting</code>を用意しています。
-<code>assignsetting</code>クラスのオブジェクトは、関数<code>makeSetting</code>で作成します。</p>
-<p>関数<code>makeSetting</code>の引数は次のとおりです。</p>
-<ul>
-<li>
-<code>lSLOT_REQUEST</code>: 各スロットの目標対象者数。
-<ul>
-<li>
-<span class="math inline">\(J\)</span>個の要素を持つリスト。<span class="math inline">\(j\)</span>番目の要素は長さ<span class="math inline">\(K_j\)</span>の整数ベクトル。</li>
-<li>
-<span class="math inline">\(j\)</span>番目の要素であるベクトルの<span class="math inline">\(k\)</span>番目の要素は、カテゴリ<span class="math inline">\(j\)</span>のスロット<span class="math inline">\(k\)</span>に割り付ける対象者数の下限を表します。
-欠損は許容されません。</li>
-</ul>
-</li>
-<li>
-<code>nCAT_MAX</code>: 割付カテゴリの最大数。</li>
-<li>
-<code>nSLOT_MAX</code>: 割付スロットの最大数。</li>
-<li>
-<code>sCAT_TYPE</code>: カテゴリの割付方法(割付タイプ)。</li>
-<li>
-<code>sCAT_FILTER</code>: カテゴリの割付方法(絞り込み条件)。</li>
-<li>
-<code>sCAT_ORDER</code>: カテゴリの割付方法(順序付け条件)。</li>
-<li>
-<code>sCAT_EXCLUDE</code>: カテゴリの割付方法(除外条件)。</li>
-<li>
-<code>sSLOT_TYPE</code>: スロットの割付方法(割付タイプ)。</li>
-<li>
-<code>sSLOT_FILTER</code>: スロットの割付方法(絞り込み条件)。</li>
-<li>
-<code>sSLOT_ORDER</code>: スロットの割付方法(順序付け条件)。</li>
-<li>
-<code>sSLOT_EXCLUDE</code>: スロットの割付方法(除外条件)。</li>
-</ul>
-<p>カテゴリ・スロットの割付方法については <a href="vignette_assign.html">“1. How to assign
-subjects”</a>を参照して下さい。</p>
-<p>では、セッティングを指定しましょう。</p>
+<p>次に、割付のセッティングを指定します。 詳細は<a href="vignette_assign.html">“How to assign
+subjects”</a>を参照してください。</p>
 <ul>
 <li>すべてのカテゴリのすべてのスロットに、すくなくとも10人の対象者を割り付けることにします。</li>
 <li>回答負荷の観点から、ひとりの対象者が割り付けられるカテゴリは2つまで、スロットは2つまでとします。</li>
-<li>カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(<code>adaptive</code>,<code>open</code>,<code>random</code>,<code>none</code>)を使用し、スロットの割付方法として(<code>adaptive</code>,<code>all</code>,<code>shortnum</code>,<code>allclosed</code>)を使用します。</li>
+<li>カテゴリの割付方法として<code>assignable-openclosed-open-none</code>
+(ver
+0.3までの指定方法では<code>adaptive</code>,<code>open</code>,<code>random</code>,<code>none</code>)を使用します。</li>
+<li>スロットの割付方法として<code>assignable-shortnum-assignable-allclosed</code>
+(ver
+0.3までの指定方法では<code>adaptive</code>,<code>all</code>,<code>shortnum</code>,<code>allclosed</code>)を使用します。</li>
+<li>すべてのスロットにおいて割り付けられた対象者数が目標に到達したときに調査を停止します。</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lSetting</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
 <span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lSlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>  nCAT_MAX      <span class="op">=</span> <span class="fl">2</span>, </span>
 <span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>,</span>
-<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">'open'</span>,</span>
-<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">'random'</span>,</span>
-<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">'none'</span>,</span>
-<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">'adaptive'</span>,</span>
-<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'all'</span>,</span>
-<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'shortnum'</span>,</span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span></span>
+<span>  sCAT_ASSIGN   <span class="op">=</span> <span class="st">'assignable-openclosed-open-none'</span>,</span>
+<span>  sSLOT_ASSIGN  <span class="op">=</span> <span class="st">'assignable-shortnum-assignable-allclosed'</span>,</span>
+<span>  bSTOP_WHEN_FULFILLED <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
 </div>
@@ -297,23 +254,23 @@ subjects”</a>を参照して下さい。</p>
 <span>  lSETTING <span class="op">=</span> <span class="va">lSetting</span>        <span class="co"># セッティングを指定する</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [execTrials] start trials (serial) ...</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 573 ; 0.06 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 459 ; 0.057 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] end trials.</span></span></code></pre></div>
-<p>コンソールに表示されるメッセージは、各試行の結果を表しています。この試行では、母集団から調査対象者を573人抽出したところで、
-すべてのスロットにおいて目標対象者数が満たされ、調査が終了しました。</p>
+<p>コンソールに表示されるメッセージは、各試行の結果を表しています。この試行では、母集団から調査対象者を459人抽出したところで
+調査が終了しました。</p>
 <p>シミュレーションの結果をみてみましょう。</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dfResult</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 9</span></span></span>
 <span><span class="co">#&gt;   sRowname nPerson nCat1 nCat2 nParentCat nSlot1 nSlot2 nTrial nSubject</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1           <span style="text-decoration: underline;">6</span>779     3     2          3      7     <span style="color: #BB0000;">NA</span>      1        1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2           <span style="text-decoration: underline;">5</span>953     3     1          3      9     10      1        2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3           <span style="text-decoration: underline;">3</span>232     2     1         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4           <span style="text-decoration: underline;">1</span>226     2     1          2      7      5      1        4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1           <span style="text-decoration: underline;">6</span>779     1     2          1      9      6      1        1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2           <span style="text-decoration: underline;">5</span>953     2     3          3     10      9      1        2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3           <span style="text-decoration: underline;">3</span>232     3     1         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4           <span style="text-decoration: underline;">1</span>226     3     2          3      2      5      1        4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5           <span style="text-decoration: underline;">5</span>372     1    <span style="color: #BB0000;">NA</span>          1      7     10      1        5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 6           <span style="text-decoration: underline;">7</span>652     1     2          1      2      1      1        6</span></span></code></pre></div>
-<p>このシミュレーションでは、1人目の調査対象者として母集団メンバー6779が抽出されました。カテゴリ割付の結果、カテゴリ2,3が割り付けられました。スロット割付の結果、カテゴリ3のスロット7が割り付けられました。</p>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 6           <span style="text-decoration: underline;">7</span>652     2     1          2      2      1      1        6</span></span></code></pre></div>
+<p>このシミュレーションでは、1人目の調査対象者として母集団メンバー6779が抽出されました。カテゴリ割付の結果、カテゴリ1,2が割り付けられました。スロット割付の結果、カテゴリ1のスロット6,9が割り付けられました。</p>
 <p>このシミュレーションで、各スロットには何人の対象者が割り付けられたのでしょうか？
 調べてみましょう。</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -324,9 +281,9 @@ subjects”</a>を参照して下さい。</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mnIn</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, <span class="va">mnIn</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    </span></span>
 <span><span class="co">#&gt;      1  2  3  4  5  6  7  8  9 10</span></span>
-<span><span class="co">#&gt;   1 12 11 10 11 10 11 11 11 13 12</span></span>
-<span><span class="co">#&gt;   2 13 14 13 10 12 13 10 13 10 10</span></span>
-<span><span class="co">#&gt;   3 11 11 11 11 12 10 11 11 12 11</span></span></code></pre></div>
+<span><span class="co">#&gt;   1 11 11 12 11 10 11 11 11 12 12</span></span>
+<span><span class="co">#&gt;   2 13 13 13 10 13 13 10 14 10 10</span></span>
+<span><span class="co">#&gt;   3 10 11 11 11 11 10 12 10 13 10</span></span></code></pre></div>
 <p>上の表は、行がカテゴリ、列がスロット、値がそのスロットに割り付けられた人数を表しています。すべてのスロットに10人以上が割り付けられていることを確認できます。</p>
 </div>
 <div class="section level3">
@@ -350,16 +307,16 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_vig
 RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/work/simSize.log</code>を
 実行すると、ログファイルを監視できます。</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>  <span class="co"># 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
-<span><span class="co">## 都合によりコメントアウトしています</span></span>
+<code class="sourceCode R"><span><span class="co">## 都合によりコメントアウトしています</span></span>
+<span><span class="co"># set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要</span></span>
 <span><span class="co"># dfResult &lt;- simSize (</span></span>
-<span><span class="co">#  lPOP      =  lPop,          </span></span>
-<span><span class="co">#  lSETTING  = lSetting, </span></span>
-<span><span class="co">#  nNUMTRIAL = 500,</span></span>
-<span><span class="co">#  bPARALLEL = TRUE,</span></span>
-<span><span class="co">#  sLOGFILE  = "c:/work/simSize.log",</span></span>
-<span><span class="co">#  sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", </span></span>
-<span><span class="co">#  bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする</span></span>
+<span><span class="co">#   lPOP      =  lPop,          </span></span>
+<span><span class="co">#   lSETTING  = lSetting, </span></span>
+<span><span class="co">#   nNUMTRIAL = 500,</span></span>
+<span><span class="co">#   bPARALLEL = TRUE,</span></span>
+<span><span class="co">#   sLOGFILE  = "c:/work/simSize.log",</span></span>
+<span><span class="co">#   sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", </span></span>
+<span><span class="co">#   bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
 <p>関数<code>getSize_raw</code>で、
 データベースに格納された結果をそのまま取り出すことができます。</p>
@@ -368,12 +325,12 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 9</span></span></span>
 <span><span class="co">#&gt;   sRowname nPerson nCat1 nCat2 nParentCat nSlot1 nSlot2 nTrial nSubject</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1           <span style="text-decoration: underline;">8</span>470     2     1          2      1      2      1        1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2           <span style="text-decoration: underline;">9</span>210     2     3         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3           <span style="text-decoration: underline;">5</span>801     3     1          3      2     <span style="color: #BB0000;">NA</span>      1        3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4           <span style="text-decoration: underline;">6</span>816     2     3          2      3      8      1        4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1           <span style="text-decoration: underline;">8</span>470     2     3          2      1      2      1        1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2           <span style="text-decoration: underline;">9</span>210     1     2          1     10      7      1        2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3           <span style="text-decoration: underline;">5</span>801     2     1          2      1     <span style="color: #BB0000;">NA</span>      1        3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4           <span style="text-decoration: underline;">6</span>816     3     2          3      7      9      1        4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5           <span style="text-decoration: underline;">4</span>868    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      1        5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 6            688     3     2          3      6      3      1        6</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 6            688     1     2          1      2      3      1        6</span></span></code></pre></div>
 <p>なお、これまでにデータベースに格納した試行数は、格納した際に表示されますが、
 関数<code>countSize</code>で調べることもできます。</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -410,24 +367,24 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 500 × 3</span></span></span>
 <span><span class="co">#&gt;    nTrial nNum_scr nNum_main</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>      1      451       189</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>      2      475       191</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>      3      496       182</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>      4      399       179</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>      5      441       188</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>      6      568       186</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>      7      643       192</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>      8      451       186</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>      9      764       190</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     10      529       187</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>      1      420       189</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>      2      504       192</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>      3      480       181</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>      4      459       179</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>      5      365       186</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>      6      568       189</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>      7      679       187</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>      8      425       187</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>      9      705       195</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     10      529       192</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 490 more rows</span></span></span></code></pre></div>
 <p><code>nNum_scr</code>は調査対象者数,
 <code>nNum_main</code>はそのうち1つ以上のスロットに割り付けられた人数を表しています。</p>
 <p>調査対象者数の平均を求めてみましょう。</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dfResult_s</span><span class="op">$</span><span class="va">nNum_scr</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 525.892</span></span></code></pre></div>
-<p>必要な調査対象者数の平均は約525人となりました。</p>
+<span><span class="co">#&gt; [1] 522.444</span></span></code></pre></div>
+<p>必要な調査対象者数の平均は約522人となりました。</p>
 <p>実務的には、必要な調査対象者数の平均だけではなく、その分散にも関心が持たれます。
 仮に分散が大きい場合、実際に調査を行った際の調査対象者数は運悪く大きな値となり、
 予算をオーバーしてしまいかねません。
@@ -453,9 +410,9 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">dfResult_c</span><span class="op">$</span><span class="va">nNum</span>, <span class="va">dfResult_c</span><span class="op">$</span><span class="va">nCat</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       1       2       3 </span></span>
-<span><span class="co">#&gt; 319.320 354.090 248.538</span></span></code></pre></div>
-<p>カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約383人, 420人,
-310人となりました。</p>
+<span><span class="co">#&gt; 317.416 350.768 245.866</span></span></code></pre></div>
+<p>カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約318人, 350人,
+245人となりました。</p>
 <p>関数<code>getSize</code>の引数<code>sTYPE</code>を<code>slot</code>とすると、各スロットの割付人数を調べることができます。</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dfResult_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getSize.html">getSize</a></span> <span class="op">(</span></span>
@@ -464,11 +421,11 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">dfResult_s</span><span class="op">$</span><span class="va">nNum</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">dfResult_s</span><span class="op">$</span><span class="va">nParentCat</span>, <span class="va">dfResult_s</span><span class="op">$</span><span class="va">nSlot</span><span class="op">)</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        1      2      3      4      5      6      7      8      9     10</span></span>
-<span><span class="co">#&gt; 1 11.570 11.048 11.274 11.318 10.002 11.226 10.946 11.214 11.748 12.546</span></span>
-<span><span class="co">#&gt; 2 13.534 12.932 12.592 10.286 12.912 12.226 10.412 12.998 10.538 11.174</span></span>
-<span><span class="co">#&gt; 3 11.320 10.898 11.092 10.964 11.106 10.004 11.174 11.094 11.342 10.840</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 11.580 11.074 11.240 11.294 10.002 11.194 10.890 11.144 11.690 12.522</span></span>
+<span><span class="co">#&gt; 2 13.532 12.910 12.608 10.220 12.918 12.234 10.378 12.988 10.452 11.154</span></span>
+<span><span class="co">#&gt; 3 11.328 10.902 11.150 11.034 11.096 10.000 11.196 11.080 11.310 10.822</span></span></code></pre></div>
 <p>たとえば、カテゴリ1のスロット1の割付人数は、平均して約11.5人となりました。</p>
-<p>割付人数が目標である10人を超えるのは、スロット割付の絞り込み条件を<code>all</code>にしたため、
+<p>割付人数が目標である10人を超えるのは、この割り付け方法の場合、
 すでに目標に到達しているスロットへの割付が発生する場合があるからです。</p>
 </div>
 </div>
@@ -477,7 +434,9 @@ RStudioを使っているなら、Terminalウィンドウで<code>tail -F C:/wor
 </h2>
 <p>調査に必要な対象者数がカテゴリ割付・スロット割付の方法によって
 どのように変わるかを、シミュレーションによって推測することができます。</p>
-<p>たとえば、スロット割付の方法を(<code>adaptive</code>,<code>all</code>,<code>random</code>,<code>allclosed</code>)に変更して
+<p>たとえば、スロット割付の方法を<code>assignable-random-assignable-allclosed</code>
+(ver
+0.3までの指定方法では<code>adaptive</code>,<code>all</code>,<code>random</code>,<code>allclosed</code>)に変更して
 シミュレーションしてみます。
 SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_demo2.sqlite</code>を
 作成します。20試行実行します。</p>
@@ -485,15 +444,9 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <code class="sourceCode R"><span><span class="va">lSetting2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/makeSetting.html">makeSetting</a></span><span class="op">(</span></span>
 <span>  lSLOT_REQUEST <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lSlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mbSlot</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>  nCAT_MAX      <span class="op">=</span> <span class="fl">2</span>, </span>
-<span>  sCAT_TYPE     <span class="op">=</span> <span class="st">'adaptive'</span>,</span>
-<span>  sCAT_FILTER   <span class="op">=</span> <span class="st">'open'</span>,</span>
-<span>  sCAT_ORDER    <span class="op">=</span> <span class="st">'random'</span>,</span>
-<span>  sCAT_EXCLUDE  <span class="op">=</span> <span class="st">'none'</span>,</span>
+<span>  sCAT_ASSIGN   <span class="op">=</span> <span class="st">'assignable-openclosed-open-none'</span>,</span>
 <span>  nSLOT_MAX     <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  sSLOT_TYPE    <span class="op">=</span> <span class="st">'adaptive'</span>,</span>
-<span>  sSLOT_FILTER  <span class="op">=</span> <span class="st">'all'</span>,</span>
-<span>  sSLOT_ORDER   <span class="op">=</span> <span class="st">'random'</span>,</span>
-<span>  sSLOT_EXCLUDE <span class="op">=</span> <span class="st">'allclosed'</span></span>
+<span>  sSLOT_ASSIGN  <span class="op">=</span> <span class="st">'assignable-random-assignable-allclosed'</span>,</span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [makeSetting] assign names to lSLOT_REQUEST ...</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -506,26 +459,26 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span>  bAPPEND        <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [execTrials] start trials (serial) ...</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.092 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 2 ; extract: 1303 ; 0.084 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 3 ; extract: 1201 ; 0.085 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1505 ; 0.1 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1380 ; 0.094 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 1234 ; 0.086 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1177 ; 0.084 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 8 ; extract: 1371 ; 0.182 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 9 ; extract: 1041 ; 0.073 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1385 ; 0.088 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 1081 ; 0.077 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1555 ; 0.099 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 979 ; 0.069 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 14 ; extract: 1495 ; 0.091 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 15 ; extract: 1128 ; 0.079 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 16 ; extract: 1072 ; 0.075 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1437 ; 0.085 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 18 ; extract: 1157 ; 0.075 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1158 ; 0.082 sec.</span></span>
-<span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 991 ; 0.073 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 1 ; extract: 1235 ; 0.093 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 2 ; extract: 1021 ; 0.085 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 3 ; extract: 1206 ; 0.096 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 4 ; extract: 1398 ; 0.106 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 5 ; extract: 1156 ; 0.094 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 6 ; extract: 931 ; 0.074 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 7 ; extract: 1682 ; 0.124 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 8 ; extract: 1640 ; 0.129 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 9 ; extract: 1516 ; 0.111 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 10 ; extract: 1293 ; 0.199 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 11 ; extract: 966 ; 0.073 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 12 ; extract: 1023 ; 0.079 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 13 ; extract: 1515 ; 0.111 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 14 ; extract: 931 ; 0.074 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 15 ; extract: 1518 ; 0.107 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 16 ; extract: 1393 ; 0.104 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 17 ; extract: 1150 ; 0.089 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 18 ; extract: 1585 ; 0.116 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 19 ; extract: 1239 ; 0.095 sec.</span></span>
+<span><span class="co">#&gt; [execTrials] nTrial: 20 ; extract: 1359 ; 0.103 sec.</span></span>
 <span><span class="co">#&gt; [execTrials] end trials.</span></span>
 <span><span class="co">#&gt; [simSize] # Accumlated Trials: 20</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
@@ -535,9 +488,9 @@ SQLiteデータベースファイルとして、<code>../tools/rSurveyAssign_dem
 <span>  sDBPATH <span class="op">=</span> <span class="st">"../tools/rSurveyAssign_vignette_size_2.sqlite"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dfResult2_s</span><span class="op">$</span><span class="va">nNum_scr</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1244.25</span></span></code></pre></div>
-<p>必要な調査対象者数の平均は約1244人となりました。</p>
-<p>スロット割付方法を(<code>adaptive</code>,<code>all</code>,<code>shortnum</code>,<code>allclosed</code>)としたときの調査対象者数の平均は約525人でしたから、
+<span><span class="co">#&gt; [1] 1287.85</span></span></code></pre></div>
+<p>必要な調査対象者数の平均は約1287人となりました。</p>
+<p>スロット割付方法を<code>assignable-shortnum-assignable-allclosed</code>としたときの調査対象者数の平均は約522人でしたから、
 こちらの割付方法のほうがはるかに多くの調査対象者を必要とすることがわかります。</p>
 </div>
 <div class="section level2">
