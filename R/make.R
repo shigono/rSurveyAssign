@@ -715,15 +715,9 @@ makeSurvey <- function(
   #'   lSETTING = makeSetting(
   #'     lSLOT_REQUEST = list(rep(10, 10), rep(10, 10), rep(10, 10)),
   #'     nCAT_MAX      = 2,
-  #'     sCAT_TYPE     = 'adaptive',
-  #'     sCAT_FILTER   = "open",
-  #'     sCAT_ORDER    = "random",
-  #'     sCAT_EXCLUDE  = "none",
-  #'     nSLOT_MAX      = 2,
-  #'     sSLOT_TYPE    = "adaptive",
-  #'     sSLOT_FILTER  = "all",
-  #'     sSLOT_ORDER   = "shortnum",
-  #'     sSLOT_EXCLUDE = "allclosed"
+  #'     sCAT_ASSIGN   = 'assignable-openclosed-open-none',
+  #'     nSLOT_MAX     = 2,
+  #'     sSLOT_ASSIGN  = 'assignable-shortnum-assignable-allclosed'
   #'   ),
   #'   mnASSIGNCAT   = as.matrix(surveydata[, c("nAssignedCat_1", "nAssignedCat_2")]),
   #'   anPARENTCAT   = as.vector(surveydata$nAssignedCat_Slots),

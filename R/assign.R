@@ -476,10 +476,7 @@ sub_checkslot <- function(
     cat("[sub_checkslot] anSlotNo_Count:", anSlotNo_Count, "\n")
     cat("[sub_checkslot] anSlotNo_Request:", anSlotNo_Request, "\n")
     cat("[sub_checkslot] nSLOT_MAX:", nSLOT_MAX, "\n")
-    cat("[sub_checkslot] sSLOT_TYPE:", sSLOT_TYPE, "\n")
-    cat("[sub_checkslot] sSLOT_FILTER:", sSLOT_FILTER, "\n")
-    cat("[sub_checkslot] sSLOT_ORDER:", sSLOT_ORDER, "\n")
-    cat("[sub_checkslot] sSLOT_EXCLUDE:", sSLOT_EXCLUDE, "\n")
+   cat("[sub_checkslot] asSLOT_ASSIGN:", asSLOT_ASSIGN, "\n")
 
     ## abSlotNo_Hit
     ## 欠損無し, 0か1

@@ -7,15 +7,9 @@
 makeSetting(
   lSLOT_REQUEST,
   nCAT_MAX,
-  sCAT_TYPE = c("adaptive", "nonadaptive"),
-  sCAT_FILTER = c("all", "open"),
-  sCAT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
-  sCAT_EXCLUDE = c("none", "allclosed"),
+  sCAT_ASSIGN,
   nSLOT_MAX,
-  sSLOT_TYPE = c("adaptive", "nonadaptive"),
-  sSLOT_FILTER = c("all", "open"),
-  sSLOT_ORDER = c("random", "openclosed", "shortnum", "shortratio"),
-  sSLOT_EXCLUDE = c("none", "allclosed"),
+  sSLOT_ASSIGN,
   nSUBJECT_MAX = 0,
   nCATSUBJECT_MAX = 0,
   nSLOTSUBJECT_MAX = 0,
@@ -34,32 +28,14 @@ makeSetting(
 \item{nCAT_MAX}{a integer.
 ある対象者に割り付けるカテゴリ数の上限。}
 
-\item{sCAT_TYPE}{a string.
-カテゴリ割付タイプ。詳細はvignetteを参照。}
-
-\item{sCAT_FILTER}{a string.
-カテゴリ割付の際の絞り込み条件。詳細はvignetteを参照。}
-
-\item{sCAT_ORDER}{a string.
-カテゴリ割付の際の順序付け条件。詳細はvignetteを参照。}
-
-\item{sCAT_EXCLUDE}{a string.
-カテゴリ割付の際の除外条件。詳細はvignetteを参照。}
+\item{sCAT_ASSIGN}{a string.
+カテゴリ割付方法。詳細はvignetteを参照。}
 
 \item{nSLOT_MAX}{an integer.
 ある対象者に割り付けるスロット数の上限。}
 
-\item{sSLOT_TYPE}{a string.
-スロット割付タイプ。詳細はvignetteを参照。}
-
-\item{sSLOT_FILTER}{a string.
-スロット割付の際の絞り込み条件。詳細はvignetteを参照。}
-
-\item{sSLOT_ORDER}{a string.
-スロット割付の際の順序付け条件。詳細はvignetteを参照。}
-
-\item{sSLOT_EXCLUDE}{a string.
-スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
+\item{sSLOT_ASSIGN}{a string.
+スロット割付方法。詳細はvignetteを参照。}
 
 \item{nSUBJECT_MAX}{an integer.
 抽出する対象者数の上限。0以上の整数。
@@ -77,12 +53,11 @@ makeSetting(
 スロット割付が生じた対象者数がその値に達したときに中止される。}
 
 \item{bSTOP_WHEN_FULFILLED}{as boolean.
-調査停止ルール。TRUEのとき、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAX
-のいずれにも到達していなくても、すべてのスロットにおいて割り付けられた対象者数が
-目標に到達した時に調査停止となる。
-FALSEの場合は、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかに
-到達した時に調査停止となる。この場合、これらのいずれか1つ以上に0以上の値を
-指定すること。}
+調査停止ルール。nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかが
+0以上である場合、これに到達した時に調査停止となる。さらに、
+この引数がTRUEであるときには、
+すべてのスロットにおいて割り付けられた対象者数が
+目標に到達した時にも調査停止となる。}
 
 \item{sVERBOSE}{a string.
 画面表示レベル。}
@@ -100,15 +75,9 @@ an object of `assignsetting` class.
 lSetting <- makeSetting(
   lSLOT_REQUEST = lapply(1:10, function(x) rep(100, 10)),
   nCAT_MAX      = 1,
-  sCAT_TYPE     = 'adaptive',
-  sCAT_FILTER   = 'open',
-  sCAT_ORDER    = 'shortnum',
-  sCAT_EXCLUDE  = 'allclosed',
+  sCAT_ASSIGN   = 'all-random-assignable-none',
   nSLOT_MAX     = 2,
-  sSLOT_TYPE    = 'adaptive',
-  sSLOT_FILTER  = 'open',
-  sSLOT_ORDER   = 'shortnum',
-  sSLOT_EXCLUDE = 'allclosed',
+  sSLOT_ASSIGN  = 'all-random-assignable-none',
   sVERBOSE      = "detail"
 )
 }

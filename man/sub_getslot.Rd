@@ -10,10 +10,7 @@ sub_getslot(
   anSlotNo_Count,
   anSlotNo_Request,
   nSLOT_MAX,
-  sSLOT_TYPE,
-  sSLOT_FILTER,
-  sSLOT_ORDER,
-  sSLOT_EXCLUDE,
+  asSLOT_ASSIGN,
   bDEBUG
 )
 }
@@ -33,17 +30,8 @@ sub_getslot(
 \item{nSLOT_MAX}{整数。
 ある対象者に割り付けるスロット数の上限。}
 
-\item{sSLOT_TYPE}{文字列。
-スロット割付タイプ。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_FILTER}{文字列。
-スロット割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_ORDER}{文字列。
-スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。}
-
-\item{sSLOT_EXCLUDE}{文字列。
-スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。}
+\item{asSLOT_ASSIGN}{文字列。
+スロット割付方法。指定は必須。詳細はvignetteを参照。}
 
 \item{bDEBUG}{as logical.
 デバッグモード}

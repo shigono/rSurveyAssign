@@ -10,10 +10,7 @@ sub_checkcat(
   anCatNo_OpenCount,
   anCatNo_AllCount,
   nCAT_MAX,
-  sCAT_TYPE,
-  sCAT_FILTER,
-  sCAT_ORDER,
-  sCAT_EXCLUDE,
+  asCAT_ASSIGN,
   bDEBUG
 )
 }
@@ -33,17 +30,8 @@ sub_checkcat(
 \item{nCAT_MAX}{整数。
 ある対象者に割り付けるカテゴリ数の上限。}
 
-\item{sCAT_TYPE}{文字列。
-カテゴリ割付タイプ。}
-
-\item{sCAT_FILTER}{文字列。
-カテゴリ割付の際の絞り込み条件。}
-
-\item{sCAT_ORDER}{文字列。
-カテゴリ割付の際の順序付け条件。}
-
-\item{sCAT_EXCLUDE}{文字列。
-カテゴリ割付の際の除外条件。}
+\item{asCAT_ASSIGN}{文字列ベクトル(長さ4)。
+カテゴリ割付方法。}
 
 \item{bDEBUG}{as logical.
 デバッグモード}

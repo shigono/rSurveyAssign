@@ -508,6 +508,7 @@ getBias <- function(
   #'    \item \code{gBarR_S}: 割り付けられた対象者における割付可能レシオの平均
   #'    }
   #'
+  #'
   #' @importFrom stats var
   #' @importFrom stats cov
   #'
