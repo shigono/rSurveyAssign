@@ -142,6 +142,10 @@ weights”</a>を参照して下さい。</li>
 </h3>
 <p><code>rSurveyAssign</code>パッケージは、 推定された<span class="math inline">\(p_i\)</span>, <span class="math inline">\(V_i\)</span>に基づいて、これから行う調査が持つであろう割付バイアスを評価します。
 本項では、評価の際に用いる指標について説明します。</p>
+<div class="section level4">
+<h4 id="割付確率の変動係数の推定値hatmathrmcvp">
+<strong>割付確率の変動係数の推定値</strong><span class="math inline">\(\hat{\mathrm{CV}}(p)\)</span><a class="anchor" aria-label="anchor" href="#%E5%89%B2%E4%BB%98%E7%A2%BA%E7%8E%87%E3%81%AE%E5%A4%89%E5%8B%95%E4%BF%82%E6%95%B0%E3%81%AE%E6%8E%A8%E5%AE%9A%E5%80%A4hatmathrmcvp"></a>
+</h4>
 <p>あるカテゴリないしスロットにおいて生じる割付バイアスとは、割付可能対象者を通じた「平均が1になるようにスケーリングした割付確率」<span class="math inline">\(q_i = p_i /
 \bar{p}_P\)</span>と、関心ある変数<span class="math inline">\(x_i\)</span>との共分散です。関心ある変数を特定しないと、割付バイアスの大きさもわからないわけです。</p>
 <p>しかし、<span class="math inline">\(q_i\)</span>のばらつきが小さければ、いかなる変数においても割付バイアスは小さいといえます。関心ある変数を特定できない状況では、<span class="math inline">\(q_i\)</span>の標準偏差を割付バイアスの大きさの目安として捉えることができます。</p>
@@ -152,6 +156,31 @@ weights”</a>を参照して下さい。</li>
 (\hat{p}_i - \bar{\hat{p}}_P)^2 } \]</span> <span class="math display">\[ \hat{\mathrm{CV}}(p) = \sqrt{
 (\mathrm{CV}(\hat{p}))^2 - \frac{\frac{1}{N} \sum_{i=1}^N
 \hat{V}_i}{\bar{\hat{p}}_P^2}} \]</span></p>
+</div>
+<div class="section level4">
+<h4 id="そのほかの指標">そのほかの指標<a class="anchor" aria-label="anchor" href="#%E3%81%9D%E3%81%AE%E3%81%BB%E3%81%8B%E3%81%AE%E6%8C%87%E6%A8%99"></a>
+</h4>
+<p>なお、その他の指標として以下も出力されます。</p>
+<ul>
+<li>割付確率の推定値の変動係数 <span class="math inline">\(\mathrm{CV}(\hat{p})\)</span>。上記を参照。</li>
+<li>デザイン効果の推定値 <span class="math inline">\(\hat{\mathrm{Deff}}\)</span>
+</li>
+<li>実質標本サイズの推定値 <span class="math inline">\(\hat{\mathrm{ESS}}\)</span>
+</li>
+<li>スケーリングした割付確率の推定値と割付可能レシオ(全カテゴリないしスロットに占める割付可能カテゴリないしスロットの割合)との共分散の推定値
+<span class="math inline">\(\mathrm{Cov}(\hat{q}, r)\)</span>
+</li>
+<li>割付可能対象者における割付可能レシオの平均</li>
+<li>割り付けられた対象者における割付可能レシオの平均</li>
+</ul>
+<p><span class="math inline">\(\hat{\mathrm{Deff}},  \hat{\mathrm{ESS}}\)</span>の定義は以下の通りです。</p>
+<p><span class="math display">\[ \hat{w}_i = 1 / \hat{p}_i\]</span>
+<span class="math display">\[ \bar{\hat{w}}_S = \frac{1}{n} \sum_{i=1}^n
+\hat{w}_i\]</span> <span class="math display">\[ \hat{\mathrm{Deff}} = 1
++ \left( \frac{1}{\bar{\hat{w}}_S^2} \times \frac{1}{n} \sum_{i=1}^n
+(\hat{w}_i - \bar{\hat{w}}_S)^2 \right) \]</span> <span class="math display">\[ \hat{\mathrm{ESS}} =
+\frac{n}{\hat{\mathrm{Deff}}}\]</span></p>
+</div>
 </div>
 </div>
 <div class="section level2">
