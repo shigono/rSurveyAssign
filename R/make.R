@@ -196,15 +196,9 @@ makePop <- function(
 makeSetting <- function(
   lSLOT_REQUEST,
   nCAT_MAX,
-  sCAT_TYPE         = c("adaptive", "nonadaptive"),
-  sCAT_FILTER       = c("all", "open"),
-  sCAT_ORDER        = c("random", "openclosed", "shortnum", "shortratio"),
-  sCAT_EXCLUDE      = c("none", "allclosed"),
+  sCAT_ASSIGN,
   nSLOT_MAX,
-  sSLOT_TYPE        = c("adaptive", "nonadaptive"),
-  sSLOT_FILTER      = c("all", "open"),
-  sSLOT_ORDER       = c("random", "openclosed", "shortnum", "shortratio"),
-  sSLOT_EXCLUDE     = c("none", "allclosed"),
+  sSLOT_ASSIGN,
   nSUBJECT_MAX      = 0,
   nCATSUBJECT_MAX   = 0,
   nSLOTSUBJECT_MAX  = 0,
@@ -225,24 +219,12 @@ makeSetting <- function(
   #'    名前を付けるならばすべての要素に重複なく名前をつけること。
   #' @param nCAT_MAX a integer.
   #'    ある対象者に割り付けるカテゴリ数の上限。
-  #' @param sCAT_TYPE a string.
-  #'    カテゴリ割付タイプ。詳細はvignetteを参照。
-  #' @param sCAT_FILTER a string.
-  #'    カテゴリ割付の際の絞り込み条件。詳細はvignetteを参照。
-  #' @param sCAT_ORDER a string.
-  #'    カテゴリ割付の際の順序付け条件。詳細はvignetteを参照。
-  #' @param sCAT_EXCLUDE a string.
-  #'    カテゴリ割付の際の除外条件。詳細はvignetteを参照。
+  #' @param sCAT_ASSIGN a string.
+  #'    カテゴリ割付方法。詳細はvignetteを参照。
   #' @param nSLOT_MAX an integer.
   #'    ある対象者に割り付けるスロット数の上限。
-  #' @param sSLOT_TYPE a string.
-  #'    スロット割付タイプ。詳細はvignetteを参照。
-  #' @param sSLOT_FILTER a string.
-  #'    スロット割付の際の絞り込み条件。詳細はvignetteを参照。
-  #' @param sSLOT_ORDER a string.
-  #'    スロット割付の際の順序付け条件。詳細はvignetteを参照。
-  #' @param sSLOT_EXCLUDE a string.
-  #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
+  #' @param sSLOT_ASSIGN a string.
+  #'    スロット割付方法。詳細はvignetteを参照。
   #' @param nSUBJECT_MAX an integer.
   #'    抽出する対象者数の上限。0以上の整数。
   #'    0より大きい値が指定された場合、対象者抽出は、
@@ -256,13 +238,11 @@ makeSetting <- function(
   #'    0より大きい値が指定された場合、対象者抽出は、
   #'    スロット割付が生じた対象者数がその値に達したときに中止される。
   #' @param bSTOP_WHEN_FULFILLED as boolean.
-  #'    調査停止ルール。TRUEのとき、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAX
-  #'    のいずれにも到達していなくても、すべてのスロットにおいて割り付けられた対象者数が
-  #'    目標に到達した時に調査停止となる。
-  #'    FALSEの場合は、nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかに
-  #'    到達した時に調査停止となる。この場合、これらのいずれか1つ以上に0以上の値を
-  #'    指定すること。
-  #'
+  #'    調査停止ルール。nSUBJECT_MAX, nCATSUBJECT_MAX, nSLOTSUBJECT_MAXのいずれかが
+  #'    0以上である場合、これに到達した時に調査停止となる。さらに、
+  #'    この引数がTRUEであるときには、
+  #'    すべてのスロットにおいて割り付けられた対象者数が
+  #'    目標に到達した時にも調査停止となる。
   #' @param sVERBOSE a string.
   #'    画面表示レベル。
   #'
@@ -275,15 +255,9 @@ makeSetting <- function(
   #' lSetting <- makeSetting(
   #'   lSLOT_REQUEST = lapply(1:10, function(x) rep(100, 10)),
   #'   nCAT_MAX      = 1,
-  #'   sCAT_TYPE     = 'adaptive',
-  #'   sCAT_FILTER   = 'open',
-  #'   sCAT_ORDER    = 'shortnum',
-  #'   sCAT_EXCLUDE  = 'allclosed',
+  #'   sCAT_ASSIGN   = 'all-random-assignable-none',
   #'   nSLOT_MAX     = 2,
-  #'   sSLOT_TYPE    = 'adaptive',
-  #'   sSLOT_FILTER  = 'open',
-  #'   sSLOT_ORDER   = 'shortnum',
-  #'   sSLOT_EXCLUDE = 'allclosed',
+  #'   sSLOT_ASSIGN  = 'all-random-assignable-none',
   #'   sVERBOSE      = "detail"
   #' )
 
@@ -313,57 +287,35 @@ makeSetting <- function(
   stopifnot(is.numeric(nCAT_MAX))
   stopifnot(nCAT_MAX > 0)
 
-  ## sCAT_TYPE
+  ## sCAT_ASSIGN
   ## とにかく指定していることが必要
-  stopifnot(length(sCAT_TYPE) == 1)
-  ## あとはチェックなし。推測する
-  sCAT_TYPE <- match.arg(sCAT_TYPE)
-
-  ## sCAT_FILTER
-  ## とにかく指定していることが必要
-  stopifnot(length(sCAT_FILTER) == 1)
-  ## あとはチェックなし。推測する
-  sCAT_FILTER <- match.arg(sCAT_FILTER)
-
-  ## sCAT_ORDER
-  ## とにかく指定していることが必要
-  stopifnot(length(sCAT_ORDER) == 1)
-  ## あとはチェックなし。推測する
-  sCAT_ORDER <- match.arg(sCAT_ORDER)
-
-  ## sCAT_EXCLUDE
-  ## とにかく指定していることが必要
-  stopifnot(length(sCAT_EXCLUDE) == 1)
-  ## あとはチェックなし。推測する
-  sCAT_EXCLUDE <- match.arg(sCAT_EXCLUDE)
+  stopifnot(length(sCAT_ASSIGN) == 1)
+  ## 分割する
+  asCAT_ASSIGN <- strsplit(sCAT_ASSIGN, "-")[[1]]
+  ## 4要素であること
+  stopifnot(length(asCAT_ASSIGN) == 4)
+  ## 各要素が期待どおりであること
+  stopifnot(asCAT_ASSIGN[1] %in% c("all", "assignable"))
+  stopifnot(asCAT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+  stopifnot(asCAT_ASSIGN[3] %in% c("assignable", "open"))
+  stopifnot(asCAT_ASSIGN[4] %in% c("none", "allclosed"))
 
   ## nSLOT_MAX
   stopifnot(is.numeric(nSLOT_MAX))
   stopifnot(nSLOT_MAX > 0)
 
-  ## sSLOT_TYPE
+  ## sSLOT_ASSIGN
   ## とにかく指定していることが必要
-  stopifnot(length(sSLOT_TYPE) == 1)
-  ## あとはチェックなし。推測する
-  sSLOT_TYPE <- match.arg(sSLOT_TYPE)
-
-  ## sSLOT_FILTER
-  ## とにかく指定していることが必要
-  stopifnot(length(sSLOT_FILTER) == 1)
-  ## あとはチェックなし。推測する
-  sSLOT_FILTER <- match.arg(sSLOT_FILTER)
-
-  ## sSLOT_ORDER
-  ## とにかく指定していることが必要
-  stopifnot(length(sSLOT_ORDER) == 1)
-  ## あとはチェックなし。推測する
-  sSLOT_ORDER <- match.arg(sSLOT_ORDER)
-
-  ## sSLOT_EXCLUDE
-  ## とにかく指定していることが必要
-  stopifnot(length(sSLOT_EXCLUDE) == 1)
-  ## あとはチェックなし。推測する
-  sSLOT_EXCLUDE <- match.arg(sSLOT_EXCLUDE)
+  stopifnot(length(sSLOT_ASSIGN) == 1)
+  ## 分割する
+  asSLOT_ASSIGN <- strsplit(sSLOT_ASSIGN, "-")[[1]]
+  ## 4要素であること
+  stopifnot(length(asSLOT_ASSIGN) == 4)
+  ## 各要素が期待どおりであること
+  stopifnot(asSLOT_ASSIGN[1] %in% c("all", "assignable"))
+  stopifnot(asSLOT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+  stopifnot(asSLOT_ASSIGN[3] %in% c("assignable", "open"))
+  stopifnot(asSLOT_ASSIGN[4] %in% c("none", "allclosed"))
 
   ## nSUBJECT_MAX
   ## とにかく指定していることが必要
@@ -416,15 +368,9 @@ makeSetting <- function(
   lOut <- list(
     lSLOT_REQUEST = lSLOT_REQUEST,
     nCAT_MAX      = nCAT_MAX,
-    sCAT_TYPE     = sCAT_TYPE,
-    sCAT_FILTER   = sCAT_FILTER,
-    sCAT_ORDER    = sCAT_ORDER,
-    sCAT_EXCLUDE  = sCAT_EXCLUDE,
+    asCAT_ASSIGN  = asCAT_ASSIGN,
     nSLOT_MAX     = nSLOT_MAX,
-    sSLOT_TYPE    = sSLOT_TYPE,
-    sSLOT_FILTER  = sSLOT_FILTER,
-    sSLOT_ORDER   = sSLOT_ORDER,
-    sSLOT_EXCLUDE = sSLOT_EXCLUDE,
+    asSLOT_ASSIGN  = asSLOT_ASSIGN,
     nSUBJECT_MAX         = nSUBJECT_MAX,
     nCATSUBJECT_MAX      = nCATSUBJECT_MAX,
     nSLOTSUBJECT_MAX     = nSLOTSUBJECT_MAX,

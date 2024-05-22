@@ -106,55 +106,25 @@ lPop <- makePop(mbCAT = mbCat, lSLOT = lSlot)
 
 ## 2. セッティング
 
-次に、割付のセッティングを指定します。ここでいうセッティングとは、以下を指します。
-
-- 各スロットの目標対象者数
-- 対象者に割り付けるカテゴリ数の上限
-- カテゴリ割付の方法
-- 対象者に割り付けるスロット数の上限
-- スロット割付の方法
-
-`rSurveyAssign`パッケージは、セッティングを表すクラス`assignsetting`を用意しています。
-`assignsetting`クラスのオブジェクトは、関数`makeSetting`で作成します。
-
-関数`makeSetting`の引数は次のとおりです。
-
-- `lSLOT_REQUEST`: 各スロットの目標対象者数。
-    - $J$個の要素を持つリスト。$j$番目の要素は長さ$K_j$の整数ベクトル。
-    - $j$番目の要素であるベクトルの$k$番目の要素は、カテゴリ$j$のスロット$k$に割り付ける対象者数の下限を表します。
-    欠損は許容されません。
-- `nCAT_MAX`:      割付カテゴリの最大数。
-- `nSLOT_MAX`:     割付スロットの最大数。
-- `sCAT_TYPE`:     カテゴリの割付方法(割付タイプ)。
-- `sCAT_FILTER`:   カテゴリの割付方法(絞り込み条件)。
-- `sCAT_ORDER`:    カテゴリの割付方法(順序付け条件)。
-- `sCAT_EXCLUDE`:  カテゴリの割付方法(除外条件)。
-- `sSLOT_TYPE`:    スロットの割付方法(割付タイプ)。
-- `sSLOT_FILTER`:  スロットの割付方法(絞り込み条件)。
-- `sSLOT_ORDER`:   スロットの割付方法(順序付け条件)。
-- `sSLOT_EXCLUDE`: スロットの割付方法(除外条件)。
-
-カテゴリ・スロットの割付方法については ["1. How to assign subjects"](vignette_assign.html)を参照して下さい。
-
-では、セッティングを指定しましょう。
+次に、割付のセッティングを指定します。
+詳細は["How to assign subjects"](vignette_assign.html)を参照してください。
 
 - すべてのカテゴリのすべてのスロットに、すくなくとも10人の対象者を割り付けることにします。
 - 回答負荷の観点から、ひとりの対象者が割り付けられるカテゴリは2つまで、スロットは2つまでとします。
-- カテゴリの割付方法(割付タイプ、絞り込み条件、順序付け条件、除外条件)として(`adaptive`,`open`,`random`,`none`)を使用し、スロットの割付方法として(`adaptive`,`all`,`shortnum`,`allclosed`)を使用します。
+- カテゴリの割付方法として`assignable-openclosed-open-none`
+  (ver 0.3までの指定方法では`adaptive`,`open`,`random`,`none`)を使用します。
+- スロットの割付方法として`assignable-shortnum-assignable-allclosed`
+  (ver 0.3までの指定方法では`adaptive`,`all`,`shortnum`,`allclosed`)を使用します。
+- すべてのスロットにおいて割り付けられた対象者数が目標に到達したときに調査を停止します。
 
 ```{r}
 lSetting <- makeSetting(
   lSLOT_REQUEST = lapply(lSlot, function(mbSlot) rep(10, ncol(mbSlot))), 
   nCAT_MAX      = 2, 
   nSLOT_MAX     = 2,
-  sCAT_TYPE     = 'adaptive',
-  sCAT_FILTER   = 'open',
-  sCAT_ORDER    = 'random',
-  sCAT_EXCLUDE  = 'none',
-  sSLOT_TYPE    = 'adaptive',
-  sSLOT_FILTER  = 'all',
-  sSLOT_ORDER   = 'shortnum',
-  sSLOT_EXCLUDE = 'allclosed'
+  sCAT_ASSIGN   = 'assignable-openclosed-open-none',
+  sSLOT_ASSIGN  = 'assignable-shortnum-assignable-allclosed',
+  bSTOP_WHEN_FULFILLED = TRUE
 )
 ```
 
@@ -173,15 +143,15 @@ dfResult <- simSize (
   lSETTING = lSetting        # セッティングを指定する
 )
 ```
-コンソールに表示されるメッセージは、各試行の結果を表しています。この試行では、母集団から調査対象者を573人抽出したところで、
-すべてのスロットにおいて目標対象者数が満たされ、調査が終了しました。
+コンソールに表示されるメッセージは、各試行の結果を表しています。この試行では、母集団から調査対象者を459人抽出したところで
+調査が終了しました。
 
 シミュレーションの結果をみてみましょう。
 ```{r}
 head(dfResult)
 ```
 
-このシミュレーションでは、1人目の調査対象者として母集団メンバー6779が抽出されました。カテゴリ割付の結果、カテゴリ2,3が割り付けられました。スロット割付の結果、カテゴリ3のスロット7が割り付けられました。
+このシミュレーションでは、1人目の調査対象者として母集団メンバー6779が抽出されました。カテゴリ割付の結果、カテゴリ1,2が割り付けられました。スロット割付の結果、カテゴリ1のスロット6,9が割り付けられました。
 
 このシミュレーションで、各スロットには何人の対象者が割り付けられたのでしょうか？ 調べてみましょう。
 ```{r}
@@ -221,16 +191,16 @@ RStudioを使っているなら、Terminalウィンドウで`tail -F C:/work/sim
 
 
 ```{r}
-set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
 ## 都合によりコメントアウトしています
+# set.seed(123)  # 結果を再現するために乱数のシードを設定している。通常は設定不要
 # dfResult <- simSize (
-#  lPOP      =  lPop,          
-#  lSETTING  = lSetting, 
-#  nNUMTRIAL = 500,
-#  bPARALLEL = TRUE,
-#  sLOGFILE  = "c:/work/simSize.log",
-#  sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", 
-#  bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする
+#   lPOP      =  lPop,          
+#   lSETTING  = lSetting, 
+#   nNUMTRIAL = 500,
+#   bPARALLEL = TRUE,
+#   sLOGFILE  = "c:/work/simSize.log",
+#   sDBPATH   = "../tools/rSurveyAssign_vignette_size_1.sqlite", 
+#   bAPPEND   = FALSE # すでにデータベースが存在する場合は上書きする
 # )
 ```
 
@@ -282,7 +252,7 @@ print(dfResult_s)
 print(mean(dfResult_s$nNum_scr))
 ```
 
-必要な調査対象者数の平均は約525人となりました。
+必要な調査対象者数の平均は約522人となりました。
 
 実務的には、必要な調査対象者数の平均だけではなく、その分散にも関心が持たれます。
 仮に分散が大きい場合、実際に調査を行った際の調査対象者数は運悪く大きな値となり、
@@ -310,7 +280,7 @@ dfResult_c <- getSize (
 )
 print(tapply(dfResult_c$nNum, dfResult_c$nCat, mean))
 ```
-カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約383人, 420人, 310人となりました。
+カテゴリ1, 2, 3の割付人数は、平均してそれぞれ約318人, 350人, 245人となりました。
 
 関数`getSize`の引数`sTYPE`を`slot`とすると、各スロットの割付人数を調べることができます。
 
@@ -323,14 +293,15 @@ print(tapply(dfResult_s$nNum, list(dfResult_s$nParentCat, dfResult_s$nSlot), mea
 ```
 たとえば、カテゴリ1のスロット1の割付人数は、平均して約11.5人となりました。
 
-割付人数が目標である10人を超えるのは、スロット割付の絞り込み条件を`all`にしたため、
+割付人数が目標である10人を超えるのは、この割り付け方法の場合、
 すでに目標に到達しているスロットへの割付が発生する場合があるからです。
 
 ## 5. 分析例: 割付方法の比較
 調査に必要な対象者数がカテゴリ割付・スロット割付の方法によって
 どのように変わるかを、シミュレーションによって推測することができます。
 
-たとえば、スロット割付の方法を(`adaptive`,`all`,`random`,`allclosed`)に変更して
+たとえば、スロット割付の方法を`assignable-random-assignable-allclosed`
+(ver 0.3までの指定方法では`adaptive`,`all`,`random`,`allclosed`)に変更して
 シミュレーションしてみます。
 SQLiteデータベースファイルとして、`../tools/rSurveyAssign_demo2.sqlite`を
 作成します。20試行実行します。
@@ -339,15 +310,9 @@ SQLiteデータベースファイルとして、`../tools/rSurveyAssign_demo2.sq
 lSetting2 <- makeSetting(
   lSLOT_REQUEST = lapply(lSlot, function(mbSlot) rep(10, ncol(mbSlot))), 
   nCAT_MAX      = 2, 
-  sCAT_TYPE     = 'adaptive',
-  sCAT_FILTER   = 'open',
-  sCAT_ORDER    = 'random',
-  sCAT_EXCLUDE  = 'none',
+  sCAT_ASSIGN   = 'assignable-openclosed-open-none',
   nSLOT_MAX     = 2,
-  sSLOT_TYPE    = 'adaptive',
-  sSLOT_FILTER  = 'all',
-  sSLOT_ORDER   = 'random',
-  sSLOT_EXCLUDE = 'allclosed'
+  sSLOT_ASSIGN  = 'assignable-random-assignable-allclosed',
 )
 set.seed(1234) # 結果を再現するために乱数のシードを設定している。通常は設定不要
 simSize (
@@ -363,9 +328,9 @@ dfResult2_s <- getSize (
 )
 print(mean(dfResult2_s$nNum_scr))
 ```
-必要な調査対象者数の平均は約1244人となりました。
+必要な調査対象者数の平均は約1287人となりました。
 
-スロット割付方法を(`adaptive`,`all`,`shortnum`,`allclosed`)としたときの調査対象者数の平均は約525人でしたから、
+スロット割付方法を`assignable-shortnum-assignable-allclosed`としたときの調査対象者数の平均は約522人でしたから、
 こちらの割付方法のほうがはるかに多くの調査対象者を必要とすることがわかります。
 
 ## 6. まとめ: 標本サイズ推定のための関数

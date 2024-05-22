@@ -8,10 +8,7 @@ sub_getcat <- function(
   anCatNo_OpenCount,
   anCatNo_AllCount,
   nCAT_MAX,
-  sCAT_TYPE,
-  sCAT_FILTER,
-  sCAT_ORDER,
-  sCAT_EXCLUDE,
+  asCAT_ASSIGN,
   bDEBUG
 ){
   #' Internal: Assign a participant into categories
@@ -31,14 +28,8 @@ sub_getcat <- function(
   #'    カテゴリの番号からスロット数を引くベクトル。
   #' @param nCAT_MAX 整数。
   #'    ある対象者に割り付けるカテゴリ数の上限。
-  #' @param sCAT_TYPE 文字列。
-  #'    カテゴリ割付タイプ。
-  #' @param sCAT_FILTER 文字列。
-  #'    カテゴリ割付の際の絞り込み条件。
-  #' @param sCAT_ORDER 文字列。
-  #'    カテゴリ割付の際の順序付け条件。
-  #' @param sCAT_EXCLUDE 文字列。
-  #'    カテゴリ割付の際の除外条件。
+  #' @param asCAT_ASSIGN 文字列ベクトル(長さ4)。
+  #'    カテゴリ割付方法。
   #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
@@ -80,11 +71,11 @@ sub_getcat <- function(
     ## 欠損無し
     stopifnot(!is.na(nCAT_MAX))
 
-    ## sCAT_TYPE, sCAT_FILTER, sCAT_ORDER, sCAT_EXCLUDE
-    stopifnot(sCAT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sCAT_FILTER  %in% c("all", "open"))
-    stopifnot(sCAT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sCAT_EXCLUDE %in% c("none", "allclosed"))
+    ## asCAT_ASSIGN
+    stopifnot(asCAT_ASSIGN[1] %in% c("all", "assignable"))
+    stopifnot(asCAT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+    stopifnot(asCAT_ASSIGN[3] %in% c("assignable", "open"))
+    stopifnot(asCAT_ASSIGN[4] %in% c("none", "allclosed"))
   }
 
   # 割付可能カテゴリがあるかどうかで分岐する。時間を節約するため
@@ -95,38 +86,26 @@ sub_getcat <- function(
   } else {
     # 割付可能カテゴリがある場合
 
-    # 候補の決定
-    if (sCAT_TYPE == "adaptive"){
-      # 適応的な場合
-      anCandCat <- switch(
-        sCAT_FILTER,
-        "all"  = seq_along(abCatNo_Use)[abCatNo_Use == 1],
-        "open" = seq_along(abCatNo_Use)[abCatNo_Use * abCatNo_Open == 1],
-        stop()
-      )
-    } else {
-      # 非適応的な場合
-      anCandCat <- seq_along(abCatNo_Use)
-    }
+    # Step 1.
+    anCandCat <- switch(
+      asCAT_ASSIGN[1],
+      "all"        = seq_along(abCatNo_Use),
+      "assignable" = seq_along(abCatNo_Use)[abCatNo_Use == 1],
+      stop()
+    )
 
-    # 候補が複数あったら
+    # Step 2.
     if (length(anCandCat) >= 2){
       # 並び変えて
       anCandCat <- switch(
-        sCAT_ORDER,
+        asCAT_ASSIGN[2],
         "random" = sample(anCandCat, length(anCandCat), replace = FALSE),
         "openclosed" = {
-          # anSortkey1 <- -1 * abCatNo_Open[anCandCat]
-          # anSortkey2 <- as.integer(runif(length(anCandCat), min=0, max=99))
-          # anCandCat[order(anSortkey1, anSortkey2)]
           anSortkey <- -1 * abCatNo_Open[anCandCat] * 100 + runif(length(anCandCat), min=0, max=99)
           anSortkey <- as.integer(anSortkey)
           anCandCat[order(anSortkey)]
         },
         "shortnum" = {
-          # anSortkey1 <- -1 * anCatNo_OpenCount[anCandCat]
-          # anSortkey2 <- as.integer(runif(length(anCandCat), min=0, max=99))
-          # anCandCat[order(anSortkey1, anSortkey2)]
           anSortkey <- -1 * anCatNo_OpenCount[anCandCat] * 100 + runif(length(anCandCat), min=0, max=99)
           anSortkey <- as.integer(anSortkey)
           anCandCat[order(anSortkey)]
@@ -143,11 +122,16 @@ sub_getcat <- function(
       anCandCat <- anCandCat[!is.na(anCandCat)]
     }
 
-    # 割付可能カテゴリに絞る
-    anCandCat <- anCandCat[ abCatNo_Use[anCandCat] == 1 ]
+    # Step 3.
+    anCandCat <- switch(
+      asCAT_ASSIGN[3],
+      "assignable" = anCandCat[ abCatNo_Use[anCandCat] == 1 ],
+      "open"       = anCandCat[ abCatNo_Use[anCandCat] * abCatNo_Open[anCandCat] == 1 ],
+      stop()
+    )
 
     # 除外条件を適用
-    if (sCAT_EXCLUDE == "allclosed"){
+    if (asCAT_ASSIGN[4] == "allclosed"){
       if (sum(abCatNo_Open[anCandCat]) == 0){
         anCandCat = c()
       }
@@ -166,10 +150,7 @@ sub_checkcat <- function(
   anCatNo_OpenCount,
   anCatNo_AllCount,
   nCAT_MAX,
-  sCAT_TYPE,
-  sCAT_FILTER,
-  sCAT_ORDER,
-  sCAT_EXCLUDE,
+  asCAT_ASSIGN,
   bDEBUG
 ){
   #' Internal: Check assigned categories
@@ -191,14 +172,8 @@ sub_checkcat <- function(
   #'    カテゴリの番号からスロット数を引くベクトル。
   #' @param nCAT_MAX 整数。
   #'    ある対象者に割り付けるカテゴリ数の上限。
-  #' @param sCAT_TYPE 文字列。
-  #'    カテゴリ割付タイプ。
-  #' @param sCAT_FILTER 文字列。
-  #'    カテゴリ割付の際の絞り込み条件。
-  #' @param sCAT_ORDER 文字列。
-  #'    カテゴリ割付の際の順序付け条件。
-  #' @param sCAT_EXCLUDE 文字列。
-  #'    カテゴリ割付の際の除外条件。
+  #' @param asCAT_ASSIGN 文字列ベクトル(長さ4)。
+  #'    カテゴリ割付方法。
   #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
@@ -240,48 +215,46 @@ sub_checkcat <- function(
     ## 欠損無し
     stopifnot(!is.na(nCAT_MAX))
 
-    ## sCAT_TYPE, sCAT_FILTER, sCAT_ORDER, sCAT_EXCLUDE
-    stopifnot(sCAT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sCAT_FILTER  %in% c("all", "open"))
-    stopifnot(sCAT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sCAT_EXCLUDE %in% c("none", "allclosed"))
+    ## asCAT_ASSIGN
+    stopifnot(asCAT_ASSIGN[1] %in% c("all", "assignable"))
+    stopifnot(asCAT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+    stopifnot(asCAT_ASSIGN[3] %in% c("assignable", "open"))
+    stopifnot(asCAT_ASSIGN[4] %in% c("none", "allclosed"))
   }
 
   ## ここからメイン - - - - - - - - -
 
-  # 候補の決定
-  # 候補の決定
-  if (sCAT_TYPE == "adaptive"){
-    anCandCat <- switch(
-      sCAT_FILTER,
-      "all"  = seq_along(abCatNo_Use)[abCatNo_Use == 1],
-      "open" = seq_along(abCatNo_Use)[abCatNo_Use * abCatNo_Open == 1],
-      stop()
-    )
-  } else {
-    # 非適応的な場合
-    anCandCat <- seq_along(abCatNo_Use)
-  }
+  # Step 1.
+  anCandCat <- switch(
+    asCAT_ASSIGN[1],
+    "all"        = seq_along(abCatNo_Use),
+    "assignable" = seq_along(abCatNo_Use)[abCatNo_Use == 1],
+    stop()
+  )
 
-  # ソートキーの決定
+  # Step 2.
   anSortkey <- switch(
-    sCAT_ORDER,
+    asCAT_ASSIGN[2],
     "random"     = rep(1, length(anCandCat)),
-    "openclosed" = abCatNo_Open[anCandCat],
+    "openclosed" = - abCatNo_Open[anCandCat],
     "shortnum"   = -1 * anCatNo_OpenCount[anCandCat],
     "shortratio" = -1 * anCatNo_OpenCount[anCandCat] / anCatNo_AllCount[anCandCat],
     stop()
   )
-
   lOut <- getCandidate(anCandCat, anSortkey, nCAT_MAX)
 
-  # nonadaptive の場合、割付不能カテゴリが含まれているので取り除く
-  if (sCAT_TYPE == "nonadaptive"){
-    lOut <- unique( lapply( lOut, function(anIn) anIn[ abCatNo_Use[anIn] == 1 ] ) )
-  }
+  # Step 3.
+  lOut <- switch(
+    asCAT_ASSIGN[3],
+    "assignable" =  lapply( lOut, function(anIn) anIn[ abCatNo_Use[anIn] == 1 ] ),
+    "open"       =  lapply( lOut, function(anIn) anIn[ abCatNo_Use[anIn] * abCatNo_Open[anIn] == 1 ] ),
+    stop()
+  )
+  lOut <- unique(lOut)
 
+  # Step 4.
   # 除外条件を適用
-  if (sCAT_EXCLUDE == "allclosed"){
+  if (asCAT_ASSIGN[4] == "allclosed"){
     lOut <- lOut[ sapply(lOut, function(x) sum(abCatNo_Open[x])) > 0 ]
   }
 
@@ -294,10 +267,7 @@ sub_getslot <- function(
   anSlotNo_Count,
   anSlotNo_Request,
   nSLOT_MAX,
-  sSLOT_TYPE,
-  sSLOT_FILTER,
-  sSLOT_ORDER,
-  sSLOT_EXCLUDE,
+  asSLOT_ASSIGN,
   bDEBUG
 ){
   #' Internal: Assign a participant into slots
@@ -317,14 +287,8 @@ sub_getslot <- function(
   #'    スロット番号から目標票数を引くベクトル
   #' @param nSLOT_MAX 整数。
   #'    ある対象者に割り付けるスロット数の上限。
-  #' @param sSLOT_TYPE 文字列。
-  #'    スロット割付タイプ。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_FILTER 文字列。
-  #'    スロット割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_ORDER 文字列。
-  #'    スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_EXCLUDE 文字列。
-  #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
+  #' @param asSLOT_ASSIGN 文字列。
+  #'    スロット割付方法。指定は必須。詳細はvignetteを参照。
   #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
@@ -365,11 +329,11 @@ sub_getslot <- function(
     ## 欠損無し
     stopifnot(!is.na(nSLOT_MAX))
 
-    ## sSLOT_TYPE, sSLOT_FILTER, sSLOT_ORDER, sSLOT_EXCLUDE
-    stopifnot(sSLOT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sSLOT_FILTER  %in% c("all", "open"))
-    stopifnot(sSLOT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sSLOT_EXCLUDE %in% c("none", "allclosed"))
+    ## asSLOT_ASSIGN
+    stopifnot(asSLOT_ASSIGN[1] %in% c("all", "assignable"))
+    stopifnot(asSLOT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+    stopifnot(asSLOT_ASSIGN[3] %in% c("assignable", "open"))
+    stopifnot(asSLOT_ASSIGN[4] %in% c("none", "allclosed"))
   }
 
   ## ここからメイン - - - - - - - - -
@@ -386,26 +350,21 @@ sub_getslot <- function(
   } else {
     # 割付可能スロットがある場合
 
-    # 候補を決める
-    if (sSLOT_TYPE == "adaptive"){
-      # 適応的な場合
-      anCandSlot <- switch(
-        sSLOT_FILTER,
-        "all"  = seq_along(abSlotNo_Hit)[abSlotNo_Hit == 1],
-        "open" = seq_along(abSlotNo_Hit)[abSlotNo_Hit * abSlotNo_Open == 1],
-        stop()
-      )
-    } else {
-      # 非適応的な場合
-      anCandSlot <- seq_along(abSlotNo_Hit)
-    }
-    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (ordered):", paste0(anCandSlot, collapse=","), "\n")
+    # Step 1
+    anCandSlot <- switch(
+      asSLOT_ASSIGN[1],
+      "all"        = seq_along(abSlotNo_Hit),
+      "assignable" = seq_along(abSlotNo_Hit)[abSlotNo_Hit == 1],
+      stop()
+    )
+    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (step 1):", paste0(anCandSlot, collapse=","), "\n")
 
+    # Step 2.
     # 候補が複数あったら
     if (length(anCandSlot) >= 2){
       # 並び変えて
       anCandSlot <- switch(
-        sSLOT_ORDER,
+        asSLOT_ASSIGN[2],
         "random" = sample(anCandSlot, length(anCandSlot), replace = FALSE),
         "openclosed" = {
 
@@ -444,17 +403,24 @@ sub_getslot <- function(
       anCandSlot <- anCandSlot[seq_len(nSLOT_MAX)]
       anCandSlot <- anCandSlot[!is.na(anCandSlot)]
     }
-    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (unordered):", paste0(anCandSlot, collapse=","), "\n")
+    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (step 2):", paste0(anCandSlot, collapse=","), "\n")
 
-    # 割付可能スロットに絞る
-    anCandSlot <- anCandSlot[ abSlotNo_Hit[anCandSlot] == 1 ]
+    # Step 3.
+    anCandSlot <- switch(
+      asSLOT_ASSIGN[3],
+      "assignable" = anCandSlot[ abSlotNo_Hit[anCandSlot] == 1 ],
+      "open"       = anCandSlot[ abSlotNo_Hit[anCandSlot] * abSlotNo_Open[anCandSlot] == 1 ],
+      stop()
+    )
+    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (step 3):", paste0(anCandSlot, collapse=","), "\n")
 
     # 除外条件を適用
-    if (sSLOT_EXCLUDE == "allclosed"){
+    if (asSLOT_ASSIGN[4] == "allclosed"){
       if (sum(abSlotNo_Open[anCandSlot]) == 0){
         anCandSlot = c()
       }
     }
+    if (bDEBUG) cat("[sub_getslot] -> anCandSlot (step 4):", paste0(anCandSlot, collapse=","), "\n")
 
     # 後ろにNAを埋める
     out <- c(anCandSlot, rep(NA, nSLOT_MAX))[seq_len(nSLOT_MAX)]
@@ -471,10 +437,7 @@ sub_checkslot <- function(
   anSlotNo_Count,
   anSlotNo_Request,
   nSLOT_MAX,
-  sSLOT_TYPE,
-  sSLOT_FILTER,
-  sSLOT_ORDER,
-  sSLOT_EXCLUDE,
+  asSLOT_ASSIGN,
   bDEBUG
 ){
   #' Internal: Check assigned slots
@@ -495,14 +458,8 @@ sub_checkslot <- function(
   #'    スロット番号から目標票数を引くベクトル
   #' @param nSLOT_MAX 整数。
   #'    ある対象者に割り付けるスロット数の上限。
-  #' @param sSLOT_TYPE 文字列。
-  #'    スロット割付タイプ。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_FILTER 文字列。
-  #'    スロット割付の際の絞り込み条件。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_ORDER 文字列。
-  #'    スロット割付の際の順序付け条件。指定は必須。詳細はvignetteを参照。
-  #' @param sSLOT_EXCLUDE 文字列。
-  #'    スロット割付の際の除外条件。指定は必須。詳細はvignetteを参照。
+  #' @param asSLOT_ASSIGN 文字列。
+  #'    スロット割付方法。指定は必須。詳細はvignetteを参照。
   #' @param bDEBUG as logical.
   #'    デバッグモード
   #'
@@ -549,31 +506,25 @@ sub_checkslot <- function(
     ## 欠損無し
     stopifnot(!is.na(nSLOT_MAX))
 
-    ## sSLOT_TYPE, sSLOT_FILTER, sSLOT_ORDER, sSLOT_EXCLUDE
-    stopifnot(sSLOT_TYPE    %in% c("adaptive", "nonadaptive"))
-    stopifnot(sSLOT_FILTER  %in% c("all", "open"))
-    stopifnot(sSLOT_ORDER   %in% c("random", "openclosed", "shortnum", "shortratio"))
-    stopifnot(sSLOT_EXCLUDE %in% c("none", "allclosed"))
+    ## asSLOT_ASSIGN
+    stopifnot(asSLOT_ASSIGN[1] %in% c("all", "assignable"))
+    stopifnot(asSLOT_ASSIGN[2] %in% c("random", "openclosed", "shortnum", "shortratio"))
+    stopifnot(asSLOT_ASSIGN[3] %in% c("assignable", "open"))
+    stopifnot(asSLOT_ASSIGN[4] %in% c("none", "allclosed"))
   }
 
   ## ここからメイン - - - - - - - - -
-  # 候補の決定
-  if (sSLOT_TYPE == "adaptive"){
-    anCandSlot <- switch(
-      sSLOT_FILTER,
-      "all"  = seq_along(abSlotNo_Hit)[abSlotNo_Hit == 1],
-      "open" = seq_along(abSlotNo_Hit)[abSlotNo_Hit * abSlotNo_Open == 1],
-      stop()
-    )
-  } else {
-    # 非適応的な場合
-    anCandSlot <- seq_along(abSlotNo_Hit)
-  }
-  if (bDEBUG) cat("[sub_checkslot] anCandSlot:", anCandSlot, "\n")
+  # step 1
+  anCandSlot <- switch(
+    asSLOT_ASSIGN[1],
+    "all"        = seq_along(abSlotNo_Hit),
+    "assignable" = seq_along(abSlotNo_Hit)[abSlotNo_Hit == 1],
+    stop()
+  )
 
   # ソートキーの決定
   anSortkey <- switch(
-    sSLOT_ORDER,
+    asSLOT_ASSIGN[2],
     "random"     = rep(1, length(anCandSlot)),
     "openclosed"  = -1 * abSlotNo_Open[anCandSlot],
     "shortnum"   = {
@@ -586,7 +537,6 @@ sub_checkslot <- function(
     },
     stop()
   )
-
   lOut <- getCandidate(
     anCandSlot,
     anSortkey,
@@ -594,13 +544,17 @@ sub_checkslot <- function(
     bDEBUG = bDEBUG
   )
 
-  # nonadp の場合、割付不能カテゴリが含まれているので取り除く
-  if (sSLOT_TYPE == "nonadaptive"){
-    lOut <- unique( lapply( lOut, function(anIn) anIn[ abSlotNo_Hit[anIn] == 1 ] ) )
-  }
+  # Step 3.
+  lOut <- switch(
+    asSLOT_ASSIGN[3],
+    "assignable" = lapply( lOut, function(anIn) anIn[ abSlotNo_Hit[anIn] == 1 ] ),
+    "open"       = lapply( lOut, function(anIn) anIn[ abSlotNo_Hit[anIn] * abSlotNo_Open[anIn] == 1 ] ),
+    stop()
+  )
+  lOut <- unique(lOut)
 
-  # 除外条件を適用
-  if (sSLOT_EXCLUDE == "allclosed"){
+  # Step 4.
+  if (asSLOT_ASSIGN[4] == "allclosed"){
     lOut <- lOut[ sapply(lOut, function(x) sum(abSlotNo_Open[x])) > 0 ]
   }
 
@@ -830,10 +784,7 @@ execAssign <- function(
         anCatNo_Count,
         anCatNo_NumSlot,
         lSETTING$nCAT_MAX,
-        lSETTING$sCAT_TYPE,
-        lSETTING$sCAT_FILTER,
-        lSETTING$sCAT_ORDER,
-        lSETTING$sCAT_EXCLUDE,
+        lSETTING$asCAT_ASSIGN,
         bDEBUG = bDEBUG
       )
       if (bDEBUG){
@@ -876,10 +827,7 @@ execAssign <- function(
           anLoc_Count[anLoc_CatNo == nAssignedCat],
           anLoc_Request[anLoc_CatNo == nAssignedCat],
           lSETTING$nSLOT_MAX,
-          lSETTING$sSLOT_TYPE,
-          lSETTING$sSLOT_FILTER,
-          lSETTING$sSLOT_ORDER,
-          lSETTING$sSLOT_EXCLUDE,
+          lSETTING$asSLOT_ASSIGN,
           bDEBUG = bDEBUG
         )
 
@@ -1067,25 +1015,24 @@ checkSurvey <- function(
   # ひとりづつ抽出し、割付を行う
   for (nPerson in seq_len(nrow(lSURVEY$mbCAT))){
 
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] nPerson:", nPerson, " - - - - \n")
     }
+
 
     # この人のエラーメッセージのベクトル
     asCurrentMsg <- c()
 
     ### Phase 1. カテゴリの割り付けのチェック - - - - - - - - - - - - - -
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] Phase 1.\n")
     }
 
     # その人のカテゴリ割付可能性をとってくる
     abCatNo_Use <- lSURVEY$mbCAT[nPerson, ]
 
-    if (bDEBUG){
-      cat("[checkSurvey] abCatNo_Use:", abCatNo_Use, "\n")
-      cat("[checkSurvey] abCatNo_Open:", abCatNo_Open, "\n")
-      cat("[checkSurvey] anCatNo_Count:", anCatNo_Count, "\n")
+    if (sVERBOSE == "detail"){
+      cat("[checkSurvey] abCatNo_Use:", abCatNo_Use, "abCatNo_Open:", abCatNo_Open, "anCatNo_Count:", anCatNo_Count, "\n")
     }
 
     # 割付カテゴリの候補
@@ -1095,10 +1042,7 @@ checkSurvey <- function(
       anCatNo_Count,
       anCatNo_NumSlot,
       ncol(lSURVEY$mnASSIGNCAT),
-      lSURVEY$lSETTING$sCAT_TYPE,
-      lSURVEY$lSETTING$sCAT_FILTER,
-      lSURVEY$lSETTING$sCAT_ORDER,
-      lSURVEY$lSETTING$sCAT_EXCLUDE,
+      lSURVEY$lSETTING$asCAT_ASSIGN,
       bDEBUG = bDEBUG
     )
 
@@ -1122,7 +1066,7 @@ checkSurvey <- function(
       sPossibleCat <- paste0(sPossibleCat, " etc.")
     }
 
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] lPossibleCat:", sPossibleCat, "\n")
     }
 
@@ -1130,7 +1074,7 @@ checkSurvey <- function(
     anAssignCat <- lSURVEY$mnASSIGNCAT[nPerson,]
     anAssignCat <- anAssignCat[!is.na(anAssignCat)]
     anAssignCat <- sort(anAssignCat)
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] anAssignCat:", anAssignCat, "\n")
     }
 
@@ -1142,14 +1086,14 @@ checkSurvey <- function(
         "Assigned to unexpected categories. Possible categories are:",
         sPossibleCat
       )
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] Error:", sNewMsg, "\n")
       }
       asCurrentMsg <- c(asCurrentMsg, sNewMsg)
     }
 
     ### Phase 2. 親カテゴリの割り付けのチェック - - - - - - - - - - - - - -
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] Phase 2.\n")
     }
 
@@ -1157,7 +1101,7 @@ checkSurvey <- function(
     lPossibleCatSlot <- lapply(
       anAssignCat,
       function(nAssignCat){
-        if (bDEBUG){
+        if (sVERBOSE == "detail"){
           cat("[checkSurvey] checking at nAssignCat=", nAssignCat, "\n")
         }
 
@@ -1171,10 +1115,7 @@ checkSurvey <- function(
           anLoc_Count[anLoc_CatNo == nAssignCat],
           anLoc_Request[anLoc_CatNo == nAssignCat],
           ncol(lSURVEY$mnASSIGNSLOT),
-          lSURVEY$lSETTING$sSLOT_TYPE,
-          lSURVEY$lSETTING$sSLOT_FILTER,
-          lSURVEY$lSETTING$sSLOT_ORDER,
-          lSURVEY$lSETTING$sSLOT_EXCLUDE,
+          lSURVEY$lSETTING$asSLOT_ASSIGN,
           bDEBUG = bDEBUG
         )
         return(lPossibleSlot)
@@ -1183,7 +1124,7 @@ checkSurvey <- function(
 
     # 親カテゴリの候補
     anPossibleParent <- anAssignCat[sapply(lPossibleCatSlot, length) > 0]
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] anPossibleParent:", anPossibleParent, "\n")
     }
 
@@ -1191,7 +1132,7 @@ checkSurvey <- function(
     # 親カテゴリが割付カテゴリのなかに含まれていることはmakeSurvey()で確認済
     nParentCat <- lSURVEY$anPARENTCAT[nPerson]
     nParentCat <- nParentCat[!is.na(nParentCat)]
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] nParentCat:", nParentCat, "\n")
     }
 
@@ -1207,14 +1148,14 @@ checkSurvey <- function(
         "Unexpected parent category:", nParentCat, ". Possible categories are:",
         paste0(anPossibleParent, collapse = ",")
       )
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] Error:", sNewMsg, "\n")
       }
       asCurrentMsg <- c(asCurrentMsg, sNewMsg)
     }
 
     ### Phase 3. スロットの割り付けのチェック - - - - - - - - - - - - - -
-    if (bDEBUG){
+    if (sVERBOSE == "detail"){
       cat("[checkSurvey] Phase 3.\n")
     }
 
@@ -1231,13 +1172,10 @@ checkSurvey <- function(
         anLoc_Count[anLoc_CatNo == nParentCat],
         anLoc_Request[anLoc_CatNo == nParentCat],
         ncol(lSURVEY$mnASSIGNSLOT),
-        lSURVEY$lSETTING$sSLOT_TYPE,
-        lSURVEY$lSETTING$sSLOT_FILTER,
-        lSURVEY$lSETTING$sSLOT_ORDER,
-        lSURVEY$lSETTING$sSLOT_EXCLUDE,
+        lSURVEY$lSETTING$asSLOT_ASSIGN,
         bDEBUG = bDEBUG
       )
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] lPossibleSlot: \n")
         print(lPossibleSlot)
       }
@@ -1261,7 +1199,7 @@ checkSurvey <- function(
         )
         sPossibleSlot <- paste0(sPossibleSlot, " etc.")
       }
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] anPossibleSlot:", sPossibleSlot, "\n")
       }
 
@@ -1269,7 +1207,7 @@ checkSurvey <- function(
       anAssignSlot <- lSURVEY$mnASSIGNSLOT[nPerson,]
       anAssignSlot <- anAssignSlot[!is.na(anAssignSlot)]
       anAssignSlot <- sort(anAssignSlot)
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] anAssignSlot:", anAssignSlot, "\n")
       }
 
@@ -1282,14 +1220,14 @@ checkSurvey <- function(
           "Assigned to unexpected slots in category", nParentCat, ". Possible slots are:",
           sPossibleSlot
         )
-        if (bDEBUG){
+        if (sVERBOSE == "detail"){
           cat("[checkSurvey] Error:", sNewMsg, "\n")
         }
         asCurrentMsg <- c(asCurrentMsg, sNewMsg)
       }
 
       ### Phase 4. この対象者についての終了処理 - - - - - - - - - - - - - -
-      if (bDEBUG){
+      if (sVERBOSE == "detail"){
         cat("[checkSurvey] Phase 4.\n")
       }
       # スロットの獲得票数を加算
